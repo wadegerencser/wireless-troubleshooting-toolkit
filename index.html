@@ -3934,9 +3934,9 @@ AP Groups                   &rarr;  Policy Tag + Site Tag + RF Tag (structural, 
     const elNote = document.getElementById('poe-note');
 
     function calc() {
-      const count = Number(countInput.value) || 0;
+      const count = Math.max(0, Number(countInput.value) || 0);
       const perAp = Number(classSelect.value) || 0;
-      const budget = Number(budgetInput.value) || 0;
+      const budget = Math.max(0, Number(budgetInput.value) || 0);
       const demand = count * perAp;
       const headroom = budget - demand;
       elDemand.textContent = demand.toFixed(1);
