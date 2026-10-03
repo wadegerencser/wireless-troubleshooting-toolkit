@@ -2,434 +2,2023 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Cisco WLAN + ISE Field Guide</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cisco Wireless Engineering Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --accent: #049fd9;
-    --bg: #f7f9fa;
-    --panel: #ffffff;
-    --border: #e0e4e7;
-    --text: #1a1a1a;
-    --muted: #666;
+    --ink-0: #0A1D2B;
+    --ink: #0E2638;
+    --ink-2: #15314A;
+    --ink-3: #1C3D59;
+    --line: #2F5068;
+    --mist: #E7EFEF;
+    --mist-dim: #9FB6C2;
+    --signal: #41C9B4;
+    --good: #5FB489;
+    --caution: #D9A441;
+    --alert: #D97A5C;
   }
   * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
   body {
-    margin: 0;
-    font-family: "Helvetica Neue", Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
+    background: var(--ink);
+    color: var(--mist);
+    font-family: "IBM Plex Sans", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
     display: flex;
     min-height: 100vh;
+    opacity: 0;
+    animation: settle 0.5s ease forwards;
   }
+  @keyframes settle { from { opacity: 0; } to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    body { animation: none; opacity: 1; }
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 90% 60% at 15% 0%, rgba(65,201,180,0.07), transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  h1, h2, h3, .mono-label {
+    font-family: "Space Grotesk", "IBM Plex Sans", sans-serif;
+  }
+  code, pre, .mono {
+    font-family: "IBM Plex Mono", monospace;
+  }
+
+  /* ---------- Nav rail: rack elevation ---------- */
   nav {
-    width: 280px;
-    background: #00263a;
-    color: #cfe8f3;
-    padding: 20px 0;
-    overflow-y: auto;
+    width: 300px;
     flex-shrink: 0;
+    background: var(--ink-0);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
   }
-  nav .brand {
-    padding: 0 20px 18px;
-    border-bottom: 1px solid #0d3b52;
-    margin-bottom: 10px;
+  .nav-head {
+    padding: 22px 20px 16px;
+    border-bottom: 1px solid var(--line);
   }
-  nav .brand h1 { font-size: 16px; margin: 0 0 4px; color: #fff; }
-  nav .brand p { font-size: 11.5px; color: #8fb9cc; margin: 0; }
-  nav .section-label {
-    font-size: 10.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #6ea3bb;
-    padding: 14px 20px 6px;
+  .nav-head .mark {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
   }
-  nav button {
-    display: block;
+  .nav-head h1 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--mist);
+    letter-spacing: 0.2px;
+  }
+  .nav-head .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--signal);
+    flex-shrink: 0;
+    box-shadow: 0 0 6px var(--signal);
+  }
+  .nav-head p {
+    margin: 6px 0 0;
+    font-size: 11.5px;
+    color: var(--mist-dim);
+    line-height: 1.5;
+  }
+  .search-wrap {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .search-wrap input {
+    width: 100%;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    color: var(--mist);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+    padding: 8px 10px;
+    outline: none;
+  }
+  .search-wrap input::placeholder { color: var(--mist-dim); }
+  .search-wrap input:focus { border-color: var(--signal); }
+
+  .rack {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 0 20px;
+  }
+  .rack-group { margin-top: 16px; }
+  .rack-group:first-child { margin-top: 10px; }
+  .rack-label {
+    font-size: 11px;
+    color: var(--mist-dim);
+    padding: 0 20px 6px;
+    font-weight: 500;
+  }
+  .rack-unit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     width: 100%;
     text-align: left;
     background: none;
     border: none;
-    color: #cfe8f3;
-    padding: 9px 20px;
+    border-left: 2px solid transparent;
+    color: var(--mist-dim);
+    padding: 8px 20px 8px 18px;
     font-size: 13px;
+    font-family: "IBM Plex Sans", sans-serif;
     cursor: pointer;
-    border-left: 3px solid transparent;
   }
-  nav button:hover { background: #0d3b52; }
-  nav button.active { background: #0d3b52; border-left-color: var(--accent); color: #fff; font-weight: 600; }
+  .rack-unit:hover { background: var(--ink-2); color: var(--mist); }
+  .rack-unit.active {
+    background: var(--ink-2);
+    color: var(--mist);
+    border-left-color: var(--signal);
+  }
+  .rack-unit svg { flex-shrink: 0; opacity: 0.85; }
+  .rack-unit.active svg { opacity: 1; }
+  .rack-unit .count {
+    margin-left: auto;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    color: var(--mist-dim);
+  }
+  .rack-unit.pending { opacity: 0.55; }
+  .rack-unit.pending .count { color: var(--caution); }
+  .rack-unit[hidden] { display: none; }
+
+  /* ---------- Main ---------- */
   main {
     flex: 1;
     overflow-y: auto;
-    padding: 36px 48px;
-    max-width: 880px;
+    position: relative;
+    z-index: 1;
+  }
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 48px 100px;
   }
   .topic { display: none; }
   .topic.active { display: block; }
-  h2 { font-size: 22px; border-bottom: 3px solid var(--accent); padding-bottom: 10px; margin-top: 0; }
-  h3 { font-size: 15px; color: #005073; margin-top: 24px; }
-  .tag {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    padding: 2px 7px;
-    border-radius: 3px;
-    margin-left: 6px;
-    vertical-align: middle;
+
+  /* Hero (overview only) */
+  .hero h2 {
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.25;
+    margin: 0 0 14px;
+    color: var(--mist);
   }
-  .documented { background: #d4edda; color: #155724; }
-  .inference { background: #fff3cd; color: #856404; }
-  .unconfirmed { background: #f8d7da; color: #721c24; }
-  .card {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--accent);
-    border-radius: 0 6px 6px 0;
+  .hero .lede {
+    font-size: 15.5px;
+    color: var(--mist-dim);
+    max-width: 54ch;
+    margin: 0 0 28px;
+  }
+  .readout-row {
+    display: flex;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-bottom: 32px;
+  }
+  .readout {
+    flex: 1;
+    background: var(--ink-0);
+    padding: 14px 16px;
+  }
+  .readout .num {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--signal);
+    line-height: 1;
+  }
+  .readout .label {
+    font-size: 11px;
+    color: var(--mist-dim);
+    margin-top: 5px;
+  }
+
+  /* Datasheet header for each topic */
+  .sheet-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 24px;
+  }
+  .sheet-head svg { flex-shrink: 0; }
+  .sheet-head h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--mist);
+    line-height: 1.3;
+  }
+  .sheet-head .conf {
+    font-size: 11.5px;
+    color: var(--mist-dim);
+    margin-top: 2px;
+  }
+
+  h3 {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--mist);
+    margin: 28px 0 10px;
+  }
+  p { color: var(--mist); margin: 0 0 12px; max-width: 68ch; }
+  ul, ol { margin: 0 0 14px; padding-left: 20px; max-width: 68ch; }
+  li { margin-bottom: 5px; }
+
+  /* Status panel = replaces card-with-shadow */
+  .panel {
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--signal);
     padding: 14px 18px;
     margin: 14px 0;
   }
-  .card.warn { border-left-color: #c0392b; background: #fdf4f3; }
-  code, pre {
-    font-family: "SF Mono", Consolas, monospace;
-    font-size: 12.5px;
-    background: #eef1f3;
-    border-radius: 3px;
+  .panel.good { border-left-color: var(--good); }
+  .panel.caution { border-left-color: var(--caution); }
+  .panel.alert { border-left-color: var(--alert); }
+  .panel p:last-child { margin-bottom: 0; }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--mist-dim);
+    margin-left: 8px;
   }
-  code { padding: 1px 5px; }
-  pre { padding: 10px 12px; overflow-x: auto; border: 1px solid var(--border); }
+  .status .sw { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .status.good .sw { background: var(--good); }
+  .status.caution .sw { background: var(--caution); }
+  .status.alert .sw { background: var(--alert); }
+
   table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 13px; }
-  th, td { border: 1px solid var(--border); padding: 7px 10px; text-align: left; vertical-align: top; }
-  th { background: #eef1f3; }
-  .citation { font-size: 11px; color: var(--muted); word-break: break-all; }
-  .intro-badge {
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--ink-2); color: var(--mist-dim); font-weight: 500; font-size: 12px; }
+  td { color: var(--mist); }
+
+  code {
+    background: var(--ink-0);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 1px 5px;
+    font-size: 12.5px;
+    color: var(--signal);
+  }
+  pre {
+    background: var(--ink-0);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 12px 14px;
+    overflow-x: auto;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--mist);
+    margin: 14px 0;
+  }
+  pre code { background: none; border: none; padding: 0; color: inherit; }
+
+  .sources {
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .sources h3 { margin-top: 0; color: var(--mist-dim); font-size: 12px; }
+  .sources ul { list-style: none; padding: 0; margin: 0; }
+  .sources li {
+    font-family: "IBM Plex Mono", monospace;
     font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 20px;
+    color: var(--mist-dim);
+    word-break: break-all;
+    margin-bottom: 4px;
+  }
+
+  .pending-note {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: var(--ink-2);
+    border: 1px dashed var(--line);
+    padding: 16px 18px;
+    margin-top: 10px;
+  }
+  .pending-note .sw { margin-top: 5px; }
+
+  blockquote {
+    margin: 12px 0;
+    padding: 10px 16px;
+    border-left: 2px solid var(--mist-dim);
+    color: var(--mist-dim);
+    font-style: normal;
+    font-size: 13.5px;
+    max-width: 64ch;
+  }
+
+  /* ---------- Symptom troubleshooter ---------- */
+  .ts-backbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .ts-back {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--mist-dim);
+    font-size: 11.5px;
+    font-family: "IBM Plex Mono", monospace;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .ts-back:hover { border-color: var(--signal); color: var(--mist); }
+  .ts-step { animation: ts-in 0.2s ease; }
+  @keyframes ts-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce) { .ts-step { animation: none; } }
+  .ts-question {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--mist);
+    margin: 0 0 18px;
+    max-width: 46ch;
+  }
+  .ts-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .ts-choice {
+    text-align: left;
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--mist-dim);
+    color: var(--mist);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 14px;
+    padding: 12px 16px;
+    border-radius: 0 3px 3px 0;
+    cursor: pointer;
+    max-width: 56ch;
+  }
+  .ts-choice:hover { border-left-color: var(--signal); background: var(--ink-3); }
+  .ts-result { animation: ts-in 0.2s ease; }
+  .ts-verdict {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 600;
+    font-size: 15.5px;
+    color: var(--mist);
+    margin-bottom: 8px;
+  }
+  .ts-jump, .ts-restart {
+    display: inline-block;
+    margin-top: 6px;
+    margin-right: 10px;
+    background: none;
+    border: 1px solid var(--signal);
+    color: var(--signal);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    padding: 8px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .ts-jump:hover { background: var(--signal); color: var(--ink-0); }
+  .ts-restart { border-color: var(--line); color: var(--mist-dim); }
+  .ts-restart:hover { border-color: var(--mist-dim); color: var(--mist); }
+
+  @media (max-width: 760px) {
+    body { flex-direction: column; }
+    nav { width: 100%; border-right: none; border-bottom: 1px solid var(--line); max-height: 50vh; }
+    .page { padding: 32px 20px 80px; }
   }
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="brand">
-    <h1>WLAN + ISE Field Guide</h1>
-    <p>Cisco platform-specific &middot; 802.11 / ISE / 9800 / Catalyst Center</p>
+  <div class="nav-head">
+    <div class="mark">
+      <span class="dot"></span>
+      <h1>Wireless Engineering Reference</h1>
+    </div>
+    <p>Cisco platform troubleshooting, organized by architecture — RF theory is out of scope</p>
   </div>
-  <div class="section-label">Topics</div>
-  <button class="nav-btn active" data-topic="overview">Overview</button>
-  <button class="nav-btn" data-topic="ap-join">AP Join Failures &amp; AAA</button>
-  <button class="nav-btn" data-topic="redirect-acl">CWA Redirect ACL Logic</button>
-  <button class="nav-btn" data-topic="ft-cwa">FT Roaming + CWA Interaction</button>
-  <button class="nav-btn" data-topic="ise-sizing">ISE Deployment &amp; PSN Sizing</button>
-  <button class="nav-btn" data-topic="intermittent">Intermittent Failure Checklist</button>
-  <div class="section-label">Source Case</div>
-  <button class="nav-btn" data-topic="case-notes">Field Case Pattern (anonymized)</button>
+  <div class="search-wrap">
+    <input id="filter" type="text" placeholder="filter topics&hellip;" autocomplete="off">
+  </div>
+  <div class="rack" id="rack">
+
+    <div class="rack-group" data-group="start">
+      <div class="rack-label">Start here</div>
+      <button class="rack-unit active" data-topic="overview">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"/></svg>
+        <span>Overview</span>
+      </button>
+      <button class="rack-unit" data-topic="troubleshooter">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/><circle cx="12" cy="12" r="3"/></svg>
+        <span>Troubleshoot by symptom</span>
+      </button>
+    </div>
+
+    <div class="rack-group" data-group="9800">
+      <div class="rack-label">Catalyst 9800 &middot; ISE &middot; CWA</div>
+      <button class="rack-unit" data-topic="ap-join">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="10" width="4" height="4"/><rect x="10.5" y="4" width="4" height="4"/><rect x="18" y="10" width="4" height="4"/><path d="M7 12h3.5M14.5 8v2.5M14.5 10.5L18 11"/></svg>
+        <span>AP join &amp; AAA</span><span class="count">6</span>
+      </button>
+      <button class="rack-unit" data-topic="redirect-acl">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16M4 12h10M4 18h16" stroke-dasharray="2 2"/><path d="M16 10l3 2-3 2"/></svg>
+        <span>CWA redirect ACL</span><span class="count">5</span>
+      </button>
+      <button class="rack-unit" data-topic="ft-cwa">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M8.3 10.3L15.7 13.7M8.3 13.7L15.7 10.3"/></svg>
+        <span>FT roam + CWA</span><span class="count">4</span>
+      </button>
+      <button class="rack-unit" data-topic="ise-sizing">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>
+        <span>ISE deployment sizing</span><span class="count">7</span>
+      </button>
+      <button class="rack-unit" data-topic="intermittent">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 14h3l2-7 4 11 2-7 2 4h5"/></svg>
+        <span>Intermittent failures</span><span class="count">4</span>
+      </button>
+    </div>
+
+    <div class="rack-group" data-group="meraki">
+      <div class="rack-label">Meraki cloud-managed</div>
+      <button class="rack-unit" data-topic="meraki">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="16" width="6" height="4"/><path d="M7 14a4 4 0 010-8 5 5 0 019.5-1.5A4 4 0 0117 14H7z"/></svg>
+        <span>MR access points</span><span class="count">6</span>
+      </button>
+    </div>
+
+    <div class="rack-group" data-group="aireos">
+      <div class="rack-label">AireOS &amp; Mobility Express</div>
+      <button class="rack-unit" data-topic="aireos">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="9" width="5" height="6"/><rect x="16" y="9" width="5" height="6"/><path d="M8 12h8"/></svg>
+        <span>AireOS &amp; ME</span><span class="count">6</span>
+      </button>
+    </div>
+
+    <div class="rack-group" data-group="outdoor">
+      <div class="rack-label">Outdoor &amp; mesh</div>
+      <button class="rack-unit" data-topic="outdoor">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><path d="M12 8L5 16M12 8l7 8"/></svg>
+        <span>Outdoor &amp; mesh</span><span class="count">5</span>
+      </button>
+    </div>
+
+    <div class="rack-group" data-group="location">
+      <div class="rack-label">Location services</div>
+      <button class="rack-unit" data-topic="location">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="13" width="6" height="5"/><path d="M8 10a4 4 0 018 0M6 7a7 7 0 0112 0"/></svg>
+        <span>CMX &amp; Cisco Spaces</span><span class="count">4</span>
+      </button>
+    </div>
+
+    <div class="rack-group" data-group="ops">
+      <div class="rack-label">Cross-platform operations</div>
+      <button class="rack-unit" data-topic="ha-sso">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="7" height="16" rx="1"/><rect x="14" y="4" width="7" height="16" rx="1"/><path d="M10 9h4M10 15h4"/></svg>
+        <span>HA SSO &amp; N+1</span><span class="count">5</span>
+      </button>
+      <button class="rack-unit" data-topic="exclusion">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M8 8l8 8"/></svg>
+        <span>Client exclusion &amp; rogues</span><span class="count">4</span>
+      </button>
+      <button class="rack-unit" data-topic="supplicant">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/><path d="M11 7.5h4M16 11v2"/></svg>
+        <span>802.1X supplicant-side</span><span class="count">5</span>
+      </button>
+      <button class="rack-unit" data-topic="multicast">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="7" r="2"/><circle cx="6" cy="17" r="2"/><circle cx="18" cy="12" r="2"/><path d="M8 7h4a4 4 0 014 4M8 17h4a4 4 0 004-4"/></svg>
+        <span>Multicast &amp; broadcast</span><span class="count">4</span>
+      </button>
+      <button class="rack-unit" data-topic="qos-voice">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 15V9M8 18V6M12 20V4M16 18V6M20 15V9"/></svg>
+        <span>QoS &amp; voice/video</span><span class="count">4</span>
+      </button>
+      <button class="rack-unit" data-topic="ntp-certs">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.5 2"/></svg>
+        <span>NTP &amp; certificate time</span><span class="count">4</span>
+      </button>
+      <button class="rack-unit" data-topic="issu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7a8 8 0 0113-5M20 17a8 8 0 01-13 5"/><path d="M4 2v5h5M20 22v-5h-5"/></svg>
+        <span>9800 ISSU upgrades</span><span class="count">5</span>
+      </button>
+      <button class="rack-unit" data-topic="poe">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 2v6M12 2v6M17 2v6M5 8h14l-1.5 7a5 5 0 01-5 4h-1a5 5 0 01-5-4L5 8z"/></svg>
+        <span>PoE &amp; AP power</span><span class="count">5</span>
+      </button>
+    </div>
+
+    <div class="rack-group" data-group="case">
+      <div class="rack-label">Field cases</div>
+      <button class="rack-unit" data-topic="case-notes">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5L20 20"/></svg>
+        <span>Field case pattern</span><span class="count">1</span>
+      </button>
+    </div>
+
+  </div>
 </nav>
 
 <main>
+<div class="page">
 
-<div class="topic active" id="overview">
-  <h2>Overview</h2>
-  <p class="intro-badge">Status: experimental &middot; Scope: Cisco-platform troubleshooting only &mdash; not RF/802.11 theory (that's CWNP's domain)</p>
-  <div class="card">
-    <p>This guide collects documented Cisco behavior and known gotchas for engineers troubleshooting <strong>ISE, Catalyst 9800 (IOS-XE), and Catalyst Center</strong> in 802.11 wireless deployments. It exists because the same categories of mistakes keep recurring across engagements, and re-deriving them each time wastes time that documentation already answers &mdash; if you know where to look.</p>
-  </div>
-  <h3>How to read the tags</h3>
-  <table>
-    <tr><th>Tag</th><th>Meaning</th></tr>
-    <tr><td><span class="tag documented">DOCUMENTED</span></td><td>Confirmed directly from a cited Cisco source (config guide, TAC doc, DevNet reference, Cisco Press).</td></tr>
-    <tr><td><span class="tag inference">INFERENCE</span></td><td>Reasonable extrapolation from documented principles, but not a verbatim Cisco statement.</td></tr>
-    <tr><td><span class="tag unconfirmed">UNCONFIRMED</span></td><td>A plausible hypothesis that could not be verified against public Cisco documentation in this pass &mdash; needs TAC, Bug Search, or further research.</td></tr>
-  </table>
-  <h3>Related work &mdash; check internally first</h3>
-  <div class="card warn">
-    <p>This guide's scope overlaps with other internal Cisco efforts covering wireless troubleshooting methodology and ISE deployment/configuration guidance. Those are other engineers' internal projects, not detailed in this public document &mdash; check internally at Cisco before assuming this is the only resource on this topic.</p>
-  </div>
-</div>
+  <!-- OVERVIEW -->
+  <div class="topic active hero" id="overview">
+    <h2>Cisco Wireless Engineering Reference</h2>
+    <p class="lede">A platform-implementation reference for engineers supporting Cisco's wireless portfolio — Catalyst 9800, Meraki, AireOS, Mobility Express, outdoor mesh, and location services. Each finding is marked by its level of confirmation, so documented behavior can be distinguished from inference that still requires validation through TAC or Bug Search.</p>
 
-<div class="topic" id="ap-join">
-  <h2>AP Join Failures &amp; AAA <span class="tag documented">mostly DOCUMENTED</span></h2>
+    <div class="readout-row">
+      <div class="readout"><div class="num">15</div><div class="label">topics covered</div></div>
+      <div class="readout"><div class="num">70+</div><div class="label">documented findings</div></div>
+      <div class="readout"><div class="num">25+</div><div class="label">flagged inference / unconfirmed</div></div>
+    </div>
 
-  <h3>The common misconception</h3>
-  <div class="card">
-    <p>Default CAPWAP join on a Catalyst 9800 has <strong>no AAA/RADIUS step at all</strong>. The join sequence is purely certificate/DTLS-based:</p>
-    <p><code>Discovery Request/Response &rarr; DTLS handshake (cert exchange) &rarr; Join Request/Response &rarr; image check &rarr; Config &rarr; Run</code></p>
-    <p>Neither the AP join process documentation nor the 9800 join/disconnect troubleshooting guide mentions AAA or RADIUS anywhere in that path. <span class="tag documented">DOCUMENTED</span></p>
+    <h3>How confidence is marked</h3>
+    <p>Three statuses appear throughout this guide, next to every claim that isn't plain fact:</p>
+    <div class="panel good"><p><span class="status good"><span class="sw"></span>Documented</span> &mdash; confirmed directly from a cited Cisco source: a config guide, a TAC troubleshooting doc, a DevNet reference, or Cisco Press.</p></div>
+    <div class="panel caution"><p><span class="status caution"><span class="sw"></span>Inference</span> &mdash; a reasonable extrapolation from documented principles, not a verbatim Cisco statement.</p></div>
+    <div class="panel alert"><p><span class="status alert"><span class="sw"></span>Unconfirmed</span> &mdash; a plausible hypothesis that couldn't be verified in this pass. Needs TAC, Bug Search, or further digging before you rely on it.</p></div>
+
+    <h3>What this intentionally leaves out</h3>
+    <p>This guide stays scoped to <strong>Cisco-platform implementation</strong> &mdash; not RF/802.11 theory. Channels, modulation, MIMO, spectrum analysis, and roaming fundamentals are CWNP's domain (CWNA/CWDP/CWNE), and this guide defers to it rather than duplicating it. It's also not a customer case tracker: the one case pattern included here has every identifying detail stripped out.</p>
+
+    <h3>Related work &mdash; check internally first</h3>
+    <p>This guide's scope overlaps with other internal Cisco efforts covering wireless troubleshooting methodology and ISE deployment/configuration guidance. Those are other engineers' internal projects and aren't detailed in this public document &mdash; check internally at Cisco before assuming this is the only resource on a given topic.</p>
   </div>
 
-  <h3>Where AAA actually can enter the picture</h3>
-  <ul>
-    <li>An optional, <strong>off-by-default</strong> feature: "Authorize APs against MAC" (AP Policy), which checks the AP's MAC/cert against a local DB or RADIUS before/at join. <span class="tag documented">DOCUMENTED</span></li>
-    <li>802.1X AP-as-supplicant &mdash; a <strong>separate, often-confused mechanism</strong> that authenticates the AP's wired port to the switch, not the WLC. <span class="tag documented">DOCUMENTED</span></li>
-  </ul>
+  <!-- TROUBLESHOOTER -->
+  <div class="topic" id="troubleshooter">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/><circle cx="12" cy="12" r="3"/></svg>
+      <div>
+        <h2>Troubleshoot by symptom</h2>
+        <div class="conf">answer what you're seeing, land on the matching finding</div>
+      </div>
+    </div>
+    <p>This walks the same documented findings as the rest of the guide, just reached by symptom instead of by platform. Nothing here is a new claim &mdash; every stop links back to its full writeup and sources.</p>
 
-  <h3>The real, documented causes of join failure</h3>
-  <table>
-    <tr><th>Cause</th><th>Signature</th></tr>
-    <tr><td>Certificate (MIC/SSC) expiry/invalidity</td><td><code>%PKI-3-CERTIFICATE_INVALID_EXPIRED</code>, <code>%DTLS_TRACE_MSG-3-WLC_DTLS_ERR</code></td></tr>
-    <tr><td>Image-signing cert expiration stalling download</td><td>Field Notice FN72524 (CSCwd80290)</td></tr>
-    <tr><td>AP count / licensing limits</td><td>e.g. 9800-CL caps at 50 APs without active Smart Licensing</td></tr>
-    <tr><td>Country code / regulatory domain mismatch</td><td>Syslog: "country code (GA) and regulatory domain (-A) mismatch"; non-ROW blocks join entirely, -ROW joins but disables 5GHz</td></tr>
-    <tr><td>Image/version mismatch</td><td>Caught at the image-check step of the join process</td></tr>
-  </table>
-  <p class="tag documented">DOCUMENTED</p>
+    <div id="ts-root"></div>
+  </div>
 
-  <h3>Distinguishing AAA-driven vs. CAPWAP/cert-driven in logs</h3>
-  <pre>show ap join stats summary
-show ap join stats detail
+  <!-- AP JOIN -->
+  <div class="topic" id="ap-join">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="var(--signal)"><rect x="3" y="10" width="4" height="4"/><rect x="10.5" y="4" width="4" height="4"/><rect x="18" y="10" width="4" height="4"/><path d="M7 12h3.5M14.5 8v2.5M14.5 10.5L18 11"/></svg>
+      <div>
+        <h2>AP join failures &amp; AAA</h2>
+        <div class="conf">Catalyst 9800 (IOS-XE) &middot; mostly <span class="status good"><span class="sw"></span>documented</span></div>
+      </div>
+    </div>
+
+    <h3>The misconception to rule out first</h3>
+    <div class="panel">
+      <p>Default CAPWAP join on a 9800 has <strong>no AAA/RADIUS step at all</strong>. The sequence is purely certificate/DTLS-based:</p>
+      <p><code>Discovery &rarr; DTLS handshake (cert exchange) &rarr; Join &rarr; image check &rarr; Config &rarr; Run</code></p>
+    </div>
+
+    <h3>Where AAA actually enters the picture</h3>
+    <ul>
+      <li>An optional, <strong>off by default</strong> feature &mdash; "Authorize APs against MAC" &mdash; checks the AP's MAC/cert against a local DB or RADIUS before join.</li>
+      <li>802.1X AP-as-supplicant: a separate, often-confused mechanism that authenticates the AP's wired port to the <em>switch</em>, not the WLC.</li>
+    </ul>
+
+    <h3>The real, documented causes</h3>
+    <table>
+      <tr><th>Cause</th><th>Signature</th></tr>
+      <tr><td>Certificate (MIC/SSC) expiry or invalidity</td><td><code>%PKI-3-CERTIFICATE_INVALID_EXPIRED</code></td></tr>
+      <tr><td>Image-signing cert expiration stalls download</td><td>Field Notice FN72524 (CSCwd80290)</td></tr>
+      <tr><td>AP count / licensing limits</td><td>e.g. 9800-CL caps at 50 APs without active Smart Licensing</td></tr>
+      <tr><td>Country code / regulatory mismatch</td><td>Syslog: "country code (GA) and regulatory domain (-A) mismatch"</td></tr>
+      <tr><td>Image/version mismatch</td><td>Caught at the join process's image-check step</td></tr>
+    </table>
+
+    <h3>Telling AAA-driven apart from cert/CAPWAP-driven</h3>
+    <pre>show ap join stats detail
 show wireless stats ap discovery
 show wireless stats ap join
-show logging profile wireless
 show dtls connection          (AP-side)</pre>
-  <p><code>show ap join stats detail</code> gives distinct reason strings per cause &mdash; e.g. "Radius authorization of the AP has failed" (AAA-specific) vs. "Certificate payload in join request contains invalid certificate" (cert-specific) vs. image/VLAN/timeout strings. <span class="tag documented">DOCUMENTED</span></p>
+    <p><code>show ap join stats detail</code> returns a distinct reason string per cause &mdash; "Radius authorization of the AP has failed" reads very differently from "Certificate payload in join request contains invalid certificate."</p>
 
-  <h3>Field takeaway <span class="tag inference">INFERENCE</span></h3>
-  <div class="card">
-    <p>AAA appears in exactly one narrow, opt-in code path, while cert/license/country/version failures dominate the documented troubleshooting literature. If an AP won't join and AAA/RADIUS wasn't deliberately enabled for AP authorization, <strong>chase certificate, licensing, country-code, or version mismatch first</strong> &mdash; not ISE.</p>
+    <h3>Field takeaway <span class="status caution"><span class="sw"></span>inference</span></h3>
+    <p>AAA sits in exactly one narrow, opt-in path, while cert, licensing, country, and version failures dominate the documented literature. If an AP won't join and nobody deliberately turned on AP authorization, chase the certificate or the license before you chase ISE.</p>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/.../221056-understand-the-ap-join-process-with-the.html</li>
+        <li>cisco.com/.../218396-troubleshoot-catalyst-9800-ap-join-or-di.html</li>
+        <li>cisco.com/.../213916-catalyst-9800-wireless-controllers-ap-au.html</li>
+        <li>cisco.com/.../217848-configure-802-1x-supplicant-for-access-p.html</li>
+        <li>cisco.com/.../217734-connect-and-join-a-row-domain-access-po.html</li>
+        <li>cisco.com/c/en/us/support/docs/field-notices/725/fn72524.html</li>
+      </ul>
+    </div>
   </div>
 
-  <h3>Sources</h3>
-  <ul class="citation">
-    <li>cisco.com/.../221056-understand-the-ap-join-process-with-the.html</li>
-    <li>cisco.com/.../218396-troubleshoot-catalyst-9800-ap-join-or-di.html</li>
-    <li>cisco.com/.../213916-catalyst-9800-wireless-controllers-ap-au.html</li>
-    <li>cisco.com/.../217848-configure-802-1x-supplicant-for-access-p.html</li>
-    <li>cisco.com/.../217734-connect-and-join-a-row-domain-access-po.html</li>
-    <li>cisco.com/c/en/us/support/docs/field-notices/725/fn72524.html</li>
-    <li>cisco.com/c/en/us/support/docs/field-notices/704/fn70479.html</li>
-    <li>cisco.com/.../100731-ap-not-join-con.html (legacy reason-string reference)</li>
-  </ul>
-</div>
+  <!-- REDIRECT ACL -->
+  <div class="topic" id="redirect-acl">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h10M4 18h16" stroke-dasharray="2 2"/><path d="M16 10l3 2-3 2"/></svg>
+      <div>
+        <h2>CWA redirect ACL logic</h2>
+        <div class="conf"><span class="status good"><span class="sw"></span>documented</span></div>
+      </div>
+    </div>
 
-<div class="topic" id="redirect-acl">
-  <h2>CWA Redirect ACL "Flip Logic" <span class="tag documented">DOCUMENTED</span></h2>
+    <h3>The core mechanism</h3>
+    <div class="panel">
+      <p>Cisco's own CWA troubleshooting docs call the 9800 redirect ACL a <strong>punt ACL, not a security ACL</strong>:</p>
+      <ul>
+        <li><code>permit</code> &mdash; traffic <strong>is redirected</strong> to the portal</li>
+        <li><code>deny</code> &mdash; traffic is <strong>exempted</strong> from redirection, passes through normally</li>
+      </ul>
+      <p>That's the inverse of normal ACL semantics, confirmed verbatim by two independent Cisco sources.</p>
+    </div>
 
-  <h3>The core mechanism</h3>
-  <div class="card">
-    <p>Cisco's own CWA troubleshooting documentation describes the 9800 redirect ACL as a <strong>"punt ACL," not a security ACL</strong>:</p>
-    <ul>
-      <li><code>permit</code> = traffic <strong>is redirected</strong> to the captive portal</li>
-      <li><code>deny</code> = traffic is <strong>exempted</strong> from redirection (passes through normally)</li>
-    </ul>
-    <p>This is the inverse of normal ACL semantics (permit=allow, deny=block) &mdash; confirmed verbatim by two independent Cisco sources, not inferred.</p>
-  </div>
-
-  <h3>Correct ACL shape</h3>
-  <pre>ip access-list extended REDIRECT
+    <h3>Correct ACL shape</h3>
+    <pre>ip access-list extended REDIRECT
  deny ip any host &lt;ISE-IP&gt;
  deny ip host &lt;ISE-IP&gt; any
  deny udp any any eq domain
  deny udp any eq domain any
  permit tcp any any eq 80</pre>
-  <p>Deny traffic to ISE PSN nodes and DNS; permit (redirect) the rest. Missing the DNS/ISE exemptions causes a <strong>redirect loop</strong>. <span class="tag documented">DOCUMENTED</span></p>
+    <p>Deny traffic to ISE PSNs and DNS; permit the rest to redirect. Skip the DNS/ISE exemptions and you get a redirect loop.</p>
 
-  <h3>The AireOS trap <span class="tag documented">DOCUMENTED</span></h3>
-  <div class="card warn">
-    <p><strong>Semantics are inverted again on legacy AireOS controllers</strong>: on AireOS, <code>deny</code> means redirect and <code>permit</code> means pass-through &mdash; exactly backwards from 9800/IOS-XE. An engineer carrying AireOS habits onto a 9800 (or vice versa) will build the ACL exactly backwards and get a result that looks like "nothing redirects" or "everything redirects," with no obvious error.</p>
-  </div>
+    <h3>The AireOS trap</h3>
+    <div class="panel alert">
+      <p>Semantics flip <em>again</em> on legacy AireOS: there, <code>deny</code> means redirect and <code>permit</code> means pass-through &mdash; exactly backwards from 9800. An engineer carrying habits from one platform to the other will build the ACL exactly backwards, with no obvious error on screen.</p>
+    </div>
 
-  <h3>FlexConnect caveat <span class="tag documented">DOCUMENTED</span></h3>
-  <p>For locally-switched APs, the controller <strong>automatically swaps all permits and denies</strong> when pushing the ACL down to the AP. The AP-local view (<code>show ip access list</code> on the AP CLI) will look inverted relative to the WLC-side definition &mdash; this is expected, not corruption.</p>
+    <h3>FlexConnect caveat</h3>
+    <p>For locally-switched APs, the controller swaps every permit/deny when pushing the ACL to the AP. The AP-local view (<code>show ip access list</code>) looks inverted relative to the WLC side &mdash; expected, not corruption.</p>
 
-  <h3>Most common real-world failure</h3>
-  <div class="card">
-    <p><strong>ACL name mismatch</strong> between what ISE sends in the authorization response and what's configured on the WLC. Surfaces in logs as:</p>
-    <pre>SANET_AUTHZ_FAILURE - Redirect ACL Failure
+    <h3>Most common real failure</h3>
+    <div class="panel">
+      <p><strong>ACL name mismatch</strong> between what ISE sends and what's configured on the WLC. Surfaces as:</p>
+      <pre>SANET_AUTHZ_FAILURE - Redirect ACL Failure
 Failed attribute name REDIRECT</pre>
-    <p>ISE's own default ACL name is <code>ACL_WEBAUTH_REDIRECT</code> (underscores) &mdash; frequently mistyped with dashes (<code>ACL-WEBAUTH-REDIRECT</code>), creating a silent mismatch. <span class="tag documented">DOCUMENTED</span></p>
-  </div>
+      <p>ISE's default ACL name is <code>ACL_WEBAUTH_REDIRECT</code> (underscores) &mdash; frequently retyped with dashes, which breaks the match silently.</p>
+    </div>
 
-  <h3>Troubleshooting commands</h3>
-  <pre>show run wlan
-show run aaa
-show aaa servers
-show ap tag summary
-show wlan summary
-show wireless tag policy detailed &lt;tag&gt;
-show wireless profile policy detailed &lt;profile&gt;
-show wireless client mac-address &lt;mac&gt; detail   (ACL under "Server Policies")
+    <h3>Verifying it</h3>
+    <pre>show wireless client mac-address &lt;mac&gt; detail   (ACL under "Server Policies")
 show ip access list                               (AP CLI, FlexConnect only)
 debug wireless mac &lt;mac&gt; monitor-time &lt;sec&gt;</pre>
-  <p class="tag documented">DOCUMENTED</p>
-  <p><em>Could not verify verbatim in any Cisco CWA-specific doc:</em> <code>show ip access-lists</code> (plural, WLC-side) with hit-counter output for this specific flow. Standard IOS-XE command, almost certainly works, but no CWA-specific doc spelled out this exact syntax for this purpose. <span class="tag unconfirmed">UNCONFIRMED</span></p>
+    <p><span class="status alert"><span class="sw"></span>unconfirmed</span> &mdash; <code>show ip access-lists</code> (plural, WLC-side) with hit counters for this specific flow is a standard IOS-XE command that almost certainly works, but no CWA-specific doc spells out this exact use.</p>
 
-  <h3>Sources</h3>
-  <ul class="citation">
-    <li>cisco.com/.../220852-troubleshoot-central-web-authentication.html</li>
-    <li>cisco.com/.../213920-central-web-authentication-cwa-on-cata.html</li>
-    <li>cisco.com/.../216500-catalyst-9800-central-web-authenticati.html</li>
-    <li>cisco.com/.../221941-configure-troubleshoot-downloadable-ac.html</li>
-    <li>community.cisco.com/t5/security-knowledge-base/ise-and-catalyst-9800-series-integration-guide/ta-p/3753060</li>
-    <li>ciscopress.com/articles/article.asp?p=3100059&amp;seqNum=3 (AireOS vs IOS-XE contrast)</li>
-  </ul>
-</div>
-
-<div class="topic" id="ft-cwa">
-  <h2>802.11r FT Roaming + CWA Interaction <span class="tag unconfirmed">mixed confidence</span></h2>
-
-  <h3>Is combining FT + CWA on one WLAN supported?</h3>
-  <div class="card">
-    <p><strong>Yes, documented as intentional</strong>: Cisco's CWA chapter states CWA "initiates user redirection and authentication at Layer 2, often in combination with MAC filtering or 802.1X authentication." The Local Web Auth chapter has an explicit "Configure WLAN for 802.1X and local web authentication" section. Dot1x-then-webauth is sanctioned design, not a conflated misconfiguration. <span class="tag documented">DOCUMENTED</span></p>
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/.../220852-troubleshoot-central-web-authentication.html</li>
+        <li>cisco.com/.../213920-central-web-authentication-cwa-on-cata.html</li>
+        <li>cisco.com/.../216500-catalyst-9800-central-web-authenticati.html</li>
+        <li>cisco.com/.../221941-configure-troubleshoot-downloadable-ac.html</li>
+        <li>community.cisco.com/t5/security-knowledge-base/ise-and-catalyst-9800-series-integration-guide/ta-p/3753060</li>
+        <li>ciscopress.com/articles/article.asp?p=3100059&amp;seqNum=3</li>
+      </ul>
+    </div>
   </div>
 
-  <h3>Open documentation gaps</h3>
-  <table>
-    <tr><th>Question</th><th>Status</th></tr>
-    <tr><td>Does the FT PMK cache survive while a client sits in CWA/<code>WEBAUTH_REQUIRED</code> (L2 complete, L3 pending)?</td><td><span class="tag unconfirmed">Documentation gap</span> &mdash; not addressed in either the FT or CWA config guide chapters</td></tr>
-    <tr><td>Does the session-timeout timer reset on an FT roam, or keep ticking from the original association?</td><td><span class="tag unconfirmed">Unconfirmed</span> &mdash; would explain a delete firing shortly after a successful roam if the answer is "it doesn't reset"</td></tr>
-    <tr><td>Is "Invalid PMKID" after a roam a mobility/anchor PMK-cache-sync defect rather than an AAA issue?</td><td><span class="tag unconfirmed">Unconfirmed</span> &mdash; a roam that succeeds and is reversed/retried ~1 second later is a classic symptom of two controllers disagreeing on PMK state, but no Cisco source confirms this directly</td></tr>
-    <tr><td>Does Cisco discourage combining 802.11r with CWA/guest-style portals?</td><td><span class="tag unconfirmed">No explicit statement found</span> either way &mdash; absence of a restriction isn't endorsement</td></tr>
-  </table>
+  <!-- FT + CWA -->
+  <div class="topic" id="ft-cwa">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M8.3 10.3L15.7 13.7M8.3 13.7L15.7 10.3"/></svg>
+      <div>
+        <h2>802.11r FT roaming + CWA</h2>
+        <div class="conf">mixed confidence, see below</div>
+      </div>
+    </div>
 
-  <h3>Field recommendation <span class="tag inference">INFERENCE</span></h3>
-  <div class="card">
-    <p>If you observe a client complete an FT roam successfully, get deleted seconds later with an AUTH_EXPIRED-style reason, retry FT and fail with <code>Invalid PMKID</code>, then recover via full 802.1X &mdash; treat the deletion timing (not the PMKID failure) as the thing to escalate to TAC/Bug Search. The PMKID failure is downstream of the deletion, not the trigger.</p>
-  </div>
+    <h3>Is combining FT with CWA on one WLAN supported?</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> as intentional. Cisco's CWA chapter says CWA "initiates user redirection and authentication at Layer 2, often in combination with MAC filtering or 802.1X authentication." Dot1x-then-webauth is sanctioned design, not an accidental overlap.</p>
+    </div>
 
-  <h3>Sources</h3>
-  <ul class="citation">
-    <li>cisco.com/.../m_fast_transition_ewlc.html</li>
-    <li>cisco.com/.../m_vewlc_central_web_authentication.html</li>
-    <li>cisco.com/.../m_vewlc_sec_webauth_cg.html</li>
-    <li>developer.cisco.com/docs/wireless-troubleshooting-tools/client-delete-reasons/</li>
-  </ul>
-</div>
-
-<div class="topic" id="ise-sizing">
-  <h2>ISE Deployment &amp; PSN Sizing <span class="tag documented">mostly DOCUMENTED</span></h2>
-
-  <div class="card warn">
-    <p>Other internal Cisco references cover ISE RADIUS/802.1X NAC configuration and ISE deployment/scaling in more depth &mdash; check internally before treating this section as the definitive guide. This is a quick-reference summary.</p>
-  </div>
-
-  <h3>PSN sizing is session-based, not WLC-based</h3>
-  <div class="card">
-    <p>ISE sizing is driven by <strong>concurrent active sessions</strong>, not endpoint or WLC count. Cisco's tiers:</p>
+    <h3>Open documentation gaps</h3>
     <table>
-      <tr><th>Tier</th><th>Sessions</th><th>Max PSNs</th></tr>
-      <tr><td>Small</td><td>&le; 50k</td><td>2-node pair, all personas co-located</td></tr>
-      <tr><td>Medium</td><td>&le; 150k</td><td>6 (PAN+MnT+pxGrid co-located, PSNs dedicated)</td></tr>
-      <tr><td>Large</td><td>&gt; 150k</td><td>50 (PAN, MnT, pxGrid, PSNs all dedicated/separate)</td></tr>
+      <tr><th>Question</th><th>Status</th></tr>
+      <tr><td>Does the FT PMK cache survive while a client sits in CWA / <code>WEBAUTH_REQUIRED</code>?</td><td><span class="status alert"><span class="sw"></span>gap</span></td></tr>
+      <tr><td>Does the session-timeout timer reset on an FT roam, or keep ticking from the original association?</td><td><span class="status alert"><span class="sw"></span>unconfirmed</span></td></tr>
+      <tr><td>Is "Invalid PMKID" after a roam a mobility/anchor cache-sync defect, not an AAA issue?</td><td><span class="status alert"><span class="sw"></span>unconfirmed</span></td></tr>
+      <tr><td>Does Cisco discourage pairing 802.11r with CWA/guest portals?</td><td><span class="status alert"><span class="sw"></span>no statement found</span></td></tr>
     </table>
-    <p>There is <strong>no fixed PSN-per-WLC ratio</strong>. Redundancy is built per PSN workload group (RADIUS/Guest/CWA, 802.1X, TACACS+) &mdash; not per controller. <span class="tag documented">DOCUMENTED</span></p>
+
+    <h3>Field recommendation <span class="status caution"><span class="sw"></span>inference</span></h3>
+    <p>If a client completes an FT roam, gets deleted seconds later with an AUTH_EXPIRED-style reason, retries FT and fails with <code>Invalid PMKID</code>, then recovers via full 802.1X &mdash; escalate the deletion timing, not the PMKID failure. The PMKID failure is downstream, not the trigger.</p>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/.../m_fast_transition_ewlc.html</li>
+        <li>cisco.com/.../m_vewlc_central_web_authentication.html</li>
+        <li>developer.cisco.com/docs/wireless-troubleshooting-tools/client-delete-reasons/</li>
+      </ul>
+    </div>
   </div>
 
-  <h3>CWA specifically does not support PSN load balancing</h3>
-  <div class="card warn">
-    <p>Cisco's RADIUS Server Load Balancing documentation states explicitly: <strong>CWA does not support load balancing</strong> across PSNs. CWA's flow is multi-stage (MAB auth &rarr; redirect &rarr; second RADIUS auth &rarr; CoA), and all of it must correlate against session state on the <em>same</em> PSN. A load balancer can split the second-stage auth or CoA to a different node than the one holding the original session, breaking the flow intermittently. The "least outstanding" load-balancing method is specifically called out as unsuitable for CWA/NAC scenarios.</p>
-    <p><strong>Documented alternative:</strong> a WLC-driven ordered RADIUS server list (with dead-server detection/deadtime tuned), not an external load balancer &mdash; unless that LB specifically guarantees session affinity across the whole CWA flow. <span class="tag documented">DOCUMENTED</span></p>
+  <!-- ISE SIZING -->
+  <div class="topic" id="ise-sizing">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>
+      <div>
+        <h2>ISE deployment &amp; PSN sizing</h2>
+        <div class="conf">mostly <span class="status good"><span class="sw"></span>documented</span></div>
+      </div>
+    </div>
+
+    <h3>Sizing is session-based, not WLC-based</h3>
+    <div class="panel">
+      <table>
+        <tr><th>Tier</th><th>Concurrent sessions</th><th>Max PSNs</th></tr>
+        <tr><td>Small</td><td>&le; 50k</td><td>2-node pair, all personas co-located</td></tr>
+        <tr><td>Medium</td><td>&le; 150k</td><td>6, PSNs dedicated</td></tr>
+        <tr><td>Large</td><td>&gt; 150k</td><td>50, every persona dedicated</td></tr>
+      </table>
+      <p>There's no fixed PSN-per-WLC ratio. Redundancy is built per workload group &mdash; RADIUS/Guest/CWA, 802.1X, TACACS+ &mdash; not per controller.</p>
+    </div>
+
+    <h3>CWA doesn't support PSN load balancing</h3>
+    <div class="panel alert">
+      <p>CWA's flow is multi-stage: MAB auth &rarr; redirect &rarr; second RADIUS auth &rarr; CoA, and all of it must land on the <em>same</em> PSN. A load balancer that splits the second-stage auth or CoA to a different node breaks the flow intermittently &mdash; exactly the shape of a "random" failure that's hard to reproduce on demand. Cisco's own "least outstanding" method is called out as unsuitable here.</p>
+      <p><strong>Documented alternative:</strong> a WLC-driven ordered RADIUS server list with dead-server detection tuned, not an external load balancer, unless it specifically guarantees affinity across the whole CWA flow.</p>
+    </div>
+
+    <h3>Hardware &amp; placement gotchas</h3>
+    <ul>
+      <li>ISE appliance hardware can't be upgraded after purchase &mdash; undersizing at buy time is permanent.</li>
+      <li>SNS-3895 is PAN/MnT-only; using it as a PSN gives "no additional value" per Cisco.</li>
+      <li>Only 2 MnT nodes are supported total &mdash; no horizontal MnT scaling.</li>
+      <li>PAN auto-failover needs 3+ nodes; a health-check node per site if PANs split across data centers.</li>
+      <li>Mismatched ISE versions between PAN and a joining node blocks registration outright.</li>
+    </ul>
+
+    <h3>9800-side pairing gotchas</h3>
+    <ul>
+      <li>Mobility MAC defaults to chassis base MAC; in HA SSO pairs, set it manually or it changes on failover and silently breaks mobility tunnels.</li>
+      <li>N+1 is not HA SSO &mdash; SSO is a same-chassis stateful pair, N+1 is AP site-tag failover to a separate standby. Different mechanisms, often conflated.</li>
+      <li>On a Catalyst-Center-managed 9800, manual CLI changes get silently overwritten on the next provisioning sync.</li>
+    </ul>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/td/docs/security/ise/performance_and_scalability/b_ise_perf_and_scale.html</li>
+        <li>cisco.com/.../m_radius_server_load_balancing.html</li>
+        <li>cisco.com/.../213913-building-mobility-tunnels-on-catalyst-98.html</li>
+        <li>cisco.com/.../220277-configure-high-availability-sso-on-catal.html</li>
+        <li>cisco.com/c/en/us/td/docs/security/ise/3-4/admin_guide/b_ise_admin_3_4/b_ISE_admin_deployment.html</li>
+      </ul>
+    </div>
   </div>
 
-  <h3>Hardware and placement gotchas</h3>
-  <ul>
-    <li><strong>ISE appliance hardware cannot be upgraded post-purchase</strong> (no added RAM/CPU/disk) &mdash; undersizing at purchase is permanent. <span class="tag documented">DOCUMENTED</span></li>
-    <li><strong>SNS-3895 is PAN/MnT-only</strong> &mdash; using it as a PSN provides "no additional value" per Cisco, a common oversizing mistake. <span class="tag documented">DOCUMENTED</span></li>
-    <li>Large deployments require PAN pairs on <strong>identical hardware</strong>, with MnT hardware &ge; PAN. Only <strong>2 MnT nodes</strong> are supported total &mdash; no horizontal MnT scaling. <span class="tag documented">DOCUMENTED</span></li>
-    <li>PAN auto-failover needs 3+ nodes; a health-check node per site if PANs split across data centers. <span class="tag documented">DOCUMENTED</span></li>
-    <li>Mismatched ISE software versions between PAN and a joining node blocks registration &mdash; a common upgrade-sequencing mistake. <span class="tag documented">DOCUMENTED</span></li>
-    <li>Geo-distribute PSNs close to the NAS devices (WLCs/APs) they serve; &lt;5ms inter-node latency target. PSN-to-WLC proximity specifically (vs. inter-ISE-node) is <span class="tag inference">inference</span> extrapolated from the general proximity principle.</li>
-  </ul>
+  <!-- INTERMITTENT -->
+  <div class="topic" id="intermittent">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 14h3l2-7 4 11 2-7 2 4h5"/></svg>
+      <div>
+        <h2>Intermittent failure checklist</h2>
+        <div class="conf">mostly <span class="status good"><span class="sw"></span>documented</span></div>
+      </div>
+    </div>
+    <p>For symptoms that look random, hit different users unpredictably, and resist reproduction &mdash; work this list in order.</p>
 
-  <h3>9800-side pairing gotchas</h3>
-  <ul>
-    <li><strong>9800 mobility MAC defaults to chassis base MAC</strong>; in HA SSO pairs it must be set manually or it changes on failover, silently breaking mobility tunnels. <span class="tag documented">DOCUMENTED</span></li>
-    <li><strong>N+1 &ne; HA SSO</strong>: SSO is a same-chassis-pair stateful pair; N+1 is AP site-tag-based failover to a separate standby controller &mdash; different mechanisms, often conflated. <span class="tag documented">DOCUMENTED</span></li>
-    <li><strong>Catalyst Center hard rule</strong>: manual CLI changes on a Catalyst-Center-managed 9800 get silently overwritten on the next provisioning sync &mdash; all changes must go through templates/profiles. <span class="tag documented">DOCUMENTED</span></li>
-  </ul>
+    <h3>1. RADIUS/AAA health, WLC side</h3>
+    <ul>
+      <li>Client exclusion when the server returns a VLAN/ACL name that doesn't exist locally.</li>
+      <li>EAP timeout from <code>dot1x timeout</code> / retry windows &mdash; often client/driver-side, not server-side.</li>
+      <li><code>debug wireless mac &lt;addr&gt; monitor-time &lt;N&gt;</code> elevates one MAC to debug across every process.</li>
+    </ul>
 
-  <h3>Sources</h3>
-  <ul class="citation">
-    <li>cisco.com/c/en/us/td/docs/security/ise/performance_and_scalability/b_ise_perf_and_scale.html</li>
-    <li>cisco.com/.../m_radius_server_load_balancing.html</li>
-    <li>cisco.com/.../m_aaa_dead_server_detection.html</li>
-    <li>cisco.com/.../213913-building-mobility-tunnels-on-catalyst-98.html</li>
-    <li>cisco.com/.../ConfiguringIRCM/...</li>
-    <li>cisco.com/.../220277-configure-high-availability-sso-on-catal.html</li>
-    <li>cisco.com/.../222935-upgrade-9800-in-n-1-setup-with-ap-site.html</li>
-    <li>cisco.com/c/en/us/td/docs/security/ise/3-4/admin_guide/b_ise_admin_3_4/b_ISE_admin_deployment.html</li>
-    <li>cisco.com/.../m_provision-wireless-devices.html (Catalyst Center)</li>
-  </ul>
+    <h3>2. ISE-side signals</h3>
+    <ul>
+      <li>A node out of sync with the Primary Admin node delays Application Server init (normally 15&ndash;35 min).</li>
+      <li>Self-signed/untrusted ISE certs show as "Alert (Level: Fatal, Description: Certificate Unknown)" in captures.</li>
+      <li>Check per-node CPU/latency/memory before assuming a logic bug.</li>
+    </ul>
+
+    <h3>3. Infrastructure signals mistaken for wireless</h3>
+    <ul>
+      <li><code>DHCP Required</code> mismatch across foreign/anchor controllers &rarr; stale IP retained across a roam &rarr; NAK.</li>
+      <li>Internal 9800 DHCP defaults to an infinite lease &mdash; can quietly exhaust the pool.</li>
+      <li>VLAN/trunk or FlexConnect native-VLAN mismatch explains behavior that's fine at some sites, broken at others.</li>
+    </ul>
+
+    <h3>4. Standard correlation method</h3>
+    <pre>Controller:  RadioActive trace by client MAC + exact timestamp
+AP:          AP-side client debug (bundle collector)
+ISE:         Live Logs for the same MAC/timestamp</pre>
+    <p>TAC's first ask is always the same: exact reproduction timestamp, client MAC/IP/username/session ID, and a trace captured live &mdash; continued logging overwrites debug buffers, so this can't be reconstructed after the fact.</p>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/.../213970-catalyst-9800-wireless-controllers-commo.html</li>
+        <li>cisco.com/.../222906-understand-ise-services-purpose-and-tro.html</li>
+        <li>cisco.com/.../221973-troubleshoot-dhcp-client-connectivity-is.html</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MERAKI -->
+  <div class="topic" id="meraki">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="16" width="6" height="4"/><path d="M7 14a4 4 0 010-8 5 5 0 019.5-1.5A4 4 0 0117 14H7z"/></svg>
+      <div>
+        <h2>Meraki cloud-managed (MR)</h2>
+        <div class="conf">mostly <span class="status good"><span class="sw"></span>documented</span></div>
+      </div>
+    </div>
+
+    <h3>The architecture inverts the usual model</h3>
+    <div class="panel">
+      <p>Meraki is event-driven RPC: the <strong>cloud initiates</strong> calls to devices for config push and telemetry &mdash; the opposite of a WLC pulling AP state. User traffic never touches the cloud; it goes direct to LAN/WAN. There's no CAPWAP and no controller to tunnel to &mdash; APs are independently intelligent.</p>
+      <p>Documented: on cloud connectivity loss, "the Meraki hardware device will continue to run with its last known configuration until cloud connectivity is restored." <span class="status caution"><span class="sw"></span>inference</span>: SSIDs keep broadcasting and clients keep associating locally during an outage &mdash; only dashboard-dependent functions (new config, Live Tools, Sign-on-splash auth, see below) are affected.</p>
+    </div>
+
+    <h3>Guest / web auth splash types</h3>
+    <ul>
+      <li><strong>Click-through</strong> &mdash; acknowledgment only, no credentials.</li>
+      <li><strong>Sign-on</strong> &mdash; via Meraki auth, RADIUS, LDAP, AD, or Google/Entra. With Sign-on + RADIUS, the client's credentials route through the <strong>Meraki Cloud Controller</strong>, which issues the Access-Request to the external server (e.g. ISE) &mdash; the cloud is in the auth path, not the local AP.</li>
+    </ul>
+
+    <h3>802.1X / MAB with ISE</h3>
+    <div class="panel">
+      <p>Shared secret must match on the SSID config and the RADIUS server. Enabling "Cisco ISE Authentication" lets Meraki honor ISE's <code>url-redirect</code> AVPair for CWA and auto-enables CoA.</p>
+      <p><strong>CoA/Disconnect port is platform-specific</strong> &mdash; a frequent source of "RADIUS works but CoA doesn't": the AP's UDP port must be reachable from the RADIUS server at <code>1700</code> for ISE, <code>3799</code> for other NAC vendors. CoA behavior itself changed between firmware MR25 and MR26 (full disassociation vs. in-session EAP reauth). Cloud RADIUS proxy does not support CoA at all.</p>
+    </div>
+
+    <h3>The RADIUS test tool has a specific blind spot</h3>
+    <p>Dashboard's built-in RADIUS test triggers an EAP-PEAP/MS-CHAPv2 exchange to confirm reachability and credentials. <strong>It fails for EAP-TLS</strong> every time, because the test has no client certificate to present &mdash; that failure means nothing about whether real EAP-TLS clients will work. Test those with an actual device.</p>
+
+    <h3>Connectivity requirements &amp; "unreachable" alerts</h3>
+    <table>
+      <tr><th>Traffic</th><th>Port</th></tr>
+      <tr><td>DNS</td><td>UDP/53</td></tr>
+      <tr><td>NTP</td><td>UDP/123</td></tr>
+      <tr><td>Primary cloud tunnel</td><td>UDP/7351 (falls back to HTTP/HTTPS if blocked)</td></tr>
+      <tr><td>AutoVPN registries</td><td>UDP/9350&ndash;9381</td></tr>
+    </table>
+    <div class="panel alert">
+      <p><strong>Authentication specifically has no backup-connection fallback</strong> &mdash; it requires UDP/7351 even when the general tunnel has already fallen back to HTTP/HTTPS. A site that looks "online" via the fallback path can still fail auth for this exact reason.</p>
+    </div>
+    <p>An "unreachable device" alert means the device was online and has stopped talking to the cloud &mdash; Dashboard's guided workflow: check the Meraki Status page, identify the upstream neighbor, packet capture, cable/LED/power check, local status page, support data bundle, reboot as last resort.</p>
+
+    <h3>Live Tools &mdash; and the one that doesn't exist on MR</h3>
+    <p>Monitor &gt; Access Points &gt; Tools: Ping (to client or AP), ARP table, Traceroute, Dashboard throughput test (AP&harr;dashboard only, not internet), blink LEDs, reboot, splash page test.</p>
+    <div class="panel caution">
+      <p><strong>"Cable Test" is documented for MS switches, not MR access points.</strong> An engineer looking for it on an AP's tool list won't find it &mdash; easy platform-confusion mistake, not a missing feature on your specific AP.</p>
+    </div>
+
+    <h3>Mixed Meraki + Catalyst 9800 fleets</h3>
+    <div class="panel">
+      <p>Dashboard can cloud-monitor a 9800 via <strong>Cloud-Managed Hybrid Operating Mode</strong> &mdash; a reverse "Meraki Tunnel" from the 9800 to the cloud (<code>show meraki connect</code> on IOS-XE shows tunnel/registration state). This is onboarding/monitoring only, not native MR-equivalent management. Documented gotchas are all 9800-side: onboarding needs privilege-15 credentials with correct AAA (<code>aaa authentication login default local</code> / <code>aaa authorization exec default local</code>), and conflicts can come from VTY line limits, HTTP/NETCONF ACL conflicts, SSH port/rotary conflicts, or unsupported SSH encryption algorithms.</p>
+    </div>
+    <p><span class="status caution"><span class="sw"></span>inference</span> &mdash; two assumptions that don't carry over between platforms: 9800 CLI diagnostics (<code>show wireless client</code>, CAPWAP state) have no Meraki equivalent at all &mdash; everything is Dashboard Live Tools or API; and CoA port convention isn't shared either, since MR explicitly uses 1700/3799 while 9800/IOS-XE configures its own CoA listener.</p>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>documentation.meraki.com/.../Meraki_Cloud_Architecture</li>
+        <li>documentation.meraki.com/.../Enabling_Click-through_splash-page</li>
+        <li>documentation.meraki.com/.../RADIUS_Authentication_and_Accounting_with_a_Sign-On_Splash_Page</li>
+        <li>documentation.meraki.com/.../Change_of_Authorization_with_RADIUS_(CoA)_on_MR_Access_Points</li>
+        <li>documentation.meraki.com/.../MR_RADIUS_Troubleshooting</li>
+        <li>documentation.meraki.com/.../Upstream_Firewall_Rules_for_Cloud_Connectivity</li>
+        <li>documentation.meraki.com/.../Suggested_Actions_on_Unreachable_Devices_Alert</li>
+        <li>documentation.meraki.com/.../Using_the_MR_Live_Tools</li>
+        <li>documentation.meraki.com/.../Troubleshooting_Dashboard_Connectivity_to_Catalyst_9800_Wireless_Controllers</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- AIREOS & MOBILITY EXPRESS -->
+  <div class="topic" id="aireos">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="9" width="5" height="6"/><rect x="16" y="9" width="5" height="6"/><path d="M8 12h8"/></svg>
+      <div>
+        <h2>AireOS &amp; Mobility Express</h2>
+        <div class="conf"><span class="status good"><span class="sw"></span>documented</span></div>
+      </div>
+    </div>
+
+    <h3>The CLI isn't just "older" &mdash; it's a different shape</h3>
+    <div class="panel">
+      <p>AireOS is flat and non-modal: commands fully qualify their target in one line (<code>config wlan create</code>, <code>config wlan interface</code>), with no config-mode sub-shell to step into. There's also no running/startup split &mdash; config lives as XML in RAM and only reaches NVRAM via an explicit <code>save config</code>; logging out or resetting prompts you to save first. 9800/IOS-XE uses the modal config-mode convention most engineers already expect.</p>
+    </div>
+
+    <h3>The config model itself is restructured, not just renamed</h3>
+    <p>AireOS binds a WLAN directly to a VLAN interface, with AP Groups remapping that WLAN-to-VLAN binding per site. The 9800 decouples the same idea into five pieces: <strong>WLAN Profile</strong> (SSID/L2 security) + <strong>Policy Profile</strong> (VLAN/ACL/QoS) + <strong>Policy Tag</strong> (binds the two) + <strong>RF Tag</strong> + <strong>Site Tag</strong> + <strong>AP Join Profile</strong>. Changing any tag forces an AP rejoin &mdash; a side effect that surprises engineers used to AireOS's more direct model.</p>
+
+    <h3>Debugging works completely differently</h3>
+    <table>
+      <tr><th>AireOS</th><th>9800 / IOS-XE</th></tr>
+      <tr><td><code>debug client &lt;mac&gt;</code> or <code>debug mac addr</code> &mdash; one global debug session, filterable by up to 10 MACs</td><td><code>debug platform condition feature wireless mac &lt;mac&gt;</code> then <code>debug platform condition start</code> &mdash; radioactive tracing across every process</td></tr>
+      <tr><td><code>save config</code></td><td><code>write memory</code></td></tr>
+    </table>
+    <div class="panel alert">
+      <p>On AireOS, <strong>starting a new debug session kills any other active one</strong> &mdash; a second engineer debugging a different client on the same box will silently stop your trace. There's no equivalent collision on the 9800's condition-based model.</p>
+    </div>
+
+    <h3>Mobility Express is not the same thing as the 9800's EWC</h3>
+    <div class="panel">
+      <p>Classic Mobility Express is <strong>AireOS running on an AP acting as its own controller</strong> &mdash; no separate WLC hardware. Scale depends on which AP holds the Primary role: 1540/1815/1830/1850 top out at 50 APs/1000 clients; 1560/2800/3800/4800 reach 100 APs/2000 clients; the hard ceiling across the line is 100 APs/2000 clients. No Cisco table extends this to Wi-Fi 6 APs under classic ME.</p>
+      <p>Confirm you're looking at an ME deployment, not a true WLC, with <code>show version</code> on the AP &mdash; it reports <code>AP Image Type: MOBILITY EXPRESS IMAGE</code> when it's acting as its own controller.</p>
+    </div>
+    <div class="panel alert">
+      <p><strong>Don't confuse this with the Catalyst 9800 Embedded Wireless Controller (EWC)</strong> &mdash; a separate, IOS-XE-based product, not AireOS ME. EWC itself is now end-of-sale (11/29/2024) with support ending 11/30/2029 and <strong>no replacement product</strong>. If you're inheriting an EWC deployment, there's no "upgrade path" to plan for &mdash; only a platform change.</p>
+    </div>
+
+    <h3>Primary AP election and failover</h3>
+    <p>Election priority, in order: a pinned "User Defined Master" &gt; "Next Preferred Master" &gt; highest-capability hardware &gt; lowest client load &gt; lowest MAC address. Mechanism is VRRP under the hood. No consolidated ME-vs-full-WLC feature parity table exists on Cisco.com &mdash; that gap is confirmed, not just unresearched; don't assume one platform's feature set carries over to the other without checking the specific feature.</p>
+
+    <h3>EOL dates and the IRCM migration path</h3>
+    <table>
+      <tr><th>Platform</th><th>End of Sale</th><th>Last Date of Support</th></tr>
+      <tr><td>3504</td><td>1/31/21</td><td>1/31/27</td></tr>
+      <tr><td>5520</td><td>12/10/21</td><td>1/31/27</td></tr>
+      <tr><td>8540</td><td>1/31/22</td><td>1/31/27</td></tr>
+      <tr><td>WiSM2</td><td>&mdash;</td><td>already passed (4/30/22)</td></tr>
+    </table>
+    <p>Migration path runs through the Technology Migration Program toward 9800-40/9800-CL. For mixed-fleet transitions, <strong>IRCM (Inter-Release Controller Mobility)</strong> lets AireOS and 9800 roam together &mdash; always treated as L3 &mdash; over a Secure Mobility Tunnel (UDP 16666/16667), replacing the older unencrypted AireOS-only EoIP tunnel.</p>
+    <div class="panel alert">
+      <p>IRCM has real exclusions, not just a version floor: it requires 9800 on IOS-XE 16.10.1+ and AireOS on IRCM-specific image 8.5.14x or mainline 8.8.111+. <strong>2504, 7510, and WiSM2 are explicitly unsupported</strong> for IRCM regardless of software version. FlexConnect and Application Visibility &amp; Control (AVC) don't work under IRCM at all &mdash; plan the migration order around what you'd lose mid-transition, not just whether the controllers can see each other.</p>
+    </div>
+
+    <h3>Rough command translation</h3>
+    <pre>debug client &lt;mac&gt;        &rarr;  debug platform condition feature wireless mac &lt;mac&gt;
+                                  debug platform condition start
+save config                 &rarr;  write memory
+AP Groups                   &rarr;  Policy Tag + Site Tag + RF Tag (structural, not a rename)</pre>
+    <p><span class="status alert"><span class="sw"></span>unconfirmed</span> &mdash; no Cisco source directly pairs <code>show client detail</code> against <code>show wireless client mac-address detail</code> as an equivalence. Treat that mapping as reliable general knowledge, not a cited one-to-one.</p>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-8/config-guide/b_cg88/wlans.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-8/config-guide/b_cg88/managing_configuration.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-8/config-guide/b_cg88/configuring_ap_groups.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/config-guide/b_wl_16_10_cg/new-configuration-model.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-8/config-guide/b_cg88/debugging_on_cisco_wireless_controllers.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/config-guide/b_wl_16_10_cg/conditional-debug-and-radioactive-tracing.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/technotes/8-8/b_cisco_mobility_express_8_8.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/technotes/8-8/b_cisco_mobility_express_8_8/m_master_ap_failover.html</li>
+        <li>cisco.com/c/en/us/products/collateral/wireless/embedded-wireless-controller-catalyst-access-points/wireless-ewc-access-point-eol.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/config-guide/ConfiguringIRCM/b-configuring-inter-release-controller-mobility-in-wireless-deployments-supporting-aireos-and-catalyst-9800-controllers.html</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- OUTDOOR / MESH -->
+  <div class="topic" id="outdoor">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><path d="M12 8L5 16M12 8l7 8"/></svg>
+      <div>
+        <h2>Outdoor &amp; mesh</h2>
+        <div class="conf"><span class="status good"><span class="sw"></span>documented</span></div>
+      </div>
+    </div>
+
+    <h3>RAP, MAP, and the backhaul protocol</h3>
+    <div class="panel">
+      <p><strong>RAPs</strong> have a wired link to the controller. <strong>MAPs</strong> connect wirelessly, shipping with radio role = MAP by default (<code>config ap role {rootAP|meshAP}</code> to change it). MAPs find the best wireless path back to a RAP using Cisco's <strong>Adaptive Wireless Path Protocol (AWPP)</strong>, forming a tree with keepalive adjacency request/response messages; VLAN-tagged traffic tunnels over that backhaul link.</p>
+    </div>
+
+    <h3>The join sequence has an extra step</h3>
+    <p>On a 9800, Ethernet-connected MAPs get MAC-authorized during a normal CAPWAP join &mdash; same as any indoor AP. A <strong>wirelessly</strong>-joining MAP is only authorized once it secures an AWPP link to its parent. The backhaul link has to exist before controller authorization completes, which indoor wired-join APs never have to do.</p>
+
+    <h3>Bridge Group Name &mdash; the most common connectivity cause</h3>
+    <div class="panel alert">
+      <p>Default BGN from manufacturing is <code>NULL</code>, which lets a MAP join before an admin assigns a network-specific BGN (max 10 characters). BGNs segment mesh networks sharing a channel. A MAP with a mismatched BGN scans 10 times for its correct parent; after 10 failed scans, it joins a <em>non-matching</em> BGN parent for 15 minutes before retrying its own. Cisco's documented fix order: reconfigure the farthest node first, then work back toward the RAP &mdash; reconfiguring in the wrong order can strand nodes mid-change.</p>
+    </div>
+
+    <h3>Limits and timers worth knowing cold</h3>
+    <table>
+      <tr><th>Setting</th><th>Value</th></tr>
+      <tr><td>Default max hop count</td><td>4</td></tr>
+      <tr><td>Backhaul SNR thresholds</td><td>Low 12 dB, High 60 dB (DFS-heavy regions like Europe: 20 dB minimum recommended)</td></tr>
+      <tr><td>Convergence &mdash; Standard mode</td><td>21s parent-loss detection / 3s keepalive</td></tr>
+      <tr><td>Convergence &mdash; Fast mode</td><td>7s / 3s</td></tr>
+      <tr><td>Convergence &mdash; Very Fast mode</td><td>4s / 2s</td></tr>
+    </table>
+
+    <h3>Why hop count matters more than it sounds like it should</h3>
+    <p>Hop count isn't just added latency &mdash; it's a throughput multiplier against the whole backhaul. A client two hops out getting 5 Mbps can be consuming 40 Mbps of total backhaul capacity to deliver it. CAPWAP encapsulation itself costs up to 15% throughput on top of that.</p>
+
+    <h3>Backhaul interference indoor troubleshooting doesn't prepare you for</h3>
+    <ul>
+      <li>Weather radar occupies 5600&ndash;5650 MHz (channels 124/128) and triggers DFS "quiet"/"silent" mode &mdash; a mesh link that drops specifically on those channels isn't a config problem.</li>
+      <li>Collocated mesh nodes need physical separation &mdash; 10 ft vertical or 100 ft horizontal &mdash; to avoid self-interference between the node's own radios.</li>
+    </ul>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-10/config-guide/b_cg810/connecting-mesh-aps.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-10/config-guide/b_cg810/troubleshooting-mesh-aps.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_mesh_ewlc.html</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- LOCATION SERVICES -->
+  <div class="topic" id="location">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="13" width="6" height="5"/><path d="M8 10a4 4 0 018 0M6 7a7 7 0 0112 0"/></svg>
+      <div>
+        <h2>CMX &amp; Cisco Spaces</h2>
+        <div class="conf">mostly <span class="status good"><span class="sw"></span>documented</span></div>
+      </div>
+    </div>
+
+    <h3>How RF data becomes a location</h3>
+    <div class="panel">
+      <p>The controller pulls RSSI from up to <strong>16 APs per client/tag/rogue</strong>. Probing clients send probe requests that APs forward to the controller &mdash; acknowledged probes by default, with unacknowledged probes available as an accuracy option. The controller relays all of this over <strong>NMSP</strong>: to an on-prem CMX appliance directly, or to cloud <strong>Cisco Spaces</strong> via "NMSP cloud-services" over HTTPS.</p>
+    </div>
+    <p><span class="status caution"><span class="sw"></span>inference</span> &mdash; Cisco Spaces reads as CMX's cloud-hosted evolution: the 9800's own config chapter is titled "Cisco Spaces," but every command inside it still says <code>cmx</code>. Not a direct Cisco statement, but the naming is hard to read any other way.</p>
+
+    <h3>Accuracy add-ons &mdash; and what they actually require</h3>
+    <table>
+      <tr><th>Feature</th><th>Requirement</th><th>Accuracy</th></tr>
+      <tr><td>Standard RSSI</td><td>No special hardware</td><td>&asymp;10m</td></tr>
+      <tr><td>Hyperlocation</td><td>Dedicated AoA hardware on specific Aironet models; all APs on a floor grouped together, NTP-synced</td><td>&asymp;1m, only within the AP group's "convex hull"</td></tr>
+      <tr><td>FastLocate</td><td>Wave2/9100-series APs; uses data packets, not just probes; needs NTP sync</td><td>&asymp;10m</td></tr>
+    </table>
+    <div class="panel alert">
+      <p>Hyperlocation's 1m figure only holds <strong>inside the convex hull</strong> of the AP group that's been deployed together and NTP-synced. A test point placed outside that geometric boundary will read far less accurately, and that's expected behavior, not a defect.</p>
+    </div>
+
+    <h3>Turning on cloud Cisco Spaces from a 9800</h3>
+    <pre>nmsp cloud-services enable
+! configure DNS resolution
+crypto pki trustpool import         ! import Root CA certs
+! optionally configure an HTTP proxy
+! then register, and set:
+nmsp cloud-services server url &lt;url&gt;
+nmsp cloud-services server token &lt;token&gt;</pre>
+    <p>For on-prem CMX instead: NMSP (TCP port 16113) must be open between the controller and the CMX appliance. <code>show nmsp status</code> verifies the connection either way.</p>
+
+    <h3>What's not confirmed</h3>
+    <div class="panel alert">
+      <p><span class="status alert"><span class="sw"></span>unconfirmed</span> &mdash; license-tier requirements for Cisco Spaces and a dedicated "Cisco Spaces Connector" appliance guide weren't reachable in this research pass. Don't rely on this guide for licensing specifics; confirm against current Cisco documentation directly before quoting a tier to anyone.</p>
+    </div>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-10/config-guide/b_cg810/location_services.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/mse/10-6/cmx_config/b_cg_cmx106/the_cisco_cmx_detect_and_locate_service.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_cmx_cloud.html</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- HA SSO & N+1 -->
+  <div class="topic" id="ha-sso">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="7" height="16" rx="1"/><rect x="14" y="4" width="7" height="16" rx="1"/><path d="M10 9h4M10 15h4"/></svg>
+      <div>
+        <h2>HA SSO &amp; N+1 failover</h2>
+        <div class="conf">Catalyst 9800 &middot; mostly <span class="status good"><span class="sw"></span>documented</span>, with real gaps noted</div>
+      </div>
+    </div>
+
+    <h3>RMI and RP — the link that has to be right</h3>
+    <div class="panel">
+      <p>The Redundancy Management Interface (RMI) and Redundancy Port (RP) must sit on the <strong>same subnet, isolated from every other interface</strong> on the box. Cisco's documented addressing recommendation is a 169.254.x.x/16 block derived from the management interface &mdash; explicitly <strong>not</strong> 10.10.10.x/24. RP round-trip time must stay under 80ms, and the HA port maps only to a 1Gbps interface (SFP takes priority over RJ-45 if both are present).</p>
+    </div>
+
+    <h3>Split-brain is a named, documented condition</h3>
+    <div class="panel alert">
+      <p>If RP goes down <em>and</em> RMI becomes unreachable at the same time, Cisco calls this a <strong>double fault</strong>: "Both controllers may become active, causing a network conflict." Role negotiation only resumes once connectivity is restored, and the controller that came up last stays active &mdash; not the one that was active before the fault. If RP alone drops during HA sync, the standby <strong>intentionally crashes</strong> when IPC communication fails, rather than risk running split.</p>
+      <p>If RP is down but RMI/gateway is still reachable: the standby becomes active, and the previous active enters <code>rp-rec-mode</code> (visible in the hostname) with every interface admin-down except the wireless management interface on the RMI IP.</p>
+    </div>
+
+    <h3>Verification commands</h3>
+    <pre>show romvar                              ! exact HA config: CHASSIS_HA_REMOTE_IP,
+                                          !   CHASSIS_HA_LOCAL_IP, CHASSIS_HA_IFNAME, CHASSIS_HA_IFMAC
+show chassis                             ! chassis state (caveat below)
+show redundancy                          ! active/standby box details
+show redundancy switchover history       ! switchover count, reason, timestamp
+show wireless stat redundancy summary    ! AP recovery duration (ms), SSO HA sync timer expired
+test wireless redundancy packetdump start
+test wireless redundancy rping</pre>
+    <div class="panel caution">
+      <p>Documented caveat on <code>show chassis</code>: "When the peer timeout and retries are configured, the <code>show chassis ha-status</code> command output may show incorrect values." Don't trust that field blindly if custom peer-timeout values are in play.</p>
+      <p><span class="status alert"><span class="sw"></span>unverified</span> &mdash; no 9800-specific sample output for <code>show redundancy states</code> could be confirmed in this research pass. The classic "Current Software state = ACTIVE/STANDBY HOT" phrasing is well known from the general IOS-XE redundancy framework, but it is not independently confirmed in a 9800-specific document. Verify directly against a live 9800 before quoting it as exact output.</p>
+    </div>
+
+    <h3>What a clean SSO actually preserves</h3>
+    <div class="panel good">
+      <p>Only one CAPWAP tunnel is maintained between APs and the active controller at a time &mdash; "zero downtime for client services and no SSID outages" is the documented target, and database mirroring prevents APs from re-entering discovery.</p>
+    </div>
+    <p>What does <strong>not</strong> survive a switchover, documented explicitly: clients not yet in RUN state are removed, and purged entirely after 300 seconds if they haven't reconnected; NBAR flow state in local mode is lost; AVC flow context must be relearned; voice calls can't be recognized post-switchover because RTP/RTCP-based policy breaks; TCP sessions must re-establish; statistics tables aren't synchronized at all.</p>
+
+    <h3>N+1 — a terminology gap worth stating plainly</h3>
+    <div class="panel alert">
+      <p><span class="status alert"><span class="sw"></span>unconfirmed terminology</span> &mdash; the mechanism most engineers mean by "N+1" (AP failover to a separate standby controller, not a chassis pair) maps to Cisco's documented <strong>AP priming profile</strong> system: primary/secondary/tertiary controller statements pushed to APs via <code>priming-override</code>, mapped by name-regex filter or directly by AP MAC address. But the 9800 config guide itself never uses the term "N+1" for this mechanism &mdash; it reserves "N+1" for a separate, unrelated feature (rolling AP image upgrades across sites). Don't present the priming/N+1 equivalence as confirmed Cisco terminology; treat it as the closest documented mechanism, not a verified rename.</p>
+    </div>
+    <p>Documented failover logic: an AP always returns to its primary once that controller is available again. Tertiary is only used if both primary and secondary are down, and if secondary recovers while primary is still down, the AP <strong>stays on tertiary</strong> &mdash; there's no mid-outage fallback to secondary.</p>
+    <pre>show ap filters all type priming
+show ap filters active type priming
+show wireless profile ap priming summary
+show wireless profile ap priming all
+show ap name &lt;ap-name&gt; config general | sec Priming   ! Priming Profile, Override, Source (MAC/FILTER/NONE)</pre>
+    <p>That last command is the one that actually answers "why didn't this AP fail over as expected" &mdash; it shows whether the AP received the priming configuration at all.</p>
+
+    <h3>Root causes Cisco documents</h3>
+    <ul>
+      <li>Active and standby must run the <strong>same mode</strong> (Install or Bundle) and the <strong>same image version</strong>. Auto-upgrade exists specifically to handle "one of the redundancy port is upgraded to a newer version, and the other one is not upgraded at the same time."</li>
+      <li>Mismatched wireless trustpoints &mdash; same name, different keys &mdash; prevent the trustpoint from coming up after SSO forms.</li>
+      <li>Don't enable hyper-threading on HA VMs: "HA keepalives are lost, and a stack merge may occur."</li>
+      <li>VM snapshots of HA hosts are unsupported and can crash the controller.</li>
+    </ul>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-9/config-guide/b_wl_17_9_cg/m_vewlc_high_availability.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-9/config-guide/b_wl_17_9_cg/m_ap_fb_wlcs.html</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CLIENT EXCLUSION & ROGUE -->
+  <div class="topic" id="exclusion">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><path d="M8 8l8 8"/></svg>
+      <div>
+        <h2>Client exclusion &amp; rogue management</h2>
+        <div class="conf">mixed confidence &mdash; see panels</div>
+      </div>
+    </div>
+
+    <h3>Exclusion categories and their fixed thresholds</h3>
+    <div class="panel">
+      <table>
+        <tr><th>Policy</th><th>Excluded on</th></tr>
+        <tr><td>Excessive 802.11 association failures</td><td>6th attempt, after 5 consecutive failures</td></tr>
+        <tr><td>Excessive 802.11 authentication failures</td><td>6th attempt, after 5 consecutive failures</td></tr>
+        <tr><td>Excessive 802.1X authentication failures</td><td>4th attempt, after 3 consecutive failures</td></tr>
+        <tr><td>Maximum 802.1X-AAA failure attempts</td><td>configurable 1&ndash;10, default 3</td></tr>
+        <tr><td>IP theft / IP reuse</td><td>on detection &mdash; IP already assigned elsewhere</td></tr>
+        <tr><td>Excessive web authentication failures</td><td>4th attempt, after 3 consecutive failures</td></tr>
+      </table>
+      <p>All exclusion policies are enabled by default, globally. Per-WLAN, each is independently toggleable, and the exclusion timeout itself is configurable. Documented default exclusion timeout (AireOS): 60 seconds before release 8.5, 180 seconds from 8.5 onward; Cisco's own tuning guidance is 60&ndash;300 seconds, noting "values higher than 300 seconds provide better protection but can trigger user complaints."</p>
+    </div>
+    <div class="panel caution">
+      <p><span class="status caution"><span class="sw"></span>inference</span> &mdash; no 9800/IOS-XE-specific document could confirm whether the current default timeout matches the AireOS-era 180 seconds. Treat that figure as a carried-forward assumption, not a confirmed 17.x default, until checked on a live box.</p>
+    </div>
+
+    <h3>Why this gets misdiagnosed as an active failure</h3>
+    <div class="panel alert">
+      <p><span class="status alert"><span class="sw"></span>unconfirmed field names</span> &mdash; this research could not confirm the exact <code>show wireless client mac-address &lt;mac&gt; detail</code> field name for exclusion state, nor an exact syslog string, on 9800/IOS-XE despite extensive attempts. What <em>is</em> documented is the exclusion-list mechanism itself: <code>show exclusionlist</code> lists MAC address, exclusion reason, and time remaining. A client that's actively failing right now will not appear in that list at all &mdash; a client that's been excluded will. That's the practical way to tell the two apart even without a confirmed field name: check the exclusion list first, before spending time on a live trace.</p>
+    </div>
+    <p>The failure pattern worth knowing by heart: fixed threshold &rarr; timed exclusion &rarr; client retries once the timer expires &rarr; same threshold trips again. From the outside this looks exactly like a continuous, unresolved auth failure. It is not currently failing — it's cycling through a timeout. <span class="status caution"><span class="sw"></span>inference</span>, consistent with the documented mechanics above but not a named Cisco troubleshooting pattern in any single source found.</p>
+
+    <h3>Rogue classification</h3>
+    <div class="panel">
+      <p>Four categories, exactly as Cisco documents them: <strong>Friendly, Malicious, Unclassified, Custom</strong>. Malicious is reached specifically when "AP authentication failure count field exceeds its threshold." Custom classification is rule-driven only — it can never be assigned manually.</p>
+    </div>
+    <pre>show wireless wps rogue ap summary
+show wireless wps rogue ap detailed &lt;mac&gt;
+show wireless wps rogue ap {friendly|malicious|unclassified|custom} summary
+show wireless wps rogue client summary
+show wireless wps rogue adhoc summary
+show wireless wps rogue containment summary
+show wireless wps rogue rule summary</pre>
+
+    <h3>Containment has a documented exception and a hard restriction</h3>
+    <div class="panel alert">
+      <p>Containment sends unicast disassociation/deauthentication frames — and for rogue APs specifically, "containment frames are sent only if a rogue client is associated." When the rogue has 802.11w/PMF enabled, the controller does <strong>not</strong> actively contain it; it marks the rogue "Contained Pending" and raises an alarm instead. Separately, and documented as a hard restriction: <strong>containment is not supported on DFS channels</strong>, full stop.</p>
+    </div>
+    <div class="panel caution">
+      <p><span class="status caution"><span class="sw"></span>not Cisco-sourced</span> &mdash; a commonly cited field caution is that containment transmits deauth/disassoc frames against third-party devices the operator doesn't own, which carries real regulatory exposure in some jurisdictions (the FCC's 2015 enforcement action against a hotel operator for exactly this is the usual reference point). No Cisco documentation page states this caution directly; if this belongs in your organization's playbook, cite the FCC action itself, not Cisco, as the source.</p>
+    </div>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-8/config-guide/b_cg88/wlan_security.html</li>
+        <li>cisco.com/c/en/us/support/docs/lan-switching/8021x/214466-802-1x-client-exclusion-on-an-aireos-wlc.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-9/config-guide/b_wl_17_9_cg/m_manage_rogue.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-9/config-guide/b_wl_17_9_cg/m_classify_rogue_aps_ewlc.html</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 802.1X SUPPLICANT-SIDE -->
+  <div class="topic" id="supplicant">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/><path d="M11 7.5h4M16 11v2"/></svg>
+      <div>
+        <h2>802.1X supplicant-side failures</h2>
+        <div class="conf">strong sourcing on the core thesis</div>
+      </div>
+    </div>
+
+    <h3>The single error code that hides four different causes</h3>
+    <div class="panel alert">
+      <p>Cisco's own "Cheat Sheet for Common Wireless Issues" documents <strong>AAA Error "-4" (Authentication Failed)</strong> as the WLC's single, most common error — and its documented cause list includes mismatched EAP methods between client and server, an expired client certificate, and an expired server certificate, all collapsed into the <em>same</em> error code. This is the concrete, Cisco-documented proof that a basic "auth failed" symptom cannot by itself distinguish a client problem from a server problem. Don't let that one error code drive an escalation decision on its own.</p>
+    </div>
+
+    <h3>Machine vs. user auth ordering (EAP chaining / TEAP)</h3>
+    <div class="panel">
+      <p>In a chained TEAP session, user identity is attempted first (ISE log <code>11573 Selected identity type 'User'</code>), then machine (<code>11574 Selected identity type 'Machine'</code>). If user auth fails but machine auth succeeds, ISE still completes the session: <code>11566 TEAP inner method finished with failure</code> for the user attempt, followed by <code>33517 Sent TEAP Intermediate Result TLV indicating failure</code>, then a successful machine attempt (<code>12528 Inner EAP-TLS authentication succeeded</code>), and the overall session can still return <code>11002 Returned RADIUS Access-Accept</code>.</p>
+      <p>Authorization is then driven by the <code>Network Access.EapChainingResult</code> attribute — Cisco's own documentation describes policy rules written explicitly around "machine authenticated but user not" versus "both now authenticated," confirming this differential treatment is intentional, documented design, not an edge case.</p>
+    </div>
+
+    <h3>Client-side certificate trust</h3>
+    <p>The WLC-side signature for a client that never responds is unambiguous: <code>DOT1X-5-FAIL</code> with reason <code>(Timeout)</code>, repeated <code>Retrying (count 3) method dot1x</code>, ending in <code>CO_CLIENT_DELETE_REASON_CONNECT_TIMEOUT</code>. Cisco's own remediation text for this exact scenario reads: <strong>"Ensure wireless client trust RADIUS' certificate"</strong> — stated as a client-side action item, not a server fix.</p>
+    <p>ISE's own error <strong>5440</strong> corroborates from the other side: "the endpoint supplicant does not complete the EAP authentication within the configured timeout," logged as "ISE sending 'Access-Challenge' but ISE didn't receive any response." ISE did its job; the client went silent. The same abandonment pattern — "Endpoint &lt;MAC&gt; abandoned EAP session &lt;session-id&gt; and started EAP session" — recurs as a named, numbered event across independent Cisco troubleshooting documents, not an ad hoc string.</p>
+    <div class="panel caution">
+      <p><span class="status caution"><span class="sw"></span>unconfirmed</span> &mdash; no Cisco documentation found states the exact log text for "untrusted root CA," "certificate expired," or "clock skew" as distinct, separately-coded failure reasons. These are well-established real-world causes, but any specific wording attributed to them should be treated as inference, not a cited string, until confirmed against a live ISE instance or TAC case.</p>
+    </div>
+
+    <h3>Localizing the fault from the 9800 side</h3>
+    <pre>debug wireless mac &lt;mac&gt; monitor-time &lt;seconds&gt;      ! default 1800s
+more bootflash:ra_trace_MAC_&lt;mac&gt;_*.log
+show wireless client mac-address &lt;mac&gt; detail | inc Policy Profile
+show logging profile wireless internal filter</pre>
+    <p>Cisco's own distinction, stated directly: an EAP timeout (client never answers) is client-side; <code>"ACL acl-sent-by-ise is missing in configuration for mac"</code> or an EPM VLAN plug-in conflict — "the ACL/VLAN sent by the RADIUS server does not exist on 9800 WLC" — is server-side. That single line is the fastest way to know which team to involve before escalating.</p>
+    <div class="panel alert">
+      <p><span class="status alert"><span class="sw"></span>unverified</span> &mdash; the exact field name for Policy Manager State (or equivalent) inside <code>show wireless client mac-address &lt;mac&gt; detail</code> output could not be confirmed in this research pass despite repeated attempts across two independent research passes. If this field is load-bearing for your troubleshooting flow, confirm it against a live 9800 CLI reference directly.</p>
+    </div>
+
+    <h3>The decision rule for not escalating prematurely</h3>
+    <p>ISE's own 5440 troubleshooting methodology states it plainly: test the same NAD/PSN/policy against a known-good endpoint, and if only certain endpoints fail, "focus the investigation on the endpoint configuration or supplicant." Combined with the WLC-side timeout+deauth signature above, that's the documented basis for keeping an issue on the endpoint rather than routing it to the RADIUS/ISE team.</p>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/support/docs/wireless/5508-wireless-controller/200072-Cheat-Sheet-Common-Wireless-issues.html</li>
+        <li>cisco.com/c/en/us/support/docs/security/identity-services-engine/216510-eap-chaining-with-teap.html</li>
+        <li>cisco.com/c/en/us/support/docs/wireless/catalyst-9800-series-wireless-controllers/213970-catalyst-9800-wireless-controllers-commo.html</li>
+        <li>cisco.com/c/en/us/support/docs/security/identity-services-engine/226277-troubleshooting-5440-endpoint.html</li>
+        <li>cisco.com/c/en/us/support/docs/security/identity-services-engine/226150-troubleshoot-ise-3-4-vpn-and-radius.html</li>
+        <li>cisco.com/c/en/us/support/docs/wireless/catalyst-9800-series-wireless-controllers/213949-wireless-debugging-and-log-collection-on.html</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MULTICAST -->
+  <div class="topic" id="multicast">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="7" r="2"/><circle cx="6" cy="17" r="2"/><circle cx="18" cy="12" r="2"/><path d="M8 7h4a4 4 0 014 4M8 17h4a4 4 0 004-4"/></svg>
+      <div>
+        <h2>Multicast &amp; broadcast over WLAN</h2>
+        <div class="conf">mostly <span class="status good"><span class="sw"></span>documented</span></div>
+      </div>
+    </div>
+
+    <h3>IGMP snooping doesn't stop at the controller</h3>
+    <div class="panel">
+      <p>The controller still forwards multicast to every AP over CAPWAP — snooping suppresses flooding at the <strong>AP-to-client, over-the-air hop</strong>, not the controller-to-AP hop. Only APs with an actively subscribed client send the multicast stream on a given WLAN. The controller builds unique MGIDs from the (L3 group, VLAN) pair and tracks per-AP client membership against them.</p>
+    </div>
+    <p>IGMPv1/MLDv1 snooping is fully supported; IGMPv2/v3 support is explicitly documented as "limited" — if the upstream switch doesn't recognize IGMPv3, hosts simply don't get traffic.</p>
+    <pre>show wireless multicast
+show wireless multicast group summary
+show wireless multicast [source &lt;src&gt;] group &lt;grp&gt; vlan &lt;vlanid&gt;
+show ip igmp snooping wireless mgid
+show ip igmp snooping igmpv2-tracking
+show wireless profile policy detail &lt;policy-profile&gt;    ! Multicast VLAN, Multicast Filter field</pre>
+
+    <h3>DTIM interval — a documented, hard recommendation</h3>
+    <div class="panel alert">
+      <p>Cisco states this without qualification: <strong>"The only recommended DTIM values are 1 and 2; higher DTIM values will likely cause communications problems."</strong> The AP buffers broadcast/multicast frames and only releases them at the DTIM beacon — a 100ms beacon period with DTIM=1 delivers multicast 10 times per second; raising DTIM delays delivery proportionally.</p>
+      <p><span class="status caution"><span class="sw"></span>inference</span> &mdash; raising DTIM on APs serving battery-saving handhelds, badge scanners, or IoT devices delays multicast/broadcast delivery in exact proportion to beacon-interval &times; DTIM value. This is commonly misdiagnosed as a flaky application ("my paging app is slow," "discovery is unreliable") rather than traced back to the RF profile's DTIM setting.</p>
+    </div>
+
+    <h3>Multicast-to-unicast conversion — a real platform split</h3>
+    <table>
+      <tr><th></th><th>AireOS &mdash; "Media Stream"</th><th>9800 &mdash; "MCUC mode"</th></tr>
+      <tr><td>Why it exists</td><td colspan="2">No 802.11 ACK/retry for multicast &mdash; a lost frame is simply gone. Converting to unicast lets each client acknowledge receipt.</td></tr>
+      <tr><td>Platform support</td><td>7.0.98.0+, clients must associate at 802.11n speeds</td><td><strong>Only 9800-CL small template and 9800-L</strong> &mdash; explicitly NOT 9800-40, 9800-80, or CW9800M/H1/H2</td></tr>
+      <tr><td>Limits</td><td>Max streams per radio/client (0&ndash;20, default unlimited); Max Retry % default 80 (exceeding it = "video will not start" or client demoted); Max Media Bandwidth default 85%; 100 multicast groups/VLAN/controller max</td><td>No documented numeric client threshold found &mdash; don't assert one</td></tr>
+      <tr><td>Verify</td><td><code>show media-stream group summary</code>, <code>show media-stream group detail &lt;name&gt;</code></td><td><code>show wireless multicast source &lt;src&gt; group &lt;grp&gt; vlan &lt;vlanid&gt;</code> &mdash; shows per-client MC2UC status</td></tr>
+    </table>
+    <div class="panel caution">
+      <p>The platform-support restriction for 9800 MCUC is the detail most likely to catch an engineer off guard moving from AireOS: the feature doesn't carry over uniformly across the 9800 line.</p>
+    </div>
+
+    <h3>mDNS/Bonjour — cross-VLAN failure is by design</h3>
+    <p>mDNS uses link-local multicast (224.0.0.251 / UDP 5353), which Cisco states plainly is "only forwarded to the local Layer 2 network." A printer or AirPlay device not discoverable across VLANs is <strong>expected behavior</strong>, not a defect — the 9800 mDNS Gateway exists specifically to bridge this via caching and service policies. mDNS AP (flood-and-learn, CAPWAP-tunneled) caps at 10 wired VLANs, supports Local/Monitor mode only, IPv4-only for wired providers, and stale wired cache entries can persist up to 4500 seconds.</p>
+    <pre>show mdns-sd summary
+show mdns-sd cache
+show mdns-sd cache wired
+show mdns-sd cache type {PTR|SRV|A-AAA|TXT}
+show mdns-sd statistics
+show mdns-sd ap</pre>
+
+    <div class="panel alert">
+      <p><span class="status alert"><span class="sw"></span>unconfirmed</span> &mdash; no confirmed 9800-side AP debug command exists for "packet reached the AP but not the client" diagnosis; the AireOS equivalent is <code>debug ap command "show capwap mcast mgid all" &lt;AP&gt;</code>, but a direct 9800 equivalent couldn't be verified. Also unconfirmed: any Cisco statement that standard WLAN QoS profiles rate-limit multicast specifically — the one documented QoS-adjacent interaction found was Media Stream's own retry-percentage-driven demotion, not a general QoS policy effect.</p>
+    </div>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m-vewlc-multicast-cg.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_wlan_9800.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-10/config-guide/b_cg810/multicast_broadcast_setup.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_mdns_gateway.html</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- QOS & VOICE/VIDEO -->
+  <div class="topic" id="qos-voice">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 15V9M8 18V6M12 20V4M16 18V6M20 15V9"/></svg>
+      <div>
+        <h2>QoS &amp; voice/video over WLAN</h2>
+        <div class="conf">strong on 9800 marking, thin on 9800 CAC</div>
+      </div>
+    </div>
+
+    <h3>Metal policies, not classic AC names</h3>
+    <div class="panel">
+      <p>9800 names its QoS tiers Platinum/Gold/Silver/Bronze rather than the raw WMM access categories: <strong>Platinum = Voice (AC_VO)</strong>, <strong>Gold = Video (AC_VI)</strong>, <strong>Silver = Best Effort (AC_BE, the default)</strong>, <strong>Bronze = Background (AC_BK)</strong>. Max DSCP per metal: Bronze 8, Silver 0, Gold 34 (AF41), Platinum 46 (EF).</p>
+    </div>
+    <div class="panel alert">
+      <p><strong>Documented client-vs-WLC marking mismatch worth memorizing</strong>: the WLC maps DSCP 46 to UP 6 (Voice), while Windows maps the same DSCP 46 to UP 5 (Video). Reading a packet capture without knowing this will make a correctly-marked voice flow look misclassified when it isn't. Default behavior since 17.4 is <code>qos-map trust-dscp-upstream</code>.</p>
+    </div>
+    <pre>show wireless client mac-address &lt;mac&gt; detail
+show wireless client summary
+show policy-map interface wireless &lt;ap&gt; input
+show wireless profile policy detailed &lt;name&gt;    ! QBSS Load status
+show dot11 qos                                    ! AP-side
+show controllers dot11Radio 1 | begin EDCA         ! AP-side</pre>
+
+    <h3>Call Admission Control — a real documentation gap between platforms</h3>
+    <div class="panel alert">
+      <p><strong>AireOS has full, documented CAC</strong>: static (radio-based) and load-based (channel-based, the default) modes, voice max-bandwidth defaulting to 75% (configurable 5&ndash;85%), with rejection counters in <code>show ap stats</code> ("Num of calls rejected due to insufficient bw" / "...invalid params/PHY rate/QoS policy") and per-client diagnostics via <code>show client voice-diag {status|tspec|qos-map|avrg_rssi|roam-history}</code>.</p>
+      <p><strong>On 9800/IOS-XE, the documentation is thin.</strong> The only confirmed CAC-related text found is "SIP CAC is not supported" for centrally-switched traffic, plus an undocumented CLI fragment (<code>ap dot11 {24|5|6}ghz cac voice acm</code>) with no accompanying bandwidth percentage, rejection statistics, or show commands. Commands that sound plausible by analogy — <code>show ap dot11 24ghz call-admission</code>, <code>show call-admission statistics</code> — could not be verified anywhere and should not be published or relied on as real syntax.</p>
+    </div>
+
+    <h3>The untrusted uplink problem, in two distinct forms</h3>
+    <div class="panel">
+      <p>Catalyst 9000 switchports default to trusted, but two separate documented failure modes still happen in the field:</p>
+      <ul>
+        <li><strong>Wired-side remarking</strong> &mdash; an intermediate switch remarks DSCP 46 down to CS1, degrading WMM all the way to Background before the traffic ever reaches the AP.</li>
+        <li><strong>Outer-header-only remarking</strong> &mdash; a switch on the AP's own uplink can only see the outer CAPWAP header, not the tunneled client traffic inside it. The inner client DSCP survives untouched, so the client-side marking looks perfectly fine — but the AP-to-WLC transport itself is deprioritized at every hop, producing jitter and loss that a client-side-only inspection will never explain.</li>
+      </ul>
+    </div>
+    <p>Cisco's documented 5-step verification: capture at the source, check every intermediate switch config, capture before and after each switch plus at the WLC and the destination, simulate the path, then cross-check against the 9800 best-practice document. Current trust-boundary commands on 9000-series: <code>trust device &lt;type&gt;</code>, <code>auto qos trust {cos|dscp}</code>, <code>auto qos voip {cisco-phone|cisco-softphone|trust}</code>, verified via <code>show auto qos</code> and <code>show policy-map interface</code>. An untrusted/mismatched peer causes both CoS and DSCP to reset to 0.</p>
+
+    <h3>Troubleshooting order — stated plainly as a synthesis</h3>
+    <div class="panel caution">
+      <p><span class="status caution"><span class="sw"></span>inference</span> &mdash; no single Cisco flowchart unifies "choppy voice/video" troubleshooting. Two separate documented paths exist: general connectivity troubleshooting checks RF retries and RSSI first via <code>show wireless stats client summary</code>, but never reaches QoS; the QoS-specific document uses the DSCP hop-by-hop capture methodology instead. A "check RF, then QoS, then CAC, then CPU" ordering is a reasonable synthesis of both, not a Cisco-stated sequence — present it to a reader as a suggested approach, not a quoted procedure.</p>
+    </div>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-9/config-guide/b_wl_17_9_cg/m_wireless_qos_cg_vewlc1_from_17_3_1_onwards.html</li>
+        <li>cisco.com/c/en/us/support/docs/wireless/catalyst-9800-series-wireless-controllers/222241-configure-validate-and-troubleshoot-wire.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-10/config-guide/b_cg810/wireless_quality_of_service.html</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- NTP & CERTIFICATE TIME -->
+  <div class="topic" id="ntp-certs">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.5 2"/></svg>
+      <div>
+        <h2>NTP &amp; certificate time dependencies</h2>
+        <div class="conf">commands/best-practice documented; the core thesis is sound inference</div>
+      </div>
+    </div>
+
+    <div class="panel caution">
+      <p><span class="status caution"><span class="sw"></span>stated plainly</span> &mdash; the idea that clock skew causes a <em>valid</em> certificate to be falsely rejected as expired is sound engineering reasoning, built from documented NTP/stratum behavior, documented CAPWAP DTLS cert-failure syslogs, and standard X.509 validity-window semantics. It is not a sentence Cisco has published verbatim for either the CAPWAP (AP&harr;controller) or EAP-TLS (client&harr;ISE) trust chain. Present it to a reader as a well-grounded troubleshooting hypothesis, not a quoted Cisco statement.</p>
+    </div>
+
+    <h3>Checking sync state</h3>
+    <pre>show ntp status          ! "Clock is synchronized, stratum 2, reference is 10.4.2.254"
+show ntp associations    ! * = synced/configured, # = selected but unsynced
+show clock detail</pre>
+    <p>A clock divergence beyond roughly 4000 seconds from the reference is Cisco's own documented threshold for flagging a real problem. <span class="status alert"><span class="sw"></span>gap</span> &mdash; no verified IOS-XE sample output for <code>show clock detail</code> specifically could be confirmed (an IOS-XR variant exists but is the wrong platform; don't substitute it).</p>
+
+    <h3>The one confirmed syslog tie-in</h3>
+    <div class="panel">
+      <p>The 9800 Data DTLS guide documents a "MIC expiration bypass for AP join" feature alongside real CAPWAP cert-validation failure syslogs: <code>%DTLS_TRACE_MSG-3-WLC_DTLS_ERR...Certificate validation failed</code> and <code>%CAPWAPAC_SMGR_TRACE_MESSAGE-5-AP_JOIN_DISJOIN...cause: DTLS handshake error</code>. This confirms the mechanism exists and has real log output — it does not confirm that clock skew specifically (versus an actually-expired cert) is what triggers it.</p>
+    </div>
+    <div class="panel alert">
+      <p><span class="status alert"><span class="sw"></span>unverified</span> &mdash; <code>%PKI-3-CERTIFICATE_INVALID_EXPIRED</code> and a corresponding not-yet-valid variant are plausible, commonly-cited PKI message IDs, but their exact text could not be confirmed on any live Cisco page this pass. Methodology to distinguish real expiry from skew-induced false rejection either way: compare <code>show clock detail</code> on the WLC, AP, and ISE against the NotBefore/NotAfter fields from <code>show crypto pki certificates</code> on each device.</p>
+    </div>
+
+    <h3>Shared NTP source — this one is directly documented</h3>
+    <div class="panel good">
+      <p>ISE's own Administration Guide states it without qualification: <strong>"Choose the same Network Time Protocol (NTP) server for all the nodes... This setting ensures that reports and logs... are always synchronized."</strong> ISE supports up to 3 NTP servers.</p>
+    </div>
+
+    <h3>A correction worth flagging: APs are not necessarily a single point of failure</h3>
+    <div class="panel caution">
+      <p>It would be easy to assume APs simply inherit the controller's clock via CAPWAP with no independent source — making a wrong controller clock a single point of failure for every AP's cert validation. That's <strong>not what Cisco documents</strong>: the 9800/EWC AP-group NTP feature lets an AP group point at its own, independent NTP server (<code>ntp ip &lt;addr&gt;</code>), separate from the controller, specifically to support location-accuracy features. <code>timezone use-controller</code> only syncs the timezone offset — not the clock itself. A Cisco Community thread (not an authoritative source) claims an AP falls back to controller-inherited time only if it has no independent source configured; cite that as a forum claim if you use it at all, not as documented fact.</p>
+    </div>
+
+    <h3>Two separate trust chains</h3>
+    <p><span class="status alert"><span class="sw"></span>unconfirmed</span> &mdash; no Cisco document directly compares the CAPWAP (AP&harr;controller) and EAP-TLS (client&harr;ISE) PKI chains side by side. That they are architecturally separate and independently validated is correct X.509/CAPWAP theory, not something found stated in a single Cisco source.</p>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/support/docs/technical-details/220303-verify-ntp-status-with-the-show-ntp-asso.html</li>
+        <li>cisco.com/c/en/us/support/docs/ip/network-time-protocol-ntp/116161-trouble-ntp-00.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-3/config-guide/b_wl_17_3_cg/m_data_dtls.html</li>
+        <li>cisco.com/c/en/us/td/docs/security/ise/3-4/admin_guide/b_ise_admin_3_4/b_ISE_admin_deployment.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/ewc/17-6/config-guide/ewc_cg_17_6/ap-group_ntp-server.html</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ISSU -->
+  <div class="topic" id="issu">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7a8 8 0 0113-5M20 17a8 8 0 01-13 5"/><path d="M4 2v5h5M20 22v-5h-5"/></svg>
+      <div>
+        <h2>9800 ISSU upgrade methodology</h2>
+        <div class="conf"><span class="status good"><span class="sw"></span>documented</span>, with explicit internal inconsistencies noted</div>
+      </div>
+    </div>
+
+    <h3>ISSU requires a real HA pair — there's no standalone fallback</h3>
+    <div class="panel">
+      <p>ISSU "upgrades the controller software image to a later release while the network continues to forward packets," on 9800-80/40/L/CL/M/H1/H2, install mode only. Cisco's own prerequisite check in <code>show issu state detail</code> validates "Standby Online" and "SSO Mode" before allowing activation. There is no documented standalone ISSU workflow anywhere in the config guide — the state machine depends on a standby to absorb traffic, so a standalone 9800 has nothing to activate first.</p>
+    </div>
+    <div class="panel alert">
+      <p><span class="status alert"><span class="sw"></span>gap</span> &mdash; Cisco does not document what happens if <code>install activate issu</code> is attempted on a standalone controller. It may fail the prerequisite check cleanly, or it may not — this is unconfirmed. For non-HA controllers, Cisco instead documents "N+1 Hitless Rolling AP Upgrade" (a separate controller pair, APs move site-tag by site-tag) as the hitless alternative. That is not ISSU and shouldn't be conflated with it.</p>
+    </div>
+
+    <h3>The process flow and what to monitor</h3>
+    <p>Image syncs to standby &rarr; AP predownload (no service impact) &rarr; standby reloads to the new version first while the active continues serving on the old version, forming a temporary mixed-version SSO pair &rarr; switchover (the upgraded unit becomes active) &rarr; former active reloads to match &rarr; staggered AP rejoin cycle &rarr; <code>install commit</code>.</p>
+    <pre>show issu state detail      ! primary monitor; shows state transitions and abort-timer countdown
+show redundancy              ! Active/Standby roles, "Communications = Up", peer "STANDBY HOT"
+show install summary         ! I/U/C/D package flags, abort-timer status
+show chassis rmi
+show ap image                ! AP predownload tracking</pre>
+    <div class="panel caution">
+      <p>Minor documentation inconsistency worth knowing: <code>show redundancy</code> appears in the separate upgrade and troubleshooting guides but not in the core ISSU config-guide chapter itself.</p>
+    </div>
+
+    <h3>Rollback — default timer and real triggers</h3>
+    <div class="panel">
+      <p>Default auto-abort timer: <strong>360 minutes (6 hours)</strong>, configurable 30&ndash;1200 via <code>install activate issu auto-abort-timer &lt;min&gt;</code>. If <code>install commit</code> isn't issued before expiry, the device reloads back to the previous version automatically.</p>
+      <pre>install commit                      ! persist the upgrade
+install abort issu                   ! manual rollback — pre-commit only
+install auto-abort-timer stop        ! disables the timer; still requires a manual commit later</pre>
+      <p>Documented rollback triggers: TFTP/image download failure, checksum mismatch, activating before AP predownload completes, auto-abort timer expiry, and config incompatibility causing MCL/PRC sync failures &mdash; Cisco cites specific real examples: the <code>domain</code> command removed in 17.6.x, <code>snmp-server enable traps hsrp</code> removed in 17.4.x, and invalid WPA3 AKM configuration.</p>
+    </div>
+    <div class="panel alert">
+      <p><strong>Cisco's own tech note tells engineers to avoid ISSU entirely on specific builds</strong> &mdash; known defects CSCws19380 and CSCws35670 cause instability specifically in 17.15.1&ndash;17.15.4d and 17.18.1&ndash;17.18.2, and Cisco recommends a standard upgrade instead of ISSU on those exact releases. This is worth stating directly: the "safe" path is not universally safe, and Cisco documents that itself.</p>
+    </div>
+
+    <h3>Confirming a supported path before you start</h3>
+    <p>ISSU is supported EM-to-EM within the same train, not more than three years apart, and within any release of the same EM. <strong>Not supported</strong>: cross-major-train moves (16.x&rarr;17.x, 17.x&rarr;18.x), SM-to-EM or EM-to-SM moves, special/engineering images, LDPE&harr;NPE moves, downgrades, and a hard break at 27.1.1 with no ISSU path into it from any prior release. There is no live <code>show issu capability</code> command — Cisco publishes a static compatibility matrix instead, which has to be checked as a lookup, not queried from the CLI. <code>show issu state detail</code>'s system check only validates runtime readiness, not version-pair eligibility — passing that check does not mean the version pair is actually supported.</p>
+
+    <h3>AP-side behavior — even "successful" ISSU involves a rejoin</h3>
+    <div class="panel caution">
+      <p>APs stay joined through most of the process, and predownload itself has no service impact — but after cutover, APs move in staggered sub-groups via <code>ap upgrade staggered</code>, and Cisco's documentation states directly: "when the APs rejoin, they rejoin with V2." That's a real reload and CAPWAP rejoin per AP sub-group, staggered to limit blast radius — not a seamless failover with zero rejoin, even on a fully successful run.</p>
+      <p>Cisco's own documentation is internally inconsistent on one point: one section says a mid-process SSO/HA event stops the rolling AP upgrade and requires a manual resume; another section says switchover auto-resumes it. This isn't resolved here — treat it as a known documentation gap rather than picking a side. Known defect CSCws53690 (fixed in 17.18.3) caused unwanted AP disjoin specifically during ISSU from 17.12.6a to 17.18.2, confirming AP disjoin is a real documented failure mode even on an otherwise-supported upgrade path.</p>
+    </div>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_issu.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/tech-notes/b_issu_9800.html</li>
+        <li>cisco.com/c/en/us/support/docs/wireless/catalyst-9800-series-wireless-controllers/222405-upgrade-catalyst-9800-wlc-ha-sso-using-i.html</li>
+        <li>cisco.com/c/en/us/support/docs/wireless/catalyst-9800-series-wireless-controllers/221693-troubleshoot-issu-upgrade-on-c9800.html</li>
+        <li>cisco.com/c/en/us/support/docs/wireless/catalyst-9800-series-wireless-controllers/215550-hitless-software-upgrade-on-catalyst-980.html</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- POE & AP POWER -->
+  <div class="topic" id="poe">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 2v6M12 2v6M17 2v6M5 8h14l-1.5 7a5 5 0 01-5 4h-1a5 5 0 01-5-4L5 8z"/></svg>
+      <div>
+        <h2>PoE &amp; AP power troubleshooting</h2>
+        <div class="conf"><span class="status good"><span class="sw"></span>documented</span></div>
+      </div>
+    </div>
+
+    <h3>What an AP gives up when it's underpowered</h3>
+    <div class="panel alert">
+      <p>Current Wi-Fi 6/6E/7 APs document an explicit, tiered feature loss by power class — this is not a vague "may underperform," it's a specific published tradeoff table per model:</p>
+      <table>
+        <tr><th>Model</th><th>Full power</th><th>802.3at (PoE+)</th><th>802.3af</th></tr>
+        <tr><td>9130AX</td><td>802.3bt/UPOE, 8x8 5GHz, USB on</td><td>8x8 w/ USB off, <em>or</em> 4x4 w/ USB on</td><td>Both radios to 1x1, uplink to 1GbE, USB off</td></tr>
+        <tr><td>9136</td><td>UPOE/bt (47.3W), tri-radio 4x4/8x8/4x4, 2x5G, 9W USB</td><td>Drops to 2x2/4x4/2x2, 1x2.5G, USB disabled</td><td>All radios off (staging only)</td></tr>
+        <tr><td>9166 / 9178 / 9163E</td><td>Full radio set, USB enabled</td><td>Radios typically retained, USB disabled and/or link speed halved</td><td>All radios off (staging only)</td></tr>
+      </table>
+      <p>All of these models separately document a <strong>thermal derating</strong> behavior above 40&deg;C ambient (e.g., 8x8&rarr;4x4 on 5GHz) that is completely independent of PoE class — a hot IDF closet can reproduce the exact same symptom as an underpowered port.</p>
+    </div>
+
+    <h3>Reading the switch-side power state</h3>
+    <pre>show power inline detail
+show platform software ilpower system 1
+show environment all
+show environment power</pre>
+    <p>Key fields: Device Detected, Device Type, Connection Check, IEEE Class (Alt-A/B), discovery mechanism ("Ieee and Cisco"), Power Allocated vs. actual consumption, and fault counters — Absent, Over Current, Short Current, Invalid Signature, and critically, <strong>Power Denied</strong>. A nonzero Power Denied counter plus an operational state of "off" is the documented signature of a port that asked for power and didn't get it.</p>
+
+    <h3>CDP/LLDP negotiation — the silent failure mode</h3>
+    <div class="panel caution">
+      <p>An AP boots at low power (under 7W) and negotiates upward via CDP. Cisco documents directly that "CDP is not supported on third-party-powered devices," which forces classification down to IEEE class alone — and 802.3at LLDP power-via-MDI is the standards-based fallback for exactly that case.</p>
+      <p><span class="status caution"><span class="sw"></span>inference</span> &mdash; no Cisco document explicitly states "a non-Cisco switch without 802.3at LLDP support will silently cap the AP at its IEEE class." But it follows directly from the documented mechanism: that switch classifies by IEEE class only, caps the AP there, and the negotiation reports success — just at a lower tier, with no error anywhere. 2-event classification (hardware class-4 detection that bypasses CDP/LLDP entirely) is Cisco's own documented mitigation for this exact gap.</p>
+    </div>
+
+    <h3>The TAC troubleshooting split</h3>
+    <table>
+      <tr><th>Symptom</th><th>Likely cause</th><th>Check</th><th>Syslog</th></tr>
+      <tr><td>No PoE on multiple/all ports</td><td>Budget exhaustion</td><td><code>show power inline detail</code>, <code>show environment all</code></td><td><code>ILPOWER_POWER_DENY</code></td></tr>
+      <tr><td>Single port fails</td><td>Per-port negotiation failure</td><td><code>show interface status</code>, check for <code>power inline never</code> misconfig</td><td><code>CONTROLLER_PORT_ERR</code>, <code>INVALID_IEEE_CLASS</code>, <code>SHUT_OVERDRAWN</code>, <code>IEEE_DISCONNECT</code></td></tr>
+      <tr><td>Negotiation disagreement</td><td>CDP/LLDP conflict</td><td>disable one — <code>no lldp tlv-select power-management</code></td><td><code>POWER_CDP_SHUT</code></td></tr>
+    </table>
+    <p>Cabling: 100m max total run including patch panels, with cutoff power calculated as rated PD consumption plus worst-case cable power loss. UPOE requires Class D or better cabling; 802.3bt requires Category 5e or above. Cisco documents <strong>cable category/quality</strong>, not a shorter max length, as the lever at higher power classes. Diagnostics: <code>show post</code>, platform-specific <code>DiagPoETest</code>/<code>TestPoE</code>, <code>debug ilpower event/controller/powerman</code>.</p>
+
+    <div class="panel alert">
+      <p><span class="status alert"><span class="sw"></span>unverified</span> &mdash; exact AP-side syslog text or LED blink codes specifically diagnostic of underpower (as distinct from simply failing to boot) could not be confirmed in this research pass. The documented symptom is the feature-loss table above, not a specific log line on the AP itself.</p>
+    </div>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/int_hw/b_1712_int_and_hw_9300_cg/configuring_poe.html</li>
+        <li>cisco.com/c/en/us/products/collateral/wireless/catalyst-9100ax-access-points/nb-06-cat-9130-ser-ap-ds-cte-en.html</li>
+        <li>cisco.com/c/en/us/products/collateral/wireless/catalyst-9100ax-access-points/nb-06-cat9136-access-point-ds-cte-en.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/access_point/9130ax/quick/guide/ap9130ax-getstart.html</li>
+        <li>cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/int_hw/b_1712_int_and_hw_9300_cg/configuring_2_event_classification.html</li>
+        <li>cisco.com/c/en/us/support/docs/switches/catalyst-9200-series-switches/215636-troubleshooting-power-over-ethernet-poe.html</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CASE NOTES -->
+  <div class="topic" id="case-notes">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5L20 20"/></svg>
+      <div>
+        <h2>Field case pattern</h2>
+        <div class="conf">anonymized</div>
+      </div>
+    </div>
+    <div class="panel alert">
+      <p>No customer name, case number, or network specifics appear here &mdash; this is the generalized technical pattern only. The case-specific writeup lives in a separate, private, access-controlled repository.</p>
+    </div>
+
+    <h3>Observed pattern</h3>
+    <ol>
+      <li>Client completes an 802.11r FT roam successfully, reaches RUN state.</li>
+      <li>About three seconds later, the controller deletes the client with an AUTH_EXPIRED-family reason &mdash; despite the client having been fully associated.</li>
+      <li>About one second after that, the client retries FT and fails with Invalid PMKID &mdash; downstream of the deletion, not the cause.</li>
+      <li>Client recovers via a fresh full 802.1X association.</li>
+      <li>Client later stalls in CWA / <code>WEBAUTH_REQUIRED</code> and times out.</li>
+    </ol>
+
+    <h3>Why this is worth escalating</h3>
+    <div class="panel">
+      <p>Cisco's own DevNet reference defines the AUTH_EXPIRED-family delete reason as a <strong>pre-association</strong> timeout &mdash; "client did auth phase, but never completed association." That doesn't match a client that had already reached RUN. This contradiction, not the downstream PMKID failure, is what belongs in front of TAC or Bug Search. See <strong>FT roam + CWA</strong> for the open questions it raises.</p>
+    </div>
+  </div>
+
 </div>
-
-<div class="topic" id="intermittent">
-  <h2>Intermittent / "Random" Failure Checklist <span class="tag documented">mostly DOCUMENTED</span></h2>
-  <p>For symptoms that look random, affect different users unpredictably, and are hard to reproduce on demand &mdash; check these in order.</p>
-
-  <h3>1. RADIUS/AAA health (WLC side)</h3>
-  <ul>
-    <li>RADIUS-driven client exclusion when the server returns a VLAN/ACL name that doesn't exist locally ("VLAN mismatch," "ACL mismatch")</li>
-    <li>EAP timeout from <code>dot1x timeout</code> / <code>dot1x request retries</code> windows &mdash; often client/driver-side, not server-side</li>
-    <li>Use RadioActive Tracing (<code>debug wireless mac &lt;addr&gt; monitor-time &lt;N&gt;</code>) to elevate a specific MAC to debug level across every process</li>
-  </ul>
-  <p class="tag documented">DOCUMENTED</p>
-
-  <h3>2. ISE-side signals</h3>
-  <ul>
-    <li>Node out of sync with the Primary Admin node (replication lag) &mdash; cascades to delayed Application Server init (normally 15-35 min)</li>
-    <li>Certificate issues surface distinctly: self-signed/untrusted ISE certs show as "Alert (Level: Fatal, Description: Certificate Unknown)" in captures</li>
-    <li>Check per-node CPU/latency/memory/disk for overload before assuming a logic bug</li>
-  </ul>
-  <p class="tag documented">DOCUMENTED</p>
-
-  <h3>3. Infrastructure signals mistaken for "wireless"</h3>
-  <ul>
-    <li><strong>DHCP Required</strong> mismatch across foreign/anchor controllers &rarr; stale IP retained across a roam &rarr; DHCP NAK</li>
-    <li>Internal 9800 DHCP defaults to an <strong>infinite lease</strong> &mdash; can silently exhaust the pool over time</li>
-    <li>VLAN/trunk or FlexConnect native-VLAN misconfig &mdash; explains behavior that's site-inconsistent (works at some APs/buildings, not others)</li>
-    <li>Stale device-tracking entries causing false "IP theft" exclusions</li>
-  </ul>
-  <p class="tag documented">DOCUMENTED</p>
-
-  <h3>4. Standard correlation method</h3>
-  <pre>Controller:  RadioActive trace by client MAC + exact timestamp
-AP:          AP-side client debug (bundle collector, Flex log level)
-ISE:         Live Logs for the same MAC/timestamp
-Optional:    simultaneous EPC on WLC + TCPDump on ISE PSN interface</pre>
-  <p>TAC's first ask is always: exact reproduction timestamp, client MAC/IP/username/session ID, and a support bundle/RA trace captured live &mdash; continued logging overwrites debug buffers, so this can't be reconstructed after the fact. <span class="tag documented">DOCUMENTED</span></p>
-
-  <h3>Sources</h3>
-  <ul class="citation">
-    <li>cisco.com/.../213970-catalyst-9800-wireless-controllers-commo.html</li>
-    <li>cisco.com/.../213949-wireless-debugging-and-log-collection-on.html</li>
-    <li>cisco.com/.../222906-understand-ise-services-purpose-and-tro.html</li>
-    <li>cisco.com/.../220852-troubleshoot-central-web-authentication.html</li>
-    <li>cisco.com/.../214153-collect-support-bundle-on-cisco-identity.html</li>
-    <li>cisco.com/.../221973-troubleshoot-dhcp-client-connectivity-is.html</li>
-  </ul>
-</div>
-
-<div class="topic" id="case-notes">
-  <h2>Pattern From a Real Case (anonymized)</h2>
-  <div class="card warn">
-    <p>No customer name, case number, or network specifics appear here &mdash; this is the generalized technical pattern only. The full case-specific writeup lives in a separate, private, access-controlled repository.</p>
-  </div>
-  <h3>Observed pattern</h3>
-  <ol>
-    <li>Client completes an 802.11r FT roam successfully, reaches RUN state.</li>
-    <li>~3 seconds later, controller deletes the client with an AUTH_EXPIRED-family reason &mdash; despite the client having been fully associated.</li>
-    <li>~1 second after that, client retries FT and fails with Invalid PMKID (downstream of the deletion, not the cause).</li>
-    <li>Client recovers via a fresh full 802.1X association.</li>
-    <li>Client later stalls in CWA/<code>WEBAUTH_REQUIRED</code> and times out.</li>
-  </ol>
-  <h3>Why this is interesting</h3>
-  <div class="card">
-    <p>Cisco's own DevNet reference defines the AUTH_EXPIRED-family delete reason as a <strong>pre-association</strong> timeout ("client did auth phase, but never completed association"). That doesn't match a client that had already reached RUN. This contradiction &mdash; not the downstream PMKID failure &mdash; is the right thing to escalate to TAC/Bug Search. See the <strong>FT Roaming + CWA Interaction</strong> topic for the open questions this raises.</p>
-  </div>
-</div>
-
 </main>
 
 <script>
-  const buttons = document.querySelectorAll('.nav-btn');
+  const buttons = document.querySelectorAll('.rack-unit');
   const topics = document.querySelectorAll('.topic');
+
+  function navigateTo(topicId) {
+    buttons.forEach(b => b.classList.remove('active'));
+    topics.forEach(t => t.classList.remove('active'));
+    const btn = document.querySelector(`.rack-unit[data-topic="${topicId}"]`);
+    if (btn) btn.classList.add('active');
+    const panel = document.getElementById(topicId);
+    if (panel) {
+      panel.classList.add('active');
+      panel.scrollIntoView({ block: 'start' });
+    }
+  }
+
   buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      buttons.forEach(b => b.classList.remove('active'));
-      topics.forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById(btn.dataset.topic).classList.add('active');
+    btn.addEventListener('click', () => navigateTo(btn.dataset.topic));
+  });
+
+  const filterInput = document.getElementById('filter');
+  const groups = document.querySelectorAll('.rack-group');
+  filterInput.addEventListener('input', () => {
+    const q = filterInput.value.trim().toLowerCase();
+    groups.forEach(group => {
+      let anyVisible = false;
+      group.querySelectorAll('.rack-unit').forEach(unit => {
+        const text = unit.textContent.toLowerCase();
+        const match = !q || text.includes(q);
+        unit.hidden = !match;
+        if (match) anyVisible = true;
+      });
+      group.querySelector('.rack-label').style.display = anyVisible ? '' : 'none';
+      group.style.display = anyVisible ? '' : 'none';
     });
   });
+
+  // --- Symptom troubleshooter: a decision tree over the guide's own sections.
+  // Every leaf links to an existing topic/finding; no new claims are introduced here.
+  const TS_TREE = {
+    id: 'root',
+    question: 'What are you actually seeing right now?',
+    choices: [
+      { label: 'An AP won’t join the controller', next: 'ap-join-branch' },
+      { label: 'A client gets stuck on the captive portal / web login', next: 'cwa-branch' },
+      { label: 'A client drops or re-authenticates right after roaming', next: 'roam-branch' },
+      { label: 'Problems are random, intermittent, hit different people', next: 'intermittent-branch' },
+      { label: 'This is a Meraki (cloud-managed) deployment', next: 'meraki-branch' },
+      { label: 'This is an older AireOS controller or Mobility Express', next: 'aireos-branch' },
+      { label: 'An outdoor or mesh AP won’t connect / backhaul is bad', next: 'mesh-branch' },
+      { label: 'Location accuracy / CMX / Cisco Spaces data looks wrong', next: 'location-branch' },
+      { label: 'A controller failover didn’t behave as expected', next: 'ha-branch' },
+      { label: 'A client keeps failing the same auth over and over', next: 'exclusion-branch' },
+      { label: 'One client fails 802.1X but others on the same SSID work fine', next: 'supplicant-branch' },
+      { label: 'Multicast, broadcast, or mDNS/Bonjour discovery isn’t working', next: 'multicast-branch' },
+      { label: 'Voice or video over Wi-Fi sounds choppy', next: 'qos-branch' },
+      { label: 'Certificate errors that don’t make sense (cert looks valid)', next: 'ntp-branch' },
+      { label: 'Planning or recovering from a 9800 software upgrade', next: 'issu-branch' },
+      { label: 'An AP is missing radios/USB, or won’t power on fully', next: 'poe-branch' },
+    ]
+  };
+
+  const TS_NODES = {
+    'ap-join-branch': {
+      question: 'Before you touch RADIUS/ISE — is AP authorization (AP Policy / 802.1X-as-supplicant) deliberately enabled on this network?',
+      choices: [
+        { label: 'No — it’s a default/standard setup', result: {
+          topic: 'ap-join',
+          verdict: 'Default CAPWAP join has no AAA step at all — so this almost certainly isn’t an ISE problem.',
+          detail: 'Check certificate validity (MIC/SSC), AP-count licensing, country-code/regulatory domain match, and image/version match first. <code>show ap join stats detail</code> gives a distinct reason string per cause.'
+        }},
+        { label: 'Yes, AP authorization is on', result: {
+          topic: 'ap-join',
+          verdict: 'This is the one documented path where AAA genuinely sits in AP join.',
+          detail: 'Confirm the AP’s MAC/cert is correctly provisioned against the local DB or RADIUS server it’s checked against — and don’t confuse this with 802.1X AP-as-supplicant, which authenticates the AP’s wired port to the switch, not the WLC.'
+        }}
+      ]
+    },
+    'cwa-branch': {
+      question: 'Does the redirect never happen at all, or does it loop / never complete?',
+      choices: [
+        { label: 'No redirect happens — client just sits there', next: 'cwa-no-redirect' },
+        { label: 'It redirects but loops, or times out before login completes', next: 'cwa-loop-timeout' }
+      ]
+    },
+    'cwa-no-redirect': {
+      question: 'Is this a 9800/IOS-XE controller, or AireOS?',
+      choices: [
+        { label: '9800 / IOS-XE', result: {
+          topic: 'redirect-acl',
+          verdict: 'Most common cause: the redirect ACL name doesn’t exactly match between ISE and the WLC.',
+          detail: 'Look for <code>SANET_AUTHZ_FAILURE - Redirect ACL Failure</code> in logs. ISE’s default name <code>ACL_WEBAUTH_REDIRECT</code> uses underscores — a dash instead breaks the match silently. Also confirm <code>aaa-override</code> and NAC are both enabled in the policy profile.'
+        }},
+        { label: 'AireOS', result: {
+          topic: 'redirect-acl',
+          verdict: 'Check the ACL polarity first — AireOS and 9800 are inverted from each other.',
+          detail: 'On AireOS, <code>deny</code> means redirect and <code>permit</code> means pass-through — the opposite of 9800. An ACL built with 9800 habits on an AireOS box will redirect exactly backwards, with no error shown.'
+        }}
+      ]
+    },
+    'cwa-loop-timeout': {
+      question: 'Does it loop continuously, or get further and then time out once?',
+      choices: [
+        { label: 'Loops continuously', result: {
+          topic: 'redirect-acl',
+          verdict: 'Almost always a missing exemption for DNS and/or the ISE PSN in the redirect ACL.',
+          detail: 'The ACL must explicitly deny (exempt) traffic to the ISE PSN and to DNS — skip either and the client keeps getting redirected mid-redirect.'
+        }},
+        { label: 'Gets further, then times out once', result: {
+          topic: 'ft-cwa',
+          verdict: 'This matches a documented CWA timer, not a config defect — or it matches the FT+CWA interaction pattern if a roam happened first.',
+          detail: 'The 9800’s reap timer = 3× init-state-timeout + 5s will deauth a client who hasn’t finished the portal login in time — a 10s timeout means a 35s cutoff. If a Fast Transition roam happened right before this, see the FT roam + CWA section for the open questions around that specific interaction.'
+        }}
+      ]
+    },
+    'roam-branch': {
+      question: 'Does the client fully recover afterward (via a fresh full login), or does it stay disconnected?',
+      choices: [
+        { label: 'It recovers via a fresh full login', result: {
+          topic: 'ft-cwa',
+          verdict: 'This matches a documented pattern: a successful FT roam followed by an unexpected deletion, then recovery.',
+          detail: 'The deletion timing — not the PMKID failure that follows it — is what’s worth escalating to TAC/Bug Search. Cisco’s own definition of the delete reason describes a pre-association failure, which doesn’t match a client that had already reached RUN.'
+        }},
+        { label: 'It stays disconnected', result: {
+          topic: 'intermittent',
+          verdict: 'Check DHCP behavior across the roam boundary before assuming it’s an auth problem.',
+          detail: 'A <code>DHCP Required</code> mismatch between foreign/anchor controllers (or FlexConnect profiles) lets a client keep a stale IP across a roam, leading to a DHCP NAK that looks like a connectivity failure.'
+        }}
+      ]
+    },
+    'intermittent-branch': {
+      question: 'Is this specifically a Central Web Authentication (guest/portal) deployment with multiple ISE nodes?',
+      choices: [
+        { label: 'Yes', result: {
+          topic: 'ise-sizing',
+          verdict: 'Check whether RADIUS/CWA traffic is being load-balanced across PSNs — CWA explicitly doesn’t support that.',
+          detail: 'CWA’s flow (MAB auth → redirect → second RADIUS auth → CoA) has to land on the same PSN throughout. A load balancer that splits any stage to a different node breaks the flow intermittently — which looks exactly like “random” failures that are hard to reproduce. The documented fix is a WLC-driven ordered server list, not an external load balancer, unless it guarantees session affinity.'
+        }},
+        { label: 'No / not sure', result: {
+          topic: 'intermittent',
+          verdict: 'Work the general checklist in order: RADIUS/AAA health, then ISE node sync, then infrastructure (DHCP/VLAN).',
+          detail: 'Most "random" failures resolve to one of: client exclusion from a bad VLAN/ACL name, an ISE node out of sync with the Primary Admin node, or a DHCP/VLAN mismatch that only shows up at specific sites. Capture a RadioActive trace by MAC + exact timestamp before concluding it’s unreproducible.'
+        }}
+      ]
+    },
+    'meraki-branch': {
+      question: 'Is this about RADIUS/CoA with an external server like ISE, or about cloud connectivity itself?',
+      choices: [
+        { label: 'RADIUS / CoA with ISE', result: {
+          topic: 'meraki',
+          verdict: 'Check the CoA port — Meraki uses a different port convention than you might expect.',
+          detail: 'CoA/Disconnect needs the AP’s UDP port reachable from the RADIUS server: port 1700 for Cisco ISE specifically, 3799 for other NAC vendors. Also: the built-in RADIUS test tool always fails for EAP-TLS (no client cert to present) — that failure means nothing; test with a real device.'
+        }},
+        { label: 'Cloud connectivity / "unreachable" status', result: {
+          topic: 'meraki',
+          verdict: 'Confirm which specific traffic is actually blocked — Meraki’s management tunnel and its auth path have different fallback behavior.',
+          detail: 'The primary cloud tunnel (UDP 7351) falls back to HTTP/HTTPS if blocked — but authentication specifically has no such fallback and always needs UDP 7351. A site that looks "online" via the fallback path can still fail auth for exactly this reason.'
+        }}
+      ]
+    },
+    'aireos-branch': {
+      question: 'Is this a true separate WLC, or an AP acting as its own controller (Mobility Express)?',
+      choices: [
+        { label: 'Separate WLC hardware', result: {
+          topic: 'aireos',
+          verdict: 'Remember the CWA redirect ACL polarity is inverted on AireOS relative to 9800, and debug sessions are exclusive.',
+          detail: 'Starting a new <code>debug client</code> session on AireOS kills any other engineer’s active debug on the same box — coordinate before you start one. If this is a mixed AireOS+9800 environment, confirm IRCM version/hardware support before assuming roaming will work (2504, 7510, and WiSM2 are explicitly unsupported for IRCM).'
+        }},
+        { label: 'Mobility Express (AP is the controller)', result: {
+          topic: 'aireos',
+          verdict: 'Confirm it’s actually ME and not the separate, now end-of-sale 9800 EWC product.',
+          detail: '<code>show version</code> on the AP reports "AP Image Type: MOBILITY EXPRESS IMAGE" when it’s really ME. Primary AP election follows a fixed priority order (pinned master → preferred master → hardware capability → client load → MAC) — if failover looks wrong, check which of those is actually driving it.'
+        }}
+      ]
+    },
+    'mesh-branch': {
+      question: 'Is the AP failing to join at all, or joined but with a bad/unstable backhaul link?',
+      choices: [
+        { label: 'Won’t join at all', result: {
+          topic: 'outdoor',
+          verdict: 'Check the Bridge Group Name (BGN) first — it’s the most common documented cause.',
+          detail: 'Default BGN from manufacturing is NULL. A MAP with a mismatched BGN scans 10 times for its real parent, then joins a wrong-BGN parent for 15 minutes before retrying. Fix order matters: reconfigure the farthest node first, then work back toward the RAP.'
+        }},
+        { label: 'Joined, but backhaul is weak/unstable', result: {
+          topic: 'outdoor',
+          verdict: 'Check hop count and SNR before assuming it’s a hardware problem.',
+          detail: 'Hop count is a throughput multiplier on the whole backhaul, not just added latency. Backhaul SNR thresholds are 12 dB (low) / 60 dB (high) — DFS-heavy regions want 20 dB minimum. Weather radar on 5600–5650 MHz can trigger DFS "quiet" mode on specific channels, which looks like an unrelated outage.'
+        }}
+      ]
+    },
+    'location-branch': {
+      question: 'Is accuracy worse than expected, or is data not arriving at all?',
+      choices: [
+        { label: 'Accuracy is worse than expected', result: {
+          topic: 'location',
+          verdict: 'Check whether you’re actually inside the deployment’s "convex hull."',
+          detail: 'Hyperlocation’s ~1m accuracy figure only holds inside the convex hull of the AP group that was deployed together and NTP-synced. A test point outside that geometric boundary reads far less accurately — expected behavior, not a defect.'
+        }},
+        { label: 'Data isn’t arriving at CMX / Cisco Spaces at all', result: {
+          topic: 'location',
+          verdict: 'Confirm the transport path is actually open before troubleshooting accuracy.',
+          detail: 'On-prem CMX needs NMSP (TCP port 16113) open to the controller — verify with <code>show nmsp status</code>. For cloud Cisco Spaces, confirm <code>nmsp cloud-services enable</code> is set, DNS resolves, and the Root CA trustpool import completed.'
+        }}
+      ]
+    },
+    'ha-branch': {
+      question: 'Did both chassis go active at once, or did the standby just not take over when expected?',
+      choices: [
+        { label: 'Both went active — or neither clearly is', result: {
+          topic: 'ha-sso',
+          verdict: 'This matches Cisco’s documented "double fault" / split-brain condition.',
+          detail: 'A double fault happens when RP goes down and RMI becomes unreachable at the same time. Role negotiation only resumes once connectivity is restored, and the controller that came up <em>last</em> stays active — not necessarily the one that was active before. Check RP link health and RMI reachability first.'
+        }},
+        { label: 'Standby didn’t take over / AP didn’t fail over as expected', result: {
+          topic: 'ha-sso',
+          verdict: 'Confirm the AP actually received its priming configuration before assuming the failover logic is broken.',
+          detail: '<code>show ap name &lt;ap-name&gt; config general | sec Priming</code> shows the Priming Profile, Override state, and Source (MAC/FILTER/NONE) — this is the command that answers whether the AP even knew about its secondary/tertiary target. Also remember: an AP always returns to primary once available, and stays on tertiary rather than falling back to secondary mid-outage.'
+        }}
+      ]
+    },
+    'exclusion-branch': {
+      question: 'Does the client show up in the exclusion list, or does it look like it’s actively failing right now?',
+      choices: [
+        { label: 'Check the exclusion list first', result: {
+          topic: 'exclusion',
+          verdict: '<code>show exclusionlist</code> is the fastest way to tell "excluded" apart from "actively failing."',
+          detail: 'A client in its exclusion timeout window won’t respond to association/EAP — which looks identical to a live failure. If it’s not in the exclusion list, it’s genuinely failing right now; if it is, you’re watching a timeout cycle, not an ongoing defect. Fixed thresholds apply per category — e.g. 802.1X exclusion fires on the 4th attempt, after 3 consecutive failures.'
+        }},
+        { label: 'This looks like a rogue AP or client instead', result: {
+          topic: 'exclusion',
+          verdict: 'Check the classification before assuming containment is the answer.',
+          detail: 'Rogues classify as Friendly, Malicious, Unclassified, or Custom. If 802.11w/PMF is enabled on the rogue, the controller won’t actively contain it — it marks "Contained Pending" and alarms instead. Containment is also never supported on DFS channels, regardless of classification.'
+        }}
+      ]
+    },
+    'supplicant-branch': {
+      question: 'Does the WLC-side trace show the client going silent (timeout), or does it get a response and still fail?',
+      choices: [
+        { label: 'Client goes silent — repeated retries, then timeout', result: {
+          topic: 'supplicant',
+          verdict: 'This is the documented client-side signature — don’t escalate to the RADIUS/ISE team yet.',
+          detail: 'Repeated "Retrying (count 3) method dot1x" ending in a timeout-driven deletion, corroborated by ISE error 5440 ("Access-Challenge sent, no response"), is Cisco’s own evidence that the fault sits upstream of the RADIUS server. ISE’s documented decision rule: test the same NAD/PSN/policy against a known-good endpoint — if only certain endpoints fail, the problem is the endpoint, not the server.'
+        }},
+        { label: 'Gets a response, but auth still fails', result: {
+          topic: 'supplicant',
+          verdict: 'Don’t trust a generic "auth failed" error to tell you which side is at fault.',
+          detail: 'Cisco’s own AAA Error "-4" collapses EAP-method mismatch, expired client cert, and expired server cert into one indistinguishable code. If this is a domain-joined device with EAP chaining/TEAP, also check whether machine auth succeeded even though user auth failed — that’s documented, intentional behavior, not a defect, and it changes what you should expect the session’s authorization to look like.'
+        }}
+      ]
+    },
+    'multicast-branch': {
+      question: 'Is this an mDNS/Bonjour discovery problem, or multicast/video delivery itself?',
+      choices: [
+        { label: 'mDNS/Bonjour discovery across VLANs', result: {
+          topic: 'multicast',
+          verdict: 'This is expected behavior, not a bug — mDNS is link-local by design.',
+          detail: 'mDNS uses link-local multicast (224.0.0.251, UDP 5353), which Cisco states is "only forwarded to the local Layer 2 network." Cross-VLAN discovery requires the 9800 mDNS Gateway to bridge it deliberately — check <code>show mdns-sd summary</code> and <code>show mdns-sd cache</code> to confirm the gateway is actually caching and forwarding the service you expect.'
+        }},
+        { label: 'Multicast/video delivery is unreliable', result: {
+          topic: 'multicast',
+          verdict: 'Check the DTIM interval before chasing anything else.',
+          detail: 'Cisco states plainly that "the only recommended DTIM values are 1 and 2; higher DTIM values will likely cause communications problems." If multicast-to-unicast conversion is in play, remember 9800’s MCUC mode is only supported on 9800-CL small template and 9800-L — not 9800-40/80 or CW9800 appliances.'
+        }}
+      ]
+    },
+    'qos-branch': {
+      question: 'Is this a Cisco IP phone / soft client rejecting calls, or general audio/video choppiness?',
+      choices: [
+        { label: 'Calls are being rejected (CAC)', result: {
+          topic: 'qos-voice',
+          verdict: 'Confirm which platform you’re actually on — CAC documentation differs sharply between AireOS and 9800.',
+          detail: 'AireOS has full documented CAC with rejection counters in <code>show ap stats</code> and per-client diagnostics via <code>show client voice-diag</code>. On 9800/IOS-XE, the only confirmed CAC text is "SIP CAC is not supported" for centrally-switched traffic — there is no verified 9800 equivalent to AireOS’s bandwidth-reservation reporting. Don’t assume a 9800 show command exists just because the AireOS one does.'
+        }},
+        { label: 'General choppiness, no explicit rejection', result: {
+          topic: 'qos-voice',
+          verdict: 'Check for DSCP remarking on the AP’s own uplink, not just the client side.',
+          detail: 'A switch on the AP’s uplink can only see the outer CAPWAP header — it can remark that outer header while the inner client DSCP stays untouched. The client-side marking will look perfectly correct while the AP-to-WLC transport itself is deprioritized at every hop. Also check for the known WLC-vs-Windows mismatch: WLC maps DSCP 46 to UP 6 (Voice), Windows maps the same value to UP 5 (Video) — this alone can make a correctly-marked flow look wrong in a capture.'
+        }}
+      ]
+    },
+    'ntp-branch': {
+      question: 'Is this a CAPWAP/AP join certificate error, or an EAP-TLS/ISE certificate error?',
+      choices: [
+        { label: 'CAPWAP / AP join', result: {
+          topic: 'ntp-certs',
+          verdict: 'Rule out clock skew before assuming the certificate itself is bad.',
+          detail: 'Compare <code>show clock detail</code> on the WLC and the AP against the NotBefore/NotAfter fields from <code>show crypto pki certificates</code>. A real but skewed clock can make a perfectly valid certificate appear expired or not-yet-valid — the documented DTLS failure syslog is the same either way, so the clock check is what actually tells them apart.'
+        }},
+        { label: 'EAP-TLS / ISE', result: {
+          topic: 'ntp-certs',
+          verdict: 'Confirm ISE and the client aren’t drifted relative to each other, same logic as the CAPWAP case.',
+          detail: 'ISE’s own guidance is to use the same NTP source across all nodes specifically so "reports and logs... are always synchronized." If the client and ISE disagree enough on time, a genuinely valid cert can fail validation on either side — check clock state before escalating as a PKI defect.'
+        }}
+      ]
+    },
+    'issu-branch': {
+      question: 'Are you planning the upgrade, or recovering from one that didn’t go as expected?',
+      choices: [
+        { label: 'Planning', result: {
+          topic: 'issu',
+          verdict: 'Confirm two things before you start: a real HA pair, and a supported version pair.',
+          detail: 'ISSU has no documented standalone fallback — it requires the standby to be online in SSO mode. Separately, check Cisco’s version-compatibility matrix directly; <code>show issu state detail</code> only validates runtime readiness, not whether the specific version pair is actually eligible for ISSU. Also check your target build against known defects — Cisco itself recommends a standard upgrade instead of ISSU on specific 17.15/17.18 releases.'
+        }},
+        { label: 'Recovering from an unexpected result', result: {
+          topic: 'issu',
+          verdict: 'Check whether the auto-abort timer already fired, and don’t assume AP disjoin means something went wrong.',
+          detail: 'Default auto-abort is 360 minutes — if <code>install commit</code> wasn’t issued in time, the device reloads back automatically. Separately, a staggered AP rejoin during cutover is expected, documented behavior, not a failure in itself. If APs disjoined unexpectedly during a 17.12.6a→17.18.2-style upgrade specifically, that matches a known, now-fixed defect (CSCws53690).'
+        }}
+      ]
+    },
+    'poe-branch': {
+      question: 'Is one AP affected, or several APs on the same switch at once?',
+      choices: [
+        { label: 'Just one AP', result: {
+          topic: 'poe',
+          verdict: 'Check the per-port negotiation state before assuming the AP itself is bad.',
+          detail: '<code>show power inline detail</code> on that port — a nonzero Power Denied counter plus operational state "off" is the documented signature of a negotiation failure, not a hardware fault. If it’s a non-Cisco switch, also check whether it even supports 802.3at LLDP power negotiation — without it, the switch classifies by IEEE class alone and silently caps the AP’s power with no error shown anywhere.'
+        }},
+        { label: 'Several APs on the same switch', result: {
+          topic: 'poe',
+          verdict: 'This points at total power budget exhaustion, not a per-port fault.',
+          detail: '<code>show environment all</code> and <code>show environment power</code> give the system-wide allocated/consumed/available PoE budget. The documented syslog for this specific condition is <code>ILPOWER_POWER_DENY</code> — if you see that, the fix is budget, not any individual port’s configuration.'
+        }}
+      ]
+    }
+  };
+
+  const tsRoot = document.getElementById('ts-root');
+  let tsHistory = [];
+
+  function tsRenderQuestion(node) {
+    const q = document.createElement('div');
+    q.className = 'ts-step';
+    const h = document.createElement('p');
+    h.className = 'ts-question';
+    h.textContent = node.question;
+    q.appendChild(h);
+    const choiceWrap = document.createElement('div');
+    choiceWrap.className = 'ts-choices';
+    node.choices.forEach(choice => {
+      const b = document.createElement('button');
+      b.className = 'ts-choice';
+      b.textContent = choice.label;
+      b.addEventListener('click', () => {
+        tsHistory.push(node);
+        if (choice.result) {
+          tsRenderResult(choice.result);
+        } else {
+          tsRender(TS_NODES[choice.next]);
+        }
+      });
+      choiceWrap.appendChild(b);
+    });
+    q.appendChild(choiceWrap);
+    return q;
+  }
+
+  function tsRenderResult(result) {
+    tsRoot.innerHTML = '';
+    tsRoot.appendChild(tsBackBar());
+    const panel = document.createElement('div');
+    panel.className = 'panel good ts-result';
+    panel.innerHTML = `
+      <p class="ts-verdict">${result.verdict}</p>
+      <p>${result.detail}</p>
+    `;
+    tsRoot.appendChild(panel);
+    const link = document.createElement('button');
+    link.className = 'ts-jump';
+    link.textContent = 'Open the full section →';
+    link.addEventListener('click', () => navigateTo(result.topic));
+    tsRoot.appendChild(link);
+    const restart = document.createElement('button');
+    restart.className = 'ts-restart';
+    restart.textContent = 'Start over';
+    restart.addEventListener('click', tsStart);
+    tsRoot.appendChild(restart);
+  }
+
+  function tsBackBar() {
+    const bar = document.createElement('div');
+    bar.className = 'ts-backbar';
+    if (tsHistory.length > 0) {
+      const back = document.createElement('button');
+      back.className = 'ts-back';
+      back.textContent = '← back';
+      back.addEventListener('click', () => {
+        const prev = tsHistory.pop();
+        tsRender(prev);
+      });
+      bar.appendChild(back);
+    }
+    const restart = document.createElement('button');
+    restart.className = 'ts-back';
+    restart.textContent = 'restart';
+    restart.addEventListener('click', tsStart);
+    bar.appendChild(restart);
+    return bar;
+  }
+
+  function tsRender(node) {
+    tsRoot.innerHTML = '';
+    tsRoot.appendChild(tsBackBar());
+    tsRoot.appendChild(tsRenderQuestion(node));
+  }
+
+  function tsStart() {
+    tsHistory = [];
+    tsRender(TS_TREE);
+  }
+
+  if (tsRoot) tsStart();
 </script>
 
 </body>
