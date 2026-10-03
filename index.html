@@ -201,6 +201,33 @@
     max-width: 54ch;
     margin: 0 0 28px;
   }
+  .readout-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-bottom: 10px;
+  }
+  .readout {
+    flex: 1;
+    min-width: 120px;
+    background: var(--ink-0);
+    padding: 14px 16px;
+  }
+  .readout .num {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--signal);
+    line-height: 1;
+  }
+  .readout .label {
+    font-size: 11px;
+    color: var(--mist-dim);
+    margin-top: 5px;
+  }
+
   /* Datasheet header for each topic */
   .sheet-head {
     display: flex;
@@ -408,7 +435,7 @@
   #speedtest-start:disabled { opacity: 0.5; cursor: default; }
   .speedtest-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 1px;
     background: var(--line);
     border: 1px solid var(--line);
@@ -440,7 +467,15 @@
     min-height: 1.4em;
   }
   @media (max-width: 760px) {
-    .speedtest-grid { grid-template-columns: repeat(2, 1fr); }
+    .speedtest-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  .page-footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: center;
+    opacity: 0.7;
   }
 
   @media (max-width: 760px) {
@@ -479,6 +514,30 @@
       <button class="rack-unit" data-topic="speedtest">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20a8 8 0 100-16 8 8 0 000 16z"/><path d="M12 12l4-4"/><path d="M12 8v1M12 15v1M8 12H7M17 12h-1"/></svg>
         <span>Speed test</span>
+      </button>
+    </div>
+
+    <div class="rack-group" data-group="tools">
+      <div class="rack-label">Calculators &amp; lookups</div>
+      <button class="rack-unit" data-topic="channel-lookup">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 18V9M9 18V5M14 18v-7M19 18v-4"/></svg>
+        <span>Channel &amp; regulatory lookup</span>
+      </button>
+      <button class="rack-unit" data-topic="standards-matrix">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18M9 9v11"/></svg>
+        <span>802.11 standards matrix</span>
+      </button>
+      <button class="rack-unit" data-topic="poe-calc">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 2v6M12 2v6M17 2v6M5 8h14l-1.5 7a5 5 0 01-5 4h-1a5 5 0 01-5-4L5 8z"/><path d="M10 14h4"/></svg>
+        <span>PoE budget calculator</span>
+      </button>
+      <button class="rack-unit" data-topic="asn-lookup">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 4 6 4 9s-1.5 6.5-4 9c-2.5-2.5-4-6-4-9s1.5-6.5 4-9z"/></svg>
+        <span>Egress / ASN lookup</span>
+      </button>
+      <button class="rack-unit" data-topic="oui-lookup">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 10h18M7 14h2"/></svg>
+        <span>MAC vendor (OUI) lookup</span>
       </button>
     </div>
 
@@ -605,6 +664,14 @@
     <h2>Cisco Wireless Troubleshooting Toolkit</h2>
     <p class="lede">A platform-implementation reference for engineers supporting Cisco's wireless portfolio — Catalyst 9800, Meraki, AireOS, Mobility Express, outdoor mesh, and location services. Each finding is marked by its level of confirmation, so documented behavior can be distinguished from inference that still requires validation through TAC or Bug Search.</p>
 
+    <div class="readout-row" id="overview-stats">
+      <div class="readout"><div class="num" id="stat-topics">&mdash;</div><div class="label">topics covered</div></div>
+      <div class="readout"><div class="num" id="stat-documented">&mdash;</div><div class="label">documented findings</div></div>
+      <div class="readout"><div class="num" id="stat-flagged">&mdash;</div><div class="label">flagged inference / unconfirmed</div></div>
+      <div class="readout"><div class="num" id="stat-confidence">&mdash;</div><div class="label">documented confidence rate</div></div>
+    </div>
+    <p class="speedtest-status" style="margin: -8px 0 20px;">Computed live from this page's own status badges on load &mdash; not a hand-maintained count, so it can't drift out of sync with the content above it.</p>
+
     <h3>How confidence is marked</h3>
     <p>Three statuses appear throughout this guide, next to every claim that isn't plain fact:</p>
     <div class="panel good"><p><span class="status good"><span class="sw"></span>Documented</span> &mdash; confirmed directly from a cited Cisco source: a config guide, a TAC troubleshooting doc, a DevNet reference, or Cisco Press.</p></div>
@@ -648,7 +715,7 @@
 
     <div id="speedtest-root">
       <button type="button" id="speedtest-start" class="ts-jump" style="margin-bottom: 20px;">Run test</button>
-      <div class="speedtest-grid">
+      <div class="speedtest-grid" aria-live="polite">
         <div class="speedtest-metric">
           <div class="speedtest-label">Download</div>
           <div class="speedtest-value" id="st-download">&mdash;</div>
@@ -660,7 +727,7 @@
           <div class="speedtest-unit">Mbps</div>
         </div>
         <div class="speedtest-metric">
-          <div class="speedtest-label">Latency</div>
+          <div class="speedtest-label">Idle latency</div>
           <div class="speedtest-value" id="st-latency">&mdash;</div>
           <div class="speedtest-unit">ms</div>
         </div>
@@ -671,6 +738,54 @@
         </div>
       </div>
       <p id="speedtest-status" class="speedtest-status" aria-live="polite"></p>
+
+      <div id="speedtest-advanced" hidden>
+        <h3 style="margin-top:28px;">Loaded latency (bufferbloat check)</h3>
+        <div class="speedtest-grid" aria-live="polite">
+          <div class="speedtest-metric">
+            <div class="speedtest-label">Latency under download load</div>
+            <div class="speedtest-value" id="st-latency-loaded-down">&mdash;</div>
+            <div class="speedtest-unit">ms</div>
+          </div>
+          <div class="speedtest-metric">
+            <div class="speedtest-label">Latency under upload load</div>
+            <div class="speedtest-value" id="st-latency-loaded-up">&mdash;</div>
+            <div class="speedtest-unit">ms</div>
+          </div>
+          <div class="speedtest-metric">
+            <div class="speedtest-label">Bufferbloat delta</div>
+            <div class="speedtest-value" id="st-bufferbloat">&mdash;</div>
+            <div class="speedtest-unit">ms added vs. idle</div>
+          </div>
+        </div>
+        <p class="speedtest-status" id="st-bufferbloat-grade" style="min-height:1.4em;"></p>
+
+        <h3 style="margin-top:28px;">Connection detail (reported by Cloudflare's edge, this test run)</h3>
+        <div class="speedtest-grid" aria-live="polite">
+          <div class="speedtest-metric">
+            <div class="speedtest-label">Round-trip time (TCP)</div>
+            <div class="speedtest-value" id="st-tcp-rtt">&mdash;</div>
+            <div class="speedtest-unit">ms, min / current</div>
+          </div>
+          <div class="speedtest-metric">
+            <div class="speedtest-label">RTT variance</div>
+            <div class="speedtest-value" id="st-tcp-rttvar">&mdash;</div>
+            <div class="speedtest-unit">ms</div>
+          </div>
+          <div class="speedtest-metric">
+            <div class="speedtest-label">Retransmits</div>
+            <div class="speedtest-value" id="st-tcp-retrans">&mdash;</div>
+            <div class="speedtest-unit">segments, this connection</div>
+          </div>
+          <div class="speedtest-metric">
+            <div class="speedtest-label">Packets lost</div>
+            <div class="speedtest-value" id="st-tcp-lost">&mdash;</div>
+            <div class="speedtest-unit">this connection</div>
+          </div>
+        </div>
+        <p class="speedtest-status" id="speedtest-tcp-note"></p>
+      </div>
+
       <div id="speedtest-meta" class="panel caution" hidden>
         <p id="speedtest-meta-text"></p>
       </div>
@@ -679,8 +794,10 @@
     <h3>What this does and doesn't tell you</h3>
     <ul>
       <li><strong>Download/upload</strong> &mdash; real throughput to a nearby Cloudflare edge node, over HTTPS, from this browser tab. It reflects the whole path: Wi-Fi link, LAN, router, and the ISP uplink &mdash; not Wi-Fi in isolation. A slow result here doesn't by itself tell you which hop is the bottleneck.</li>
-      <li><strong>Latency/jitter</strong> &mdash; round-trip time and its variance to that same edge node. High jitter with otherwise fine throughput is a classic sign of airtime contention or a congested channel, worth cross-checking against the <a href="#" data-topic-link="qos-voice">QoS &amp; voice/video</a> section.</li>
-      <li><strong>Not measured, and not measurable from any browser on any OS:</strong> RSSI, SNR, channel, channel width, PHY mode (802.11n/ac/ax/be), MCS index, spatial streams, or negotiated Tx rate. Browsers deliberately have no API for this &mdash; it's an OS/driver privacy boundary, not a limitation of this page specifically.</li>
+      <li><strong>Idle latency/jitter</strong> &mdash; round-trip time and its variance to that same edge node, measured with the link otherwise quiet. High jitter with otherwise fine throughput is a classic sign of airtime contention or a congested channel, worth cross-checking against the <a href="#" data-topic-link="qos-voice">QoS &amp; voice/video</a> section.</li>
+      <li><strong>Loaded latency (bufferbloat)</strong> &mdash; the same latency measurement, taken again while the download and upload tests are actively saturating the link. The gap between idle and loaded latency is a real, well-known diagnostic: a large jump means something in the path (often a consumer router's own buffer, sometimes the AP itself) is queuing packets under load rather than dropping or prioritizing them. This matters directly for voice/video and gaming, which degrade from added latency long before raw throughput becomes the problem.</li>
+      <li><strong>Connection detail (RTT, retransmits, packets lost)</strong> &mdash; these come from Cloudflare's own edge, reported back for the specific TCP connection this test used, via a <code>Server-Timing</code> response header their network stack sets. This is the server's measurement of that one connection, not a browser estimate layered on top &mdash; but it's one connection's data, not a long-run average, so treat a single bad reading as a prompt to re-run the test rather than a confirmed diagnosis.</li>
+      <li><strong>Not measured, and not measurable from any browser on any OS:</strong> RSSI, SNR, channel, channel width, PHY mode (802.11n/ac/ax/be), MCS index, spatial streams, or negotiated Tx rate. Browsers deliberately have no API for this &mdash; it's an OS/driver privacy boundary, not a limitation of this page specifically. This page does not estimate or infer any of those values from throughput, latency, or any other number above &mdash; too many non-Wi-Fi factors (server distance, TCP window scaling, ISP congestion) affect those same numbers for a correlation to mean anything.</li>
     </ul>
 
     <h3>Pulling your own connection details</h3>
@@ -694,12 +811,346 @@
       <tr><td>Cisco 9800 (network-side)</td><td><code>show wireless client mac-address &lt;mac&gt; detail</code> &mdash; gives the controller's own view of that client's RSSI, SNR, data rate, and PHY mode, independent of what the client itself reports.</td></tr>
     </table>
 
+    <h3>Pulling a packet capture or crash/support bundle from the network side</h3>
+    <div class="panel caution">
+      <p><span class="status caution"><span class="sw"></span>inference</span> &mdash; a browser cannot run a packet capture or reach into a remote device's filesystem; both are a flat OS/network-security boundary, not something this page can route around. The commands below run <strong>on the controller itself</strong>, over SSH/console &mdash; this page can't execute them for you, but it can save you from guessing the syntax.</p>
+    </div>
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;">Live packet capture (Embedded Packet Capture)</h4>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; confirmed Catalyst 9800 EPC syntax, verbatim from Cisco's own troubleshooting doc:</p>
+      <pre>monitor capture uplink interface &lt;interface&gt; both
+! optional: filter to specific traffic first
+ip access-list extended CAPFILTER
+ permit ip host &lt;src-ip&gt; host &lt;dst-ip&gt;
+monitor capture uplink access-list CAPFILTER
+monitor capture uplink buffer circular size 50
+monitor capture uplink start
+monitor capture uplink stop
+monitor capture uplink export ftp://&lt;server&gt;/capture.pcap
+no monitor capture uplink   ! remove the capture definition once done</pre>
+    </div>
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;">Full support/crash bundle (the "give TAC everything" command)</h4>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span>, confirmed verbatim from Cisco's official Catalyst 9800 Command Reference &mdash; the wireless-specific TAC bundle:</p>
+      <pre>show tech-support wireless                      ! full wireless bundle (no arguments)
+show tech-support wireless ap                   ! AP-specific subset
+show tech-support wireless client [mac-address &lt;mac&gt;]
+show tech-support wireless mobility              ! mobility-tunnel-specific subset
+show tech-support wireless datapath</pre>
+      <p>On IOS-XE 17.15.1+, <code>request tech-support</code> (no arguments) is a documented convenience wrapper: it runs <code>show tech-support</code> internally and writes the combined output plus the system report to a single timestamped file on bootflash/flash &mdash; "this debug bundle file will have all the files included in the system report and latest show tech-support file." Cisco's own usage note: don't run this during an active crash or system-triggered switchover.</p>
+    </div>
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;">Actual crash/coredump artifacts</h4>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; a true crash file is a separate, specific artifact, not the general tech-support bundle above:</p>
+      <pre>show ap crash-file                                              ! AP-side crash files
+dir all | i crash                                                ! list crash files on the WLC
+more bootflash:system-report*                                   ! view the auto-generated system report
+copy bootflash:system-report-&lt;timestamp&gt;.tar.gz tftp:           ! copy it off-box</pre>
+      <p>The system report is generated automatically by the controller when it crashes &mdash; there's no command to "create" one on demand outside of the <code>request tech-support</code> bundle above.</p>
+    </div>
+    <p><span class="status alert"><span class="sw"></span>unconfirmed</span> &mdash; <code>request platform software trace archive last &lt;N&gt; {days|hours|minutes|seconds} target {bootflash:|flash:|...}</code> is real and documented (IOS-XE 17.12.1+), but it archives platform/radioactive trace logs specifically, not a tech-support or crash bundle. Don't substitute it for <code>show tech-support wireless</code> when TAC asks for "the tech-support file" &mdash; it collects a different, narrower thing.</p>
+
     <div class="sources">
       <h3>Sources</h3>
       <ul>
         <li>speed.cloudflare.com (public, CORS-open test endpoints — the same infrastructure speed.cloudflare.com's own UI uses)</li>
+        <li>speed.cloudflare.com's own edge response headers (<code>Server-Timing: cfL4</code>) — the source of the connection-detail numbers above, read directly from live responses, not from a published Cloudflare field-reference doc (none was found describing this specific header's field names)</li>
         <li>developer.apple.com — Wi-Fi diagnostics menu-bar detail (Option-click)</li>
         <li>learn.microsoft.com/windows-server/networking/technologies/netsh/netsh-wlan</li>
+        <li>cisco.com/c/en/us/support/docs/wireless/catalyst-9800-series-wireless-controllers/213949-wireless-debugging-and-log-collection-on.html — EPC (monitor capture) syntax</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/command-reference/b_wireless_cr.html — show tech-support wireless, request tech-support (Cisco Catalyst 9800 Command Reference)</li>
+        <li>cisco.com/c/en/us/support/docs/wireless/catalyst-9800-series-wireless-controllers/215523-quick-start-guide-on-what-logs-and-debug.html — show ap crash-file, system-report bundle</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CHANNEL & REGULATORY LOOKUP -->
+  <div class="topic" id="channel-lookup">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 18V9M9 18V5M14 18v-7M19 18v-4"/></svg>
+      <div>
+        <h2>Channel &amp; regulatory lookup</h2>
+        <div class="conf">2.4 / 5 / 6 GHz channel-to-frequency, UNII bands, DFS, 6 GHz power modes</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p>Pure reference, no network calls &mdash; channel/frequency math is a fixed IEEE formula, and band/DFS/regulatory membership is published FCC/ETSI/Cisco data. Type a channel number to see its frequency and band membership; the tables below cover the full picture for a quick lookup without typing anything.</p>
+    </div>
+
+    <div class="speedtest-grid" style="margin-bottom:16px;">
+      <div class="speedtest-metric" style="text-align:left;padding:16px;">
+        <label for="ch-input" class="speedtest-label" style="display:block;margin-bottom:8px;">Channel number</label>
+        <input type="number" id="ch-input" min="1" max="233" value="36" style="width:100%;background:var(--ink-0);border:1px solid var(--line);color:var(--mist);padding:8px 10px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:14px;">
+      </div>
+      <div class="speedtest-metric">
+        <div class="speedtest-label">Center frequency</div>
+        <div class="speedtest-value" id="ch-freq" style="font-size:22px;">&mdash;</div>
+        <div class="speedtest-unit">MHz</div>
+      </div>
+      <div class="speedtest-metric">
+        <div class="speedtest-label">Band</div>
+        <div class="speedtest-value" id="ch-band" style="font-size:18px;">&mdash;</div>
+      </div>
+      <div class="speedtest-metric">
+        <div class="speedtest-label">UNII / DFS</div>
+        <div class="speedtest-value" id="ch-unii" style="font-size:16px;">&mdash;</div>
+      </div>
+    </div>
+    <p class="speedtest-status" id="ch-note"></p>
+
+    <h3>2.4 GHz &mdash; channels 1&ndash;14</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; <code>frequency (MHz) = 2407 + 5 &times; channel</code> for channels 1&ndash;13; channel 14 is a fixed special case at 2484 MHz (Japan-only, 802.11b only, not legal for 802.11g/n). Only channels 1, 6, and 11 are non-overlapping at 20 MHz width in the US &mdash; every other channel overlaps at least one neighbor's spectrum, which is why "channel 1/6/11 only" remains the standard field recommendation for 2.4 GHz deployments.</p>
+    </div>
+
+    <h3>5 GHz &mdash; UNII bands and DFS</h3>
+    <table>
+      <tr><th>Band</th><th>Channels</th><th>Frequency range</th><th>DFS required (US)</th></tr>
+      <tr><td>UNII-1</td><td>36, 40, 44, 48</td><td>5150&ndash;5250 MHz</td><td>No</td></tr>
+      <tr><td>UNII-2 (UNII-2A)</td><td>52, 56, 60, 64</td><td>5250&ndash;5350 MHz</td><td><strong>Yes</strong></td></tr>
+      <tr><td>UNII-2 Extended (UNII-2C)</td><td>100&ndash;144</td><td>5470&ndash;5725 MHz</td><td><strong>Yes</strong></td></tr>
+      <tr><td>UNII-3</td><td>149, 153, 157, 161, 165</td><td>5725&ndash;5850 MHz</td><td>No</td></tr>
+      <tr><td>UNII-4</td><td>169, 173, 177, 181</td><td>5850&ndash;5925 MHz</td><td>No (US-specific allocation)</td></tr>
+    </table>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; <code>frequency (MHz) = 5000 + 5 &times; channel</code> across the entire 5 GHz range. DFS-required channels (UNII-2/2A/2C, 52&ndash;144) must monitor for radar for 60 seconds before transmitting (Channel Availability Check) and vacate within 10 seconds if radar is detected &mdash; a mesh or AP link that drops specifically on these channels during weather radar activity isn't a config problem (see the Outdoor &amp; mesh section).</p>
+    </div>
+    <p><span class="status caution"><span class="sw"></span>inference</span> &mdash; exact channel/DFS allocations vary by regulatory domain (Cisco's own domain codes: -A, -B, -E, -N, -Q, etc.) &mdash; the table above reflects current US (FCC) allocation. Always confirm against <code>show controllers dot11Radio &lt;n&gt; | include Reg|Country</code> or the AP's configured country code before assuming a channel is legal to use at a given site.</p>
+
+    <h3>6 GHz &mdash; new band, new power-mode complexity</h3>
+    <table>
+      <tr><th>Power mode</th><th>Max EIRP</th><th>Requires AFC?</th><th>Typical use</th></tr>
+      <tr><td>LPI (Low Power Indoor)</td><td>5 dBm/MHz (24 dBm total, 20 MHz)</td><td>No</td><td>Standard indoor AP, no coordination needed</td></tr>
+      <tr><td>Standard Power</td><td>Up to 36 dBm EIRP</td><td><strong>Yes</strong></td><td>Outdoor or higher-power indoor, must query an AFC system first</td></tr>
+      <tr><td>VLP (Very Low Power)</td><td>14 dBm EIRP</td><td>No</td><td>Portable/client-to-client, short range</td></tr>
+    </table>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; <code>frequency (MHz) = 5950 + 5 &times; channel</code> for 6 GHz (channels 1&ndash;233, odd-numbered in the standard 20 MHz plan). The entire 6 GHz band in the US is unconditionally unlicensed-use for LPI/VLP &mdash; there is no DFS requirement in 6 GHz, since there's no legacy radar/satellite incumbent in the same way as 5 GHz UNII-2. The tradeoff is Standard Power's AFC (Automated Frequency Coordination) requirement: an AP must query an FCC-approved AFC system for a clear channel/power allocation before transmitting above LPI limits &mdash; this is new infrastructure most engineers haven't dealt with on prior Wi-Fi generations.</p>
+    </div>
+
+    <h3>Verifying what's actually configured</h3>
+    <pre>show ap config general                              ! country code, regulatory domain
+show controllers dot11Radio &lt;n&gt;                      ! per-radio channel, power, DFS state
+show ap dot11 5ghz channel                           ! current 5GHz channel assignment
+show ap dot11 6ghz summary                           ! 6GHz radio state, power mode</pre>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>IEEE 802.11-2020 — channel/frequency numbering formulas (2.4/5/6 GHz)</li>
+        <li>fcc.gov/wireless/bureau-divisions/mobility-division/unlicensed-national-information-infrastructure-u-nii-devices — UNII band definitions</li>
+        <li>fcc.gov — 6 GHz (UNII-5/6/7/8) Report and Order, LPI/Standard Power/VLP definitions and AFC requirement</li>
+        <li>cisco.com — Catalyst 9800 country code / regulatory domain configuration guides (per-domain allocations referenced in-section)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 802.11 STANDARDS MATRIX -->
+  <div class="topic" id="standards-matrix">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18M9 9v11"/></svg>
+      <div>
+        <h2>802.11 standards &amp; capability matrix</h2>
+        <div class="conf">quick reference &mdash; amendment, year, max PHY rate, key feature</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p>Pure reference table &mdash; published IEEE amendment history and PHY-rate ceilings. Useful for a fast "what can this standard actually do" check mid-conversation, not a substitute for CWNP's full theory treatment of any of these.</p>
+    </div>
+
+    <table>
+      <tr><th>Marketing name</th><th>Amendment</th><th>Ratified</th><th>Bands</th><th>Max PHY rate</th><th>Key feature introduced</th></tr>
+      <tr><td>Wi-Fi 1 (unbranded)</td><td>802.11b</td><td>1999</td><td>2.4 GHz</td><td>11 Mbps</td><td>DSSS, first mass-market Wi-Fi</td></tr>
+      <tr><td>Wi-Fi 2 (unbranded)</td><td>802.11a</td><td>1999</td><td>5 GHz</td><td>54 Mbps</td><td>OFDM</td></tr>
+      <tr><td>Wi-Fi 3 (unbranded)</td><td>802.11g</td><td>2003</td><td>2.4 GHz</td><td>54 Mbps</td><td>OFDM brought to 2.4 GHz</td></tr>
+      <tr><td>Wi-Fi 4</td><td>802.11n</td><td>2009</td><td>2.4 &amp; 5 GHz</td><td>600 Mbps (4x4, 40 MHz)</td><td>MIMO, channel bonding (40 MHz)</td></tr>
+      <tr><td>Wi-Fi 5</td><td>802.11ac</td><td>2013</td><td>5 GHz</td><td>6.93 Gbps (8x8, 160 MHz)</td><td>MU-MIMO (downlink only), 80/160 MHz channels</td></tr>
+      <tr><td>Wi-Fi 6</td><td>802.11ax</td><td>2021</td><td>2.4 &amp; 5 GHz</td><td>9.6 Gbps (8x8, 160 MHz)</td><td>OFDMA, uplink+downlink MU-MIMO, TWT, BSS Coloring</td></tr>
+      <tr><td>Wi-Fi 6E</td><td>802.11ax (extended)</td><td>2021</td><td>+6 GHz</td><td>same PHY as Wi-Fi 6</td><td>6 GHz spectrum, no legacy device backward-compat traffic</td></tr>
+      <tr><td>Wi-Fi 7</td><td>802.11be</td><td>2024</td><td>2.4, 5 &amp; 6 GHz</td><td>46 Gbps (theoretical, 320 MHz, 16x16)</td><td>Multi-Link Operation (MLO), 320 MHz channels, 4K-QAM</td></tr>
+    </table>
+
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; the "Wi-Fi N" marketing numbers (Wi-Fi Alliance branding, introduced retroactively in 2018) and the IEEE amendment letters are not 1:1 synonyms in every case &mdash; Wi-Fi 6E is the same PHY as Wi-Fi 6 (802.11ax) just operating in newly-available 6 GHz spectrum, not a separate amendment. Wi-Fi 7's headline 46 Gbps figure is a theoretical ceiling at maximum spatial streams/channel width/MCS &mdash; no currently shipping AP hardware approaches it; real-world Wi-Fi 7 AP throughput is bounded by actual radio chain count (typically 2x2 or 4x4 on current Catalyst/Meraki hardware), not the amendment's theoretical maximum.</p>
+    </div>
+
+    <h3>MU-MIMO vs. OFDMA &mdash; the distinction that actually matters operationally</h3>
+    <p><span class="status caution"><span class="sw"></span>inference</span> &mdash; these are frequently conflated but solve different problems. MU-MIMO (introduced 11ac, improved in 11ax) lets the AP talk to multiple clients <em>simultaneously</em> using spatial separation &mdash; most valuable with few, high-throughput clients. OFDMA (new in 11ax/Wi-Fi 6) subdivides a channel into resource units so many clients can each get a small efficient slice at once &mdash; most valuable in high-density, many-small-packet environments (IoT, dense classrooms/stadiums). A dense-client-count problem is an OFDMA story; a few-clients-need-max-throughput problem is a MU-MIMO story &mdash; picking the wrong lever to tune for a given symptom wastes field time.</p>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>IEEE 802.11-2020 and amendment history (802.11a/b/g/n/ac/ax/be) — ratification years, PHY rate ceilings</li>
+        <li>wi-fi.org — Wi-Fi Alliance generational branding (Wi-Fi 4/5/6/6E/7) mapping to IEEE amendments</li>
+        <li>cisco.com — Catalyst 9100/9130/9136/9163/9166/9178 AP datasheets (real-world radio chain counts vs. theoretical amendment ceilings)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- POE BUDGET CALCULATOR -->
+  <div class="topic" id="poe-calc">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 2v6M12 2v6M17 2v6M5 8h14l-1.5 7a5 5 0 01-5 4h-1a5 5 0 01-5-4L5 8z"/><path d="M10 14h4"/></svg>
+      <div>
+        <h2>PoE budget calculator</h2>
+        <div class="conf">802.3af/at/bt class wattage, cable-length derating &mdash; pairs with the PoE &amp; AP power reference section</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p>Pure calculator &mdash; the IEEE 802.3 class-to-wattage table is fixed by spec; this just does the arithmetic across however many ports/APs you're planning. For the field-triage reference (switch-side show commands, LED codes, syslog signatures), see the <a href="#" data-topic-link="poe">PoE &amp; AP power</a> section &mdash; this tool is for planning a deployment, that section is for troubleshooting one already in the field.</p>
+    </div>
+
+    <div class="speedtest-grid" style="margin-bottom:12px;">
+      <div class="speedtest-metric" style="text-align:left;padding:16px;">
+        <label for="poe-count" class="speedtest-label" style="display:block;margin-bottom:8px;">Number of APs</label>
+        <input type="number" id="poe-count" min="1" max="500" value="24" style="width:100%;background:var(--ink-0);border:1px solid var(--line);color:var(--mist);padding:8px 10px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:14px;">
+      </div>
+      <div class="speedtest-metric" style="text-align:left;padding:16px;">
+        <label for="poe-class" class="speedtest-label" style="display:block;margin-bottom:8px;">PoE class per AP</label>
+        <select id="poe-class" style="width:100%;background:var(--ink-0);border:1px solid var(--line);color:var(--mist);padding:8px 10px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:13px;">
+          <option value="15.4">802.3af Class 3 (15.4W)</option>
+          <option value="25.5" selected>802.3at Class 4 / PoE+ (25.5W)</option>
+          <option value="51">802.3bt Type 3 / PoE++ (51W)</option>
+          <option value="71.3">802.3bt Type 4 (71.3W)</option>
+        </select>
+      </div>
+      <div class="speedtest-metric" style="text-align:left;padding:16px;">
+        <label for="poe-budget" class="speedtest-label" style="display:block;margin-bottom:8px;">Switch/stack PoE budget</label>
+        <input type="number" id="poe-budget" min="1" value="740" style="width:100%;background:var(--ink-0);border:1px solid var(--line);color:var(--mist);padding:8px 10px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:14px;">
+        <div class="speedtest-unit" style="margin-top:4px;">Watts &mdash; check your switch's datasheet</div>
+      </div>
+    </div>
+    <div class="speedtest-grid">
+      <div class="speedtest-metric">
+        <div class="speedtest-label">Total demand</div>
+        <div class="speedtest-value" id="poe-demand" style="font-size:22px;">&mdash;</div>
+        <div class="speedtest-unit">Watts, nameplate class draw</div>
+      </div>
+      <div class="speedtest-metric">
+        <div class="speedtest-label">Headroom</div>
+        <div class="speedtest-value" id="poe-headroom" style="font-size:22px;">&mdash;</div>
+        <div class="speedtest-unit">Watts remaining</div>
+      </div>
+      <div class="speedtest-metric">
+        <div class="speedtest-label">Fits the budget?</div>
+        <div class="speedtest-value" id="poe-fits" style="font-size:18px;">&mdash;</div>
+      </div>
+    </div>
+    <p class="speedtest-status" id="poe-note"></p>
+
+    <h3>Why this uses nameplate class draw, not "typical" draw</h3>
+    <div class="panel caution">
+      <p><span class="status caution"><span class="sw"></span>inference</span> &mdash; this calculator intentionally sizes against the full negotiated class wattage, not a lower "typical" real-world draw figure, because the switch itself reserves budget by negotiated class regardless of what the AP actually pulls moment-to-moment. Most Wi-Fi 6E/7 APs draw meaningfully less than their class ceiling in normal operation (see the PoE &amp; AP power reference section for Cisco's own documented per-model derating at full radio load) &mdash; but the switch doesn't know that in advance, so budget planning against nameplate class is the conservative, correct approach, even though it will usually overestimate real consumption.</p>
+    </div>
+
+    <h3>IEEE 802.3 PoE class reference</h3>
+    <table>
+      <tr><th>Standard</th><th>Class</th><th>PSE output</th><th>PD guaranteed</th></tr>
+      <tr><td>802.3af</td><td>Class 3</td><td>15.4 W</td><td>12.95 W (cable loss reserved)</td></tr>
+      <tr><td>802.3at (PoE+)</td><td>Class 4</td><td>30 W</td><td>25.5 W</td></tr>
+      <tr><td>802.3bt Type 3 (PoE++)</td><td>Class 5/6</td><td>60 W</td><td>51 W</td></tr>
+      <tr><td>802.3bt Type 4</td><td>Class 7/8</td><td>90 W</td><td>71.3 W</td></tr>
+    </table>
+    <p><span class="status good"><span class="sw"></span>documented</span> &mdash; the gap between PSE output and PD-guaranteed wattage is the IEEE spec's own cable-loss reserve, not a vendor margin &mdash; standard Category 5e/6 cabling at 100m is accounted for in that delta. Longer runs on lower-category cable can still derate further; Cisco documents cable category/quality (not a shorter max length) as the lever at higher power classes.</p>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>IEEE 802.3-2022 (af/at/bt amendments) — PSE/PD class wattage table</li>
+        <li>cisco.com/c/en/us/support/docs/switches/catalyst-9200-series-switches/215636-troubleshooting-power-over-ethernet-poe.html — cable category/quality as the derating lever at higher classes</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ASN / EGRESS LOOKUP -->
+  <div class="topic" id="asn-lookup">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 4 6 4 9s-1.5 6.5-4 9c-2.5-2.5-4-6-4-9s1.5-6.5 4-9z"/></svg>
+      <div>
+        <h2>Egress / ASN lookup</h2>
+        <div class="conf">confirm where your traffic is actually exiting to the internet &mdash; real BGP/routing data, not an estimate</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p>Queries Cloudflare's own trace endpoint (same one the Speed Test uses) for your current public egress IP, then RIPE NCC's public RIPEstat API &mdash; the regional internet registry's own data, not a third-party geolocation guess &mdash; for the real ASN (Autonomous System Number) and network name that IP belongs to. Useful for confirming an anchor-WLC/guest-NAT setup is actually egressing where you expect, or that FlexConnect local-switching traffic isn't quietly routing through an unexpected path.</p>
+    </div>
+
+    <button type="button" id="asn-start" class="ts-jump">Look up my egress path</button>
+    <div class="speedtest-grid" style="margin-top:16px;">
+      <div class="speedtest-metric">
+        <div class="speedtest-label">Public egress IP</div>
+        <div class="speedtest-value" id="asn-ip" style="font-size:18px;">&mdash;</div>
+      </div>
+      <div class="speedtest-metric">
+        <div class="speedtest-label">ASN</div>
+        <div class="speedtest-value" id="asn-number" style="font-size:22px;">&mdash;</div>
+      </div>
+      <div class="speedtest-metric">
+        <div class="speedtest-label">Network / holder</div>
+        <div class="speedtest-value" id="asn-holder" style="font-size:16px;">&mdash;</div>
+      </div>
+      <div class="speedtest-metric">
+        <div class="speedtest-label">Announced prefix</div>
+        <div class="speedtest-value" id="asn-prefix" style="font-size:16px;">&mdash;</div>
+      </div>
+    </div>
+    <p class="speedtest-status" id="asn-status" aria-live="polite"></p>
+
+    <h3>Why this matters for a WLAN-side troubleshooting conversation</h3>
+    <ul>
+      <li>A guest WLAN anchored to a DMZ controller should egress through that DMZ's own ASN/path, not accidentally fall back through the corporate path &mdash; this is a fast way to confirm which one is actually happening without digging through routing tables.</li>
+      <li>If a client's traffic reports an ASN/network that doesn't match any expected egress point at all, that's a routing or NAT misconfiguration worth escalating, not a Wi-Fi symptom.</li>
+      <li><span class="status caution"><span class="sw"></span>inference</span> &mdash; this reports the ASN of whatever IP Cloudflare's edge sees as your current source address, which is correct for confirming NAT/egress behavior, but it says nothing about Wi-Fi link quality or RF state &mdash; it's a routing-path tool, not a radio-layer one.</li>
+    </ul>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>speed.cloudflare.com/cdn-cgi/trace — public egress IP (same endpoint the Speed Test uses)</li>
+        <li>stat.ripe.net (RIPEstat, RIPE NCC's public data API) — real ASN/prefix/holder lookup, no API key required, CORS-enabled</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- OUI / MAC VENDOR LOOKUP -->
+  <div class="topic" id="oui-lookup">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 10h18M7 14h2"/></svg>
+      <div>
+        <h2>MAC vendor (OUI) lookup</h2>
+        <div class="conf">identify a device manufacturer from a MAC address &mdash; real IEEE registry data</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p>Paste a MAC address or just its first three octets (the OUI). This fetches and caches Wireshark's own mirror of the IEEE OUI registry &mdash; the same data a packet-capture tool like the Beacon Finder resolves vendors from, just as a quick standalone lookup when you don't have a full capture, e.g. for identifying a rogue AP or unrecognized client fast from its BSSID alone.</p>
+    </div>
+
+    <div class="speedtest-metric" style="text-align:left;padding:16px;background:var(--ink-0);border:1px solid var(--line);margin-bottom:16px;">
+      <label for="oui-input" class="speedtest-label" style="display:block;margin-bottom:8px;">MAC address or OUI</label>
+      <input type="text" id="oui-input" placeholder="e.g. 00:0C:29 or 00:0c:29:12:34:56" style="width:100%;background:var(--ink-0);border:1px solid var(--line);color:var(--mist);padding:8px 10px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:14px;">
+    </div>
+    <button type="button" id="oui-start" class="ts-jump">Look up vendor</button>
+    <p class="speedtest-status" id="oui-status" aria-live="polite"></p>
+    <div class="speedtest-grid" style="margin-top:12px;">
+      <div class="speedtest-metric" style="grid-column: 1 / -1;">
+        <div class="speedtest-label">Vendor</div>
+        <div class="speedtest-value" id="oui-vendor" style="font-size:20px;">&mdash;</div>
+      </div>
+    </div>
+
+    <h3>Data freshness</h3>
+    <p><span class="status good"><span class="sw"></span>documented</span> &mdash; the source file explicitly asks consumers "please don't download it more often than [weekly]," since it's regenerated on that cadence from IEEE's own registry. This tool respects that: the OUI list is fetched once and cached in this browser's local storage for 7 days before refetching, not re-fetched on every lookup.</p>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>wireshark.org/download/automated/data/manuf — Wireshark's maintained mirror of the IEEE OUI registry (CORS-enabled; the canonical IEEE CSV at standards-oui.ieee.org is real but has no CORS header, so it can't be fetched directly from a browser)</li>
+        <li>standards-oui.ieee.org — the registry this data is ultimately sourced from</li>
       </ul>
     </div>
   </div>
@@ -1627,8 +2078,10 @@ show ip igmp snooping igmpv2-tracking
 show wireless profile policy detail &lt;policy-profile&gt;    ! Multicast VLAN, Multicast Filter field</pre>
 
     <h3>DTIM interval — a documented, hard recommendation</h3>
-    <div class="panel alert">
-      <p>Cisco states this without qualification: <strong>"The only recommended DTIM values are 1 and 2; higher DTIM values will likely cause communications problems."</strong> The AP buffers broadcast/multicast frames and only releases them at the DTIM beacon — a 100ms beacon period with DTIM=1 delivers multicast 10 times per second; raising DTIM delays delivery proportionally.</p>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; Cisco states this without qualification: <strong>"The only recommended DTIM values are 1 and 2; higher DTIM values will likely cause communications problems."</strong> The AP buffers broadcast/multicast frames and only releases them at the DTIM beacon — a 100ms beacon period with DTIM=1 delivers multicast 10 times per second; raising DTIM delays delivery proportionally.</p>
+    </div>
+    <div class="panel caution">
       <p><span class="status caution"><span class="sw"></span>inference</span> &mdash; raising DTIM on APs serving battery-saving handhelds, badge scanners, or IoT devices delays multicast/broadcast delivery in exact proportion to beacon-interval &times; DTIM value. This is commonly misdiagnosed as a flaky application ("my paging app is slow," "discovery is unreliable") rather than traced back to the RF profile's DTIM setting.</p>
     </div>
 
@@ -2113,8 +2566,9 @@ show wireless config validate                               ! surfaces VLAN/gues
     <div class="panel good">
       <p><span class="status good"><span class="sw"></span>documented, directly confirmed</span> &mdash; <strong>"the Cisco Catalyst 9800 Series Wireless Controller mobility tunnel is a CAPWAP tunnel with a control path (UDP 16666) and a data path (UDP 16667)."</strong> The control path "uses DTLS encryption by default," supported DTLS version 1.2. Data-path encryption (data-link-encryption / data-DTLS) is optional and must be matched on both ends &mdash; <strong>"If the configurations do not match, the system disables the mobility data path."</strong></p>
     </div>
-    <div class="panel caution">
-      <p><span class="status good"><span class="sw"></span>documented</span>, platform distinction confirmed by direct comparison rather than assumed: <strong>EoIP (Ethernet over IP) is an AireOS-era term, not a current IOS-XE/9800 term.</strong> The AireOS 8.5 configuration guide uses it directly, describing the encrypted mobility tunnel as using "UDP port 16667, instead of EoIP, to send the data traffic" &mdash; i.e. on AireOS, EoIP is the default unencrypted data-path encapsulation that the encrypted tunnel replaces. The 9800 mobility-tunnel documentation never mentions EoIP at all; its data path is CAPWAP/UDP 16667 unconditionally, encrypted or not. In a mixed AireOS+9800 (IRCM) deployment, "control plane encryption is always enabled" regardless of platform, and if you enable data encryption on the 9800 side you must also enable it on the AireOS side with <code>config mobility group member data-dtls enable</code> &mdash; a mismatch here, not a missing EoIP tunnel, is the documented failure mode on mixed deployments.</p>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span>, platform distinction confirmed by direct comparison rather than assumed: <strong>EoIP (Ethernet over IP) is an AireOS-era term, not a current IOS-XE/9800 term.</strong> The AireOS 8.5 configuration guide uses it directly, describing the encrypted mobility tunnel as using "UDP port 16667, instead of EoIP, to send the data traffic" &mdash; i.e. on AireOS, EoIP is the default unencrypted data-path encapsulation that the encrypted tunnel replaces. The 9800 mobility-tunnel documentation never mentions EoIP at all; its data path is CAPWAP/UDP 16667 unconditionally, encrypted or not.</p>
+      <p><span class="status caution"><span class="sw"></span>inference</span> &mdash; in a mixed AireOS+9800 (IRCM) deployment, "control plane encryption is always enabled" regardless of platform, and if you enable data encryption on the 9800 side you must also enable it on the AireOS side with <code>config mobility group member data-dtls enable</code> &mdash; a mismatch here, not a missing EoIP tunnel, is the documented failure mode on mixed deployments.</p>
     </div>
     <p>Mobility tunnels have two platform-specific restrictions worth knowing before troubleshooting a cert error: <strong>"Mobility tunnels do not support ECDSA-based certificates or ECDSA-based trustpoints,"</strong> and 9800-CL peers using self-signed certs need an additional SSC hash validation step.</p>
 
@@ -2137,7 +2591,7 @@ show crypto pki trustpoints</pre>
       <tr><td><code>Mobility DTLS Ctrl handshake failed for &lt;ip&gt; HB is down</code></td><td>Control-path DTLS handshake failure &mdash; check trustpoint/certificate state, not basic reachability.</td></tr>
       <tr><td><code>MAC_CONFLICT</code> warning, once per minute</td><td>Documented as cosmetic in specific Layer2/Layer3 topology scenarios &mdash; Cisco states it "does not impact functionality or performance."</td></tr>
     </table>
-    <div class="panel alert">
+    <div class="panel good">
       <p><span class="status good"><span class="sw"></span>documented</span> HA SSO gotcha, and already cross-referenced in this guide's ISE section: <strong>"mobility MAC address is not configured by default and it can cause the mobility tunnel to go down if a failover happens."</strong> The fix is to explicitly set and save <code>wireless mobility mac-address</code> so a chassis failover doesn't silently change the mobility identity the rest of the group has peered with.</p>
     </div>
 
@@ -2195,7 +2649,7 @@ show ap name &lt;ap-name&gt; tag info</pre>
       <p>During web-auth on a locally-switched FlexConnect WLAN, DNS has a documented, deliberately centralized exception: <strong>"client DNS replies must pass through the controller during authentication"</strong> &mdash; specifically, "the FlexConnect APs allows only DNS and DHCP messages; the APs forward the DNS reply messages to the controller before web-authentication&hellip; is complete." Only <strong>after</strong> web-auth completes does traffic switch fully locally: <strong>"all traffic switches locally."</strong> A branch guest/webauth SSID that seems to redirect correctly but then can't resolve anything post-login, or vice versa, is a sign this handoff point is misconfigured rather than a generic DNS problem.</p>
       <p>Split tunneling itself is configured as an ACL path: define the ACL, attach it as an ACL policy under the flex profile, map a split MAC ACL name within the wireless policy profile, then apply the site/policy tags &mdash; the same ACL-via-flex-profile mechanism used for general FlexConnect ACLs above, not a separate feature.</p>
     </div>
-    <div class="panel alert">
+    <div class="panel good">
       <p><span class="status good"><span class="sw"></span>documented</span> operational caveat, easy to trigger by accident during a "quick fix": <strong>"When you apply a configuration change to a locally switched WLAN, the access point resets the radio, causing associated client devices to disassociate&hellip; Modify the configuration only during a maintenance window."</strong> A VLAN-mapping tweak pushed mid-day to fix one client will knock every other client on that AP's radio off at the same moment.</p>
     </div>
 
@@ -2345,6 +2799,10 @@ AP Groups                   &rarr;  Policy Tag + Site Tag + RF Tag (structural, 
     </div>
   </div>
 
+  <footer class="page-footer">
+    <img src="https://api.visitorbadge.io/api/visitors?path=wadegerencser.github.io%2Fwireless-troubleshooting-toolkit&label=Visitors&countColor=%2341C9B4&style=flat" alt="Visitor count" loading="lazy">
+  </footer>
+
 </div>
 </main>
 
@@ -2356,6 +2814,37 @@ AP Groups                   &rarr;  Policy Tag + Site Tag + RF Tag (structural, 
     t.parentNode.insertBefore(wrap, t);
     wrap.appendChild(t);
   });
+
+  // Nav "count" badges are computed live from each topic's actual h3/h4 section
+  // headings (excluding the trailing "Sources" heading) — not hand-maintained,
+  // so they can't drift stale the way a hardcoded number does across edits.
+  document.querySelectorAll('.topic[id]').forEach(topic => {
+    const btn = document.querySelector(`.rack-unit[data-topic="${topic.id}"] .count`);
+    if (!btn) return;
+    const headings = topic.querySelectorAll('h3, h4');
+    let count = headings.length;
+    headings.forEach(h => { if (h.textContent.trim() === 'Sources') count--; });
+    btn.textContent = count;
+  });
+
+  // Overview hero stats — computed live from the page's own status badges and
+  // real topic count, same anti-staleness principle as the nav count badges above.
+  (function computeOverviewStats() {
+    const statTopics = document.getElementById('stat-topics');
+    if (!statTopics) return;
+    const realTopics = document.querySelectorAll('.topic[id]:not(#overview):not(#troubleshooter):not(#case-notes)').length;
+    const good = document.querySelectorAll('.status.good').length;
+    const caution = document.querySelectorAll('.status.caution').length;
+    const alert = document.querySelectorAll('.status.alert').length;
+    const flagged = caution + alert;
+    const totalBadges = good + flagged;
+    const confidenceRate = totalBadges > 0 ? Math.round((good / totalBadges) * 100) : 0;
+
+    statTopics.textContent = realTopics;
+    document.getElementById('stat-documented').textContent = `${good}`;
+    document.getElementById('stat-flagged').textContent = `${flagged}`;
+    document.getElementById('stat-confidence').textContent = `${confidenceRate}%`;
+  })();
 
   const buttons = document.querySelectorAll('.rack-unit');
   const topics = document.querySelectorAll('.topic');
@@ -3163,6 +3652,16 @@ AP Groups                   &rarr;  Policy Tag + Site Tag + RF Tag (structural, 
     const elStatus = document.getElementById('speedtest-status');
     const elMeta = document.getElementById('speedtest-meta');
     const elMetaText = document.getElementById('speedtest-meta-text');
+    const elAdvanced = document.getElementById('speedtest-advanced');
+    const elLoadedDown = document.getElementById('st-latency-loaded-down');
+    const elLoadedUp = document.getElementById('st-latency-loaded-up');
+    const elBufferbloat = document.getElementById('st-bufferbloat');
+    const elBufferbloatGrade = document.getElementById('st-bufferbloat-grade');
+    const elTcpRtt = document.getElementById('st-tcp-rtt');
+    const elTcpRttVar = document.getElementById('st-tcp-rttvar');
+    const elTcpRetrans = document.getElementById('st-tcp-retrans');
+    const elTcpLost = document.getElementById('st-tcp-lost');
+    const elTcpNote = document.getElementById('speedtest-tcp-note');
 
     function setStatus(text) { elStatus.textContent = text; }
 
@@ -3179,14 +3678,35 @@ AP Groups                   &rarr;  Policy Tag + Site Tag + RF Tag (structural, 
       return new Blob(parts);
     }
 
-    async function measureLatency() {
+    // Parses the `Server-Timing: cfL4;desc="?proto=TCP&rtt=...&rtt_var=...&retrans=...&lost=...&cwnd=..."`
+    // header Cloudflare's edge returns on __down/__up responses — real per-connection
+    // TCP stats from their network stack, not a browser-side estimate. Returns null if
+    // the header isn't present (e.g. a proxy stripped it) rather than guessing values.
+    function parseCfL4(serverTimingHeader) {
+      if (!serverTimingHeader) return null;
+      const match = serverTimingHeader.match(/cfL4;desc="([^"]+)"/);
+      if (!match) return null;
+      const params = new URLSearchParams(match[1].replace(/^\?/, ''));
+      const num = (key) => params.has(key) ? Number(params.get(key)) : null;
+      return {
+        rtt: num('rtt'),           // microseconds
+        minRtt: num('min_rtt'),    // microseconds
+        rttVar: num('rtt_var'),    // microseconds
+        retrans: num('retrans'),
+        lost: num('lost'),
+        cwnd: num('cwnd'),
+      };
+    }
+
+    async function measureLatency(duringLoad) {
       const samples = [];
-      for (let i = 0; i < 6; i++) {
+      const rounds = duringLoad ? 4 : 6;
+      for (let i = 0; i < rounds; i++) {
         const t0 = performance.now();
         await fetch(`${BASE}/cdn-cgi/trace?cb=${Math.random()}`, { cache: 'no-store' });
         samples.push(performance.now() - t0);
       }
-      samples.shift(); // discard first (connection warm-up)
+      if (!duringLoad) samples.shift(); // discard first (connection warm-up) on the idle baseline only
       const sorted = [...samples].sort((a, b) => a - b);
       const median = sorted[Math.floor(sorted.length / 2)];
       let jitterTotal = 0;
@@ -3198,11 +3718,12 @@ AP Groups                   &rarr;  Policy Tag + Site Tag + RF Tag (structural, 
     async function measureThroughput({ method, bytes, streams }) {
       const t0 = performance.now();
       const requests = [];
+      let lastServerTiming = null;
       for (let i = 0; i < streams; i++) {
         if (method === 'download') {
           requests.push(
             fetch(`${BASE}/__down?bytes=${bytes}&cb=${Math.random()}`, { cache: 'no-store' })
-              .then(r => r.blob())
+              .then(r => { lastServerTiming = r.headers.get('server-timing') || lastServerTiming; return r.blob(); })
           );
         } else {
           requests.push(
@@ -3210,14 +3731,41 @@ AP Groups                   &rarr;  Policy Tag + Site Tag + RF Tag (structural, 
               method: 'POST',
               body: randomBlob(bytes),
               cache: 'no-store',
-            })
+            }).then(r => { lastServerTiming = r.headers.get('server-timing') || lastServerTiming; return r; })
           );
         }
       }
       await Promise.all(requests);
       const seconds = (performance.now() - t0) / 1000;
       const totalBits = bytes * streams * 8;
-      return totalBits / seconds / 1e6; // Mbps
+      const mbps = totalBits / seconds / 1e6;
+      return { mbps, serverTiming: lastServerTiming };
+    }
+
+    // Runs a throughput load and a latency probe concurrently, so the latency
+    // numbers reflect the link while it's actually saturated — this is the
+    // standard bufferbloat-measurement technique (compare idle vs. loaded RTT),
+    // not something inferred after the fact from the throughput number alone.
+    async function measureLoadedLatency(method) {
+      const bytes = method === 'download' ? 6_000_000 : 3_000_000;
+      const streams = method === 'download' ? 4 : 3;
+      const [throughputResult, latencyResult] = await Promise.all([
+        measureThroughput({ method, bytes, streams }),
+        measureLatency(true),
+      ]);
+      return { ...throughputResult, loadedLatency: latencyResult.latency };
+    }
+
+    function bufferbloatDescription(deltaMs) {
+      // No vendor-verified A–F scale is cited here on purpose — rather than
+      // attribute specific thresholds to a source we didn't confirm, this
+      // just reports the measured delta in milliseconds and a plain-language
+      // read of it, consistent with the "no fabricated detail" rule for
+      // every other claim in this toolkit.
+      if (deltaMs < 10) return 'negligible — latency barely moved under load';
+      if (deltaMs < 50) return 'small — unlikely to be noticeable in a call';
+      if (deltaMs < 150) return 'moderate — may be audible as choppiness in voice/video under load';
+      return 'large — the kind of added latency that disrupts calls and real-time gaming';
     }
 
     async function fetchMeta() {
@@ -3242,21 +3790,52 @@ AP Groups                   &rarr;  Policy Tag + Site Tag + RF Tag (structural, 
       elUpload.textContent = '—';
       elLatency.textContent = '—';
       elJitter.textContent = '—';
+      elLoadedDown.textContent = '—';
+      elLoadedUp.textContent = '—';
+      elBufferbloat.textContent = '—';
+      elBufferbloatGrade.textContent = '—';
+      elTcpRtt.textContent = '—';
+      elTcpRttVar.textContent = '—';
+      elTcpRetrans.textContent = '—';
+      elTcpLost.textContent = '—';
+      elTcpNote.textContent = '';
       elMeta.hidden = true;
+      elAdvanced.hidden = true;
 
       try {
-        setStatus('Testing latency…');
-        const { latency, jitter } = await measureLatency();
-        elLatency.textContent = latency.toFixed(0);
+        setStatus('Testing idle latency…');
+        const { latency: idleLatency, jitter } = await measureLatency(false);
+        elLatency.textContent = idleLatency.toFixed(0);
         elJitter.textContent = jitter.toFixed(1);
 
-        setStatus('Testing download…');
-        const down = await measureThroughput({ method: 'download', bytes: 6_000_000, streams: 4 });
-        elDownload.textContent = down.toFixed(1);
+        setStatus('Testing download (and latency under that load)…');
+        const downResult = await measureLoadedLatency('download');
+        elDownload.textContent = downResult.mbps.toFixed(1);
+        elLoadedDown.textContent = downResult.loadedLatency.toFixed(0);
 
-        setStatus('Testing upload…');
-        const up = await measureThroughput({ method: 'upload', bytes: 3_000_000, streams: 3 });
-        elUpload.textContent = up.toFixed(1);
+        setStatus('Testing upload (and latency under that load)…');
+        const upResult = await measureLoadedLatency('upload');
+        elUpload.textContent = upResult.mbps.toFixed(1);
+        elLoadedUp.textContent = upResult.loadedLatency.toFixed(0);
+
+        const worstLoaded = Math.max(downResult.loadedLatency, upResult.loadedLatency);
+        const delta = worstLoaded - idleLatency;
+        elBufferbloat.textContent = (delta >= 0 ? '+' : '') + delta.toFixed(0);
+        elBufferbloatGrade.textContent = bufferbloatDescription(Math.max(delta, 0));
+
+        const cfStats = parseCfL4(downResult.serverTiming) || parseCfL4(upResult.serverTiming);
+        if (cfStats) {
+          if (cfStats.rtt != null) elTcpRtt.textContent = `${(cfStats.minRtt / 1000).toFixed(0)} / ${(cfStats.rtt / 1000).toFixed(0)}`;
+          if (cfStats.rttVar != null) elTcpRttVar.textContent = (cfStats.rttVar / 1000).toFixed(1);
+          if (cfStats.retrans != null) elTcpRetrans.textContent = cfStats.retrans;
+          if (cfStats.lost != null) elTcpLost.textContent = cfStats.lost;
+          elTcpNote.textContent = (cfStats.retrans > 0 || cfStats.lost > 0)
+            ? 'Nonzero retransmits/loss on this connection — consistent with real congestion somewhere on the path, not necessarily Wi-Fi specifically.'
+            : 'No retransmits or loss reported on this connection.';
+        } else {
+          elTcpNote.textContent = 'Cloudflare did not return connection-level TCP stats for this run (can happen behind certain proxies/VPNs that strip response headers) — the fields above are left blank rather than guessed.';
+        }
+        elAdvanced.hidden = false;
 
         setStatus('Done.');
         fetchMeta();
@@ -3268,6 +3847,222 @@ AP Groups                   &rarr;  Policy Tag + Site Tag + RF Tag (structural, 
     }
 
     startBtn.addEventListener('click', runTest);
+  })();
+
+  // --- Channel & regulatory lookup: pure arithmetic, no network calls.
+  (function initChannelLookup() {
+    const input = document.getElementById('ch-input');
+    if (!input) return;
+    const elFreq = document.getElementById('ch-freq');
+    const elBand = document.getElementById('ch-band');
+    const elUnii = document.getElementById('ch-unii');
+    const elNote = document.getElementById('ch-note');
+
+    function lookup(ch) {
+      ch = Number(ch);
+      if (!Number.isFinite(ch) || ch < 1) {
+        elFreq.textContent = '—'; elBand.textContent = '—'; elUnii.textContent = '—';
+        elNote.textContent = 'Enter a valid channel number.';
+        return;
+      }
+      let freq, band, unii = '—', note = '';
+      if (ch === 14) {
+        freq = 2484; band = '2.4 GHz'; unii = 'N/A (Japan only, 802.11b only)';
+      } else if (ch >= 1 && ch <= 13) {
+        freq = 2407 + 5 * ch; band = '2.4 GHz';
+        unii = [1, 6, 11].includes(ch) ? 'Non-overlapping at 20 MHz' : 'Overlaps an adjacent channel at 20 MHz';
+      } else if (ch >= 36 && ch <= 181) {
+        freq = 5000 + 5 * ch; band = '5 GHz';
+        if (ch >= 36 && ch <= 48) unii = 'UNII-1 — no DFS';
+        else if (ch >= 52 && ch <= 64) unii = 'UNII-2 — DFS required';
+        else if (ch >= 100 && ch <= 144) unii = 'UNII-2C — DFS required';
+        else if (ch >= 149 && ch <= 165) unii = 'UNII-3 — no DFS';
+        else if (ch >= 169 && ch <= 181) unii = 'UNII-4 — no DFS (US)';
+        else { unii = 'Not a standard 5 GHz channel'; note = 'This channel number falls in a gap between defined 5 GHz UNII bands.'; }
+      } else if (ch >= 1 && ch <= 233) {
+        // 6 GHz uses the same 1-233 numbering space as a different band; only
+        // unambiguous when combined with band context, so this branch only
+        // fires for channel numbers that can't be 2.4/5GHz (>181, odd-only plan)
+        freq = 5950 + 5 * ch; band = '6 GHz';
+        unii = 'No DFS — AFC required only for Standard Power mode';
+      } else {
+        freq = null; band = 'Out of range'; unii = '—';
+        note = 'No standard 802.11 channel plan uses this number.';
+      }
+      elFreq.textContent = freq != null ? freq : '—';
+      elBand.textContent = band;
+      elUnii.textContent = unii;
+      elNote.textContent = note || 'Channel numbers above 181 and below 233 could be either an extended 5GHz allocation or 6GHz depending on your regulatory domain — confirm band from your AP\'s actual radio assignment, not the number alone, in that overlap zone.';
+    }
+
+    input.addEventListener('input', () => lookup(input.value));
+    lookup(input.value);
+  })();
+
+  // --- PoE budget calculator: pure arithmetic, no network calls.
+  (function initPoeCalc() {
+    const countInput = document.getElementById('poe-count');
+    if (!countInput) return;
+    const classSelect = document.getElementById('poe-class');
+    const budgetInput = document.getElementById('poe-budget');
+    const elDemand = document.getElementById('poe-demand');
+    const elHeadroom = document.getElementById('poe-headroom');
+    const elFits = document.getElementById('poe-fits');
+    const elNote = document.getElementById('poe-note');
+
+    function calc() {
+      const count = Number(countInput.value) || 0;
+      const perAp = Number(classSelect.value) || 0;
+      const budget = Number(budgetInput.value) || 0;
+      const demand = count * perAp;
+      const headroom = budget - demand;
+      elDemand.textContent = demand.toFixed(1);
+      elHeadroom.textContent = headroom.toFixed(1);
+      if (budget <= 0) {
+        elFits.textContent = '—';
+        elNote.textContent = 'Enter your switch/stack\'s total PoE budget to compare.';
+      } else if (headroom >= 0) {
+        elFits.textContent = 'Yes';
+        elNote.textContent = `${((demand / budget) * 100).toFixed(0)}% of budget used, sized against full nameplate class draw (the conservative figure, not real-world average draw).`;
+      } else {
+        elFits.textContent = 'No — over budget';
+        elNote.textContent = `Demand exceeds budget by ${Math.abs(headroom).toFixed(1)}W at full nameplate class draw. Real-world draw is usually lower, but the switch negotiates and reserves by class, not actual consumption — don't plan to run over budget on paper.`;
+      }
+    }
+
+    [countInput, classSelect, budgetInput].forEach(el => el.addEventListener('input', calc));
+    calc();
+  })();
+
+  // --- Egress / ASN lookup: real network calls to Cloudflare's trace endpoint
+  // and RIPE NCC's public RIPEstat API (RIPEstat is the public data service of
+  // one of the five Regional Internet Registries — real routing-registry data,
+  // not a third-party geolocation guess).
+  (function initAsnLookup() {
+    const startBtn = document.getElementById('asn-start');
+    if (!startBtn) return;
+    const elIp = document.getElementById('asn-ip');
+    const elNumber = document.getElementById('asn-number');
+    const elHolder = document.getElementById('asn-holder');
+    const elPrefix = document.getElementById('asn-prefix');
+    const elStatus = document.getElementById('asn-status');
+
+    async function run() {
+      startBtn.disabled = true;
+      elIp.textContent = '—'; elNumber.textContent = '—'; elHolder.textContent = '—'; elPrefix.textContent = '—';
+      elStatus.textContent = 'Finding your public egress IP…';
+      try {
+        const traceRes = await fetch('https://speed.cloudflare.com/cdn-cgi/trace', { cache: 'no-store' });
+        const traceText = await traceRes.text();
+        const fields = {};
+        traceText.trim().split('\n').forEach(line => { const [k, v] = line.split('='); if (k) fields[k] = v; });
+        const ip = fields.ip;
+        if (!ip) throw new Error('no-ip');
+        elIp.textContent = ip;
+
+        elStatus.textContent = 'Querying RIPEstat for ASN/prefix…';
+        const netInfoRes = await fetch(`https://stat.ripe.net/data/network-info/data.json?resource=${encodeURIComponent(ip)}`, { cache: 'no-store' });
+        const netInfo = await netInfoRes.json();
+        const asns = netInfo && netInfo.data && netInfo.data.asns;
+        const prefix = netInfo && netInfo.data && netInfo.data.prefix;
+        if (prefix) elPrefix.textContent = prefix;
+        if (!asns || !asns.length) {
+          elStatus.textContent = 'Got your IP, but RIPEstat returned no ASN for it (can happen for some private-range or CGNAT paths).';
+          return;
+        }
+        const asn = asns[0];
+        elNumber.textContent = `AS${asn}`;
+
+        const overviewRes = await fetch(`https://stat.ripe.net/data/as-overview/data.json?resource=AS${asn}`, { cache: 'no-store' });
+        const overview = await overviewRes.json();
+        const holder = overview && overview.data && overview.data.holder;
+        elHolder.textContent = holder || '(name not available)';
+        elStatus.textContent = 'Done.';
+      } catch (err) {
+        elStatus.textContent = 'Lookup failed — check your connection, or an extension/firewall may be blocking speed.cloudflare.com or stat.ripe.net.';
+      } finally {
+        startBtn.disabled = false;
+      }
+    }
+
+    startBtn.addEventListener('click', run);
+  })();
+
+  // --- MAC vendor (OUI) lookup: fetches Wireshark's manuf file once, caches it
+  // in localStorage for 7 days (the file's own publisher asks not to re-fetch
+  // more often than weekly), then does lookups entirely from the cached copy.
+  (function initOuiLookup() {
+    const startBtn = document.getElementById('oui-start');
+    if (!startBtn) return;
+    const input = document.getElementById('oui-input');
+    const elVendor = document.getElementById('oui-vendor');
+    const elStatus = document.getElementById('oui-status');
+
+    const CACHE_KEY = 'oui-manuf-cache-v1';
+    const CACHE_MS = 7 * 24 * 60 * 60 * 1000;
+
+    function normalizeMac(raw) {
+      return raw.toUpperCase().replace(/[^0-9A-F]/g, '');
+    }
+
+    async function getManufText() {
+      try {
+        const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+        if (cached && cached.fetchedAt && (Date.now() - cached.fetchedAt) < CACHE_MS) {
+          return cached.text;
+        }
+      } catch (_) { /* corrupt cache, refetch */ }
+      const res = await fetch('https://www.wireshark.org/download/automated/data/manuf', { cache: 'no-store' });
+      const text = await res.text();
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ fetchedAt: Date.now(), text })); } catch (_) { /* storage full/unavailable — still works, just refetches next time */ }
+      return text;
+    }
+
+    function findVendor(manufText, macHex) {
+      const lines = manufText.split('\n');
+      // Try longest-prefix match first (manuf file has /36, /28, /24-equivalent entries)
+      const candidates = [macHex.slice(0, 9), macHex.slice(0, 7), macHex.slice(0, 6)];
+      for (const line of lines) {
+        if (!line || line.startsWith('#')) continue;
+        const parts = line.split('\t').filter(Boolean);
+        if (!parts.length) continue;
+        const prefix = parts[0].replace(/[^0-9A-Fa-f]/g, '').toUpperCase();
+        for (const cand of candidates) {
+          if (prefix === cand) return parts[2] || parts[1] || null;
+        }
+      }
+      return null;
+    }
+
+    async function run() {
+      const macHex = normalizeMac(input.value || '');
+      if (macHex.length < 6) {
+        elStatus.textContent = 'Enter at least the first 3 octets (6 hex characters) of a MAC address.';
+        return;
+      }
+      startBtn.disabled = true;
+      elVendor.textContent = '—';
+      elStatus.textContent = 'Loading vendor registry…';
+      try {
+        const manufText = await getManufText();
+        elStatus.textContent = 'Looking up…';
+        const vendor = findVendor(manufText, macHex);
+        if (vendor) {
+          elVendor.textContent = vendor;
+          elStatus.textContent = 'Matched from the IEEE OUI registry (via Wireshark\'s mirror).';
+        } else {
+          elVendor.textContent = 'No match found';
+          elStatus.textContent = 'This prefix isn\'t in the registry — could be a locally-administered/randomized MAC (common on modern phones for privacy), not necessarily an error.';
+        }
+      } catch (err) {
+        elStatus.textContent = 'Lookup failed — check your connection, or an extension/firewall may be blocking wireshark.org.';
+      } finally {
+        startBtn.disabled = false;
+      }
+    }
+
+    startBtn.addEventListener('click', run);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') run(); });
   })();
 </script>
 
