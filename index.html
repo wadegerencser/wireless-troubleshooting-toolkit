@@ -201,31 +201,6 @@
     max-width: 54ch;
     margin: 0 0 28px;
   }
-  .readout-row {
-    display: flex;
-    gap: 1px;
-    background: var(--line);
-    border: 1px solid var(--line);
-    margin-bottom: 32px;
-  }
-  .readout {
-    flex: 1;
-    background: var(--ink-0);
-    padding: 14px 16px;
-  }
-  .readout .num {
-    font-family: "Space Grotesk", sans-serif;
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--signal);
-    line-height: 1;
-  }
-  .readout .label {
-    font-size: 11px;
-    color: var(--mist-dim);
-    margin-top: 5px;
-  }
-
   /* Datasheet header for each topic */
   .sheet-head {
     display: flex;
@@ -430,6 +405,44 @@
   .ts-restart { border-color: var(--line); color: var(--mist-dim); }
   .ts-restart:hover { border-color: var(--mist-dim); color: var(--mist); }
 
+  #speedtest-start:disabled { opacity: 0.5; cursor: default; }
+  .speedtest-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .speedtest-metric {
+    background: var(--ink-0);
+    padding: 16px 14px;
+    text-align: center;
+  }
+  .speedtest-label {
+    font-size: 11px;
+    color: var(--mist-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .speedtest-value {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--signal);
+    line-height: 1.4;
+    margin-top: 4px;
+  }
+  .speedtest-unit { font-size: 11px; color: var(--mist-dim); }
+  .speedtest-status {
+    font-size: 12.5px;
+    color: var(--mist-dim);
+    margin: 14px 0 0;
+    min-height: 1.4em;
+  }
+  @media (max-width: 760px) {
+    .speedtest-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
   @media (max-width: 760px) {
     body { flex-direction: column; }
     nav { width: 100%; border-right: none; border-bottom: 1px solid var(--line); max-height: 50vh; }
@@ -462,6 +475,10 @@
       <button class="rack-unit" data-topic="troubleshooter">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/><circle cx="12" cy="12" r="3"/></svg>
         <span>Troubleshoot by symptom</span>
+      </button>
+      <button class="rack-unit" data-topic="speedtest">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20a8 8 0 100-16 8 8 0 000 16z"/><path d="M12 12l4-4"/><path d="M12 8v1M12 15v1M8 12H7M17 12h-1"/></svg>
+        <span>Speed test</span>
       </button>
     </div>
 
@@ -588,12 +605,6 @@
     <h2>Cisco Wireless Troubleshooting Toolkit</h2>
     <p class="lede">A platform-implementation reference for engineers supporting Cisco's wireless portfolio — Catalyst 9800, Meraki, AireOS, Mobility Express, outdoor mesh, and location services. Each finding is marked by its level of confirmation, so documented behavior can be distinguished from inference that still requires validation through TAC or Bug Search.</p>
 
-    <div class="readout-row">
-      <div class="readout"><div class="num">21</div><div class="label">topics covered</div></div>
-      <div class="readout"><div class="num">50+</div><div class="label">documented findings</div></div>
-      <div class="readout"><div class="num">35+</div><div class="label">flagged inference / unconfirmed</div></div>
-    </div>
-
     <h3>How confidence is marked</h3>
     <p>Three statuses appear throughout this guide, next to every claim that isn't plain fact:</p>
     <div class="panel good"><p><span class="status good"><span class="sw"></span>Documented</span> &mdash; confirmed directly from a cited Cisco source: a config guide, a TAC troubleshooting doc, a DevNet reference, or Cisco Press.</p></div>
@@ -619,6 +630,78 @@
     <p>This walks the same documented findings as the rest of the guide, just reached by symptom instead of by platform. Nothing here is a new claim &mdash; every stop links back to its full writeup and sources.</p>
 
     <div id="ts-root" aria-live="polite"></div>
+  </div>
+
+  <!-- SPEED TEST -->
+  <div class="topic" id="speedtest">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20a8 8 0 100-16 8 8 0 000 16z"/><path d="M12 12l4-4"/><path d="M12 8v1M12 15v1M8 12H7M17 12h-1"/></svg>
+      <div>
+        <h2>Wireless speed test</h2>
+        <div class="conf">download, upload &amp; latency, run from this device right now</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p>This measures the throughput and latency this browser is actually getting right now &mdash; useful as a first data point before diving into any of the topics above. It can't see RSSI, channel, or PHY rate; a browser has no access to that layer on any OS. See <strong>Pulling your own connection details</strong> below the results for how to get that from the OS directly.</p>
+    </div>
+
+    <div id="speedtest-root">
+      <button type="button" id="speedtest-start" class="ts-jump" style="margin-bottom: 20px;">Run test</button>
+      <div class="speedtest-grid">
+        <div class="speedtest-metric">
+          <div class="speedtest-label">Download</div>
+          <div class="speedtest-value" id="st-download">&mdash;</div>
+          <div class="speedtest-unit">Mbps</div>
+        </div>
+        <div class="speedtest-metric">
+          <div class="speedtest-label">Upload</div>
+          <div class="speedtest-value" id="st-upload">&mdash;</div>
+          <div class="speedtest-unit">Mbps</div>
+        </div>
+        <div class="speedtest-metric">
+          <div class="speedtest-label">Latency</div>
+          <div class="speedtest-value" id="st-latency">&mdash;</div>
+          <div class="speedtest-unit">ms</div>
+        </div>
+        <div class="speedtest-metric">
+          <div class="speedtest-label">Jitter</div>
+          <div class="speedtest-value" id="st-jitter">&mdash;</div>
+          <div class="speedtest-unit">ms</div>
+        </div>
+      </div>
+      <p id="speedtest-status" class="speedtest-status" aria-live="polite"></p>
+      <div id="speedtest-meta" class="panel caution" hidden>
+        <p id="speedtest-meta-text"></p>
+      </div>
+    </div>
+
+    <h3>What this does and doesn't tell you</h3>
+    <ul>
+      <li><strong>Download/upload</strong> &mdash; real throughput to a nearby Cloudflare edge node, over HTTPS, from this browser tab. It reflects the whole path: Wi-Fi link, LAN, router, and the ISP uplink &mdash; not Wi-Fi in isolation. A slow result here doesn't by itself tell you which hop is the bottleneck.</li>
+      <li><strong>Latency/jitter</strong> &mdash; round-trip time and its variance to that same edge node. High jitter with otherwise fine throughput is a classic sign of airtime contention or a congested channel, worth cross-checking against the <a href="#" data-topic-link="qos-voice">QoS &amp; voice/video</a> section.</li>
+      <li><strong>Not measured, and not measurable from any browser on any OS:</strong> RSSI, SNR, channel, channel width, PHY mode (802.11n/ac/ax/be), MCS index, spatial streams, or negotiated Tx rate. Browsers deliberately have no API for this &mdash; it's an OS/driver privacy boundary, not a limitation of this page specifically.</li>
+    </ul>
+
+    <h3>Pulling your own connection details</h3>
+    <p>To get the radio-level detail a speed test can't show (what this looks like on a Mac, as an example):</p>
+    <table>
+      <tr><th>Platform</th><th>How</th></tr>
+      <tr><td>macOS</td><td>Option-click the Wi-Fi icon in the menu bar &mdash; shows RSSI, noise, Tx rate, PHY mode, MCS index, channel, and security directly, no extra app needed.</td></tr>
+      <tr><td>Windows</td><td><code>netsh wlan show interfaces</code> in a terminal &mdash; signal %, channel, radio type, and transmit/receive rate.</td></tr>
+      <tr><td>iOS</td><td>No built-in detailed view; a third-party Wi-Fi analyzer app is required for RSSI/channel detail.</td></tr>
+      <tr><td>Android</td><td>Settings &gt; Wi-Fi &gt; tap the connected network for signal strength and link speed; a Wi-Fi analyzer app for channel/band detail.</td></tr>
+      <tr><td>Cisco 9800 (network-side)</td><td><code>show wireless client mac-address &lt;mac&gt; detail</code> &mdash; gives the controller's own view of that client's RSSI, SNR, data rate, and PHY mode, independent of what the client itself reports.</td></tr>
+    </table>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>speed.cloudflare.com (public, CORS-open test endpoints — the same infrastructure speed.cloudflare.com's own UI uses)</li>
+        <li>developer.apple.com — Wi-Fi diagnostics menu-bar detail (Option-click)</li>
+        <li>learn.microsoft.com/windows-server/networking/technologies/netsh/netsh-wlan</li>
+      </ul>
+    </div>
   </div>
 
   <!-- AP JOIN -->
@@ -3056,6 +3139,136 @@ AP Groups                   &rarr;  Policy Tag + Site Tag + RF Tag (structural, 
   }
 
   if (tsRoot) tsStart();
+
+  // --- Cross-reference links inside topic prose (e.g. "see the QoS section")
+  document.querySelectorAll('[data-topic-link]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigateTo(a.dataset.topicLink);
+    });
+  });
+
+  // --- Speed test: real download/upload/latency against Cloudflare's public,
+  // CORS-open test endpoints (the same infrastructure speed.cloudflare.com's
+  // own UI calls). No server of our own, no library — plain fetch.
+  (function initSpeedTest() {
+    const startBtn = document.getElementById('speedtest-start');
+    if (!startBtn) return;
+
+    const BASE = 'https://speed.cloudflare.com';
+    const elDownload = document.getElementById('st-download');
+    const elUpload = document.getElementById('st-upload');
+    const elLatency = document.getElementById('st-latency');
+    const elJitter = document.getElementById('st-jitter');
+    const elStatus = document.getElementById('speedtest-status');
+    const elMeta = document.getElementById('speedtest-meta');
+    const elMetaText = document.getElementById('speedtest-meta-text');
+
+    function setStatus(text) { elStatus.textContent = text; }
+
+    function randomBlob(bytes) {
+      const chunk = new Uint8Array(65536);
+      const parts = [];
+      let remaining = bytes;
+      while (remaining > 0) {
+        const size = Math.min(remaining, chunk.length);
+        crypto.getRandomValues(chunk);
+        parts.push(chunk.slice(0, size));
+        remaining -= size;
+      }
+      return new Blob(parts);
+    }
+
+    async function measureLatency() {
+      const samples = [];
+      for (let i = 0; i < 6; i++) {
+        const t0 = performance.now();
+        await fetch(`${BASE}/cdn-cgi/trace?cb=${Math.random()}`, { cache: 'no-store' });
+        samples.push(performance.now() - t0);
+      }
+      samples.shift(); // discard first (connection warm-up)
+      const sorted = [...samples].sort((a, b) => a - b);
+      const median = sorted[Math.floor(sorted.length / 2)];
+      let jitterTotal = 0;
+      for (let i = 1; i < samples.length; i++) jitterTotal += Math.abs(samples[i] - samples[i - 1]);
+      const jitter = samples.length > 1 ? jitterTotal / (samples.length - 1) : 0;
+      return { latency: median, jitter };
+    }
+
+    async function measureThroughput({ method, bytes, streams }) {
+      const t0 = performance.now();
+      const requests = [];
+      for (let i = 0; i < streams; i++) {
+        if (method === 'download') {
+          requests.push(
+            fetch(`${BASE}/__down?bytes=${bytes}&cb=${Math.random()}`, { cache: 'no-store' })
+              .then(r => r.blob())
+          );
+        } else {
+          requests.push(
+            fetch(`${BASE}/__up?cb=${Math.random()}`, {
+              method: 'POST',
+              body: randomBlob(bytes),
+              cache: 'no-store',
+            })
+          );
+        }
+      }
+      await Promise.all(requests);
+      const seconds = (performance.now() - t0) / 1000;
+      const totalBits = bytes * streams * 8;
+      return totalBits / seconds / 1e6; // Mbps
+    }
+
+    async function fetchMeta() {
+      try {
+        const res = await fetch(`${BASE}/cdn-cgi/trace?cb=${Math.random()}`, { cache: 'no-store' });
+        const text = await res.text();
+        const fields = {};
+        text.trim().split('\n').forEach(line => {
+          const [k, v] = line.split('=');
+          if (k) fields[k] = v;
+        });
+        if (fields.colo) {
+          elMetaText.textContent = `Measured against Cloudflare's ${fields.colo} edge location${fields.loc ? ` (${fields.loc})` : ''} — not your ISP's own speed-test server, so treat this as a reasonable proxy, not an exact match to speedtest.net.`;
+          elMeta.hidden = false;
+        }
+      } catch (_) { /* meta is a nice-to-have, not required */ }
+    }
+
+    async function runTest() {
+      startBtn.disabled = true;
+      elDownload.textContent = '—';
+      elUpload.textContent = '—';
+      elLatency.textContent = '—';
+      elJitter.textContent = '—';
+      elMeta.hidden = true;
+
+      try {
+        setStatus('Testing latency…');
+        const { latency, jitter } = await measureLatency();
+        elLatency.textContent = latency.toFixed(0);
+        elJitter.textContent = jitter.toFixed(1);
+
+        setStatus('Testing download…');
+        const down = await measureThroughput({ method: 'download', bytes: 6_000_000, streams: 4 });
+        elDownload.textContent = down.toFixed(1);
+
+        setStatus('Testing upload…');
+        const up = await measureThroughput({ method: 'upload', bytes: 3_000_000, streams: 3 });
+        elUpload.textContent = up.toFixed(1);
+
+        setStatus('Done.');
+        fetchMeta();
+      } catch (err) {
+        setStatus('Test failed — check your connection, or an extension/firewall may be blocking speed.cloudflare.com.');
+      } finally {
+        startBtn.disabled = false;
+      }
+    }
+
+    startBtn.addEventListener('click', runTest);
+  })();
 </script>
 
 </body>
