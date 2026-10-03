@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cisco Wireless Engineering Reference</title>
+<title>Cisco Wireless Troubleshooting Toolkit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -416,7 +416,7 @@
   <div class="nav-head">
     <div class="mark">
       <span class="dot"></span>
-      <h1>Wireless Engineering Reference</h1>
+      <h1>Wireless Troubleshooting Toolkit</h1>
     </div>
     <p>Cisco platform troubleshooting, organized by architecture — RF theory is out of scope</p>
   </div>
@@ -489,7 +489,7 @@
       <div class="rack-label">Location services</div>
       <button class="rack-unit" data-topic="location">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="13" width="6" height="5"/><path d="M8 10a4 4 0 018 0M6 7a7 7 0 0112 0"/></svg>
-        <span>CMX &amp; Cisco Spaces</span><span class="count">4</span>
+        <span>CMX &amp; Cisco Spaces</span><span class="count">6</span>
       </button>
     </div>
 
@@ -497,15 +497,15 @@
       <div class="rack-label">Cross-platform operations</div>
       <button class="rack-unit" data-topic="ha-sso">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="7" height="16" rx="1"/><rect x="14" y="4" width="7" height="16" rx="1"/><path d="M10 9h4M10 15h4"/></svg>
-        <span>HA SSO &amp; N+1</span><span class="count">5</span>
+        <span>HA SSO &amp; N+1</span><span class="count">7</span>
       </button>
       <button class="rack-unit" data-topic="exclusion">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M8 8l8 8"/></svg>
-        <span>Client exclusion &amp; rogues</span><span class="count">4</span>
+        <span>Client exclusion &amp; rogues</span><span class="count">5</span>
       </button>
       <button class="rack-unit" data-topic="supplicant">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/><path d="M11 7.5h4M16 11v2"/></svg>
-        <span>802.1X supplicant-side</span><span class="count">5</span>
+        <span>802.1X supplicant-side</span><span class="count">6</span>
       </button>
       <button class="rack-unit" data-topic="multicast">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="7" r="2"/><circle cx="6" cy="17" r="2"/><circle cx="18" cy="12" r="2"/><path d="M8 7h4a4 4 0 014 4M8 17h4a4 4 0 004-4"/></svg>
@@ -517,7 +517,7 @@
       </button>
       <button class="rack-unit" data-topic="ntp-certs">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.5 2"/></svg>
-        <span>NTP &amp; certificate time</span><span class="count">4</span>
+        <span>NTP &amp; certificate time</span><span class="count">6</span>
       </button>
       <button class="rack-unit" data-topic="issu">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7a8 8 0 0113-5M20 17a8 8 0 01-13 5"/><path d="M4 2v5h5M20 22v-5h-5"/></svg>
@@ -525,7 +525,11 @@
       </button>
       <button class="rack-unit" data-topic="poe">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 2v6M12 2v6M17 2v6M5 8h14l-1.5 7a5 5 0 01-5 4h-1a5 5 0 01-5-4L5 8z"/></svg>
-        <span>PoE &amp; AP power</span><span class="count">5</span>
+        <span>PoE &amp; AP power</span><span class="count">9</span>
+      </button>
+      <button class="rack-unit" data-topic="l2-switching">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="4" rx="1"/><rect x="3" y="15" width="18" height="4" rx="1"/><path d="M7 9v6M12 9v6M17 9v6"/></svg>
+        <span>Layer 2 switching for AP uplinks</span><span class="count">6</span>
       </button>
     </div>
 
@@ -545,13 +549,13 @@
 
   <!-- OVERVIEW -->
   <div class="topic active hero" id="overview">
-    <h2>Cisco Wireless Engineering Reference</h2>
+    <h2>Cisco Wireless Troubleshooting Toolkit</h2>
     <p class="lede">A platform-implementation reference for engineers supporting Cisco's wireless portfolio — Catalyst 9800, Meraki, AireOS, Mobility Express, outdoor mesh, and location services. Each finding is marked by its level of confirmation, so documented behavior can be distinguished from inference that still requires validation through TAC or Bug Search.</p>
 
     <div class="readout-row">
-      <div class="readout"><div class="num">15</div><div class="label">topics covered</div></div>
-      <div class="readout"><div class="num">70+</div><div class="label">documented findings</div></div>
-      <div class="readout"><div class="num">25+</div><div class="label">flagged inference / unconfirmed</div></div>
+      <div class="readout"><div class="num">16</div><div class="label">topics covered</div></div>
+      <div class="readout"><div class="num">85+</div><div class="label">documented findings</div></div>
+      <div class="readout"><div class="num">20+</div><div class="label">flagged inference / unconfirmed</div></div>
     </div>
 
     <h3>How confidence is marked</h3>
@@ -715,14 +719,17 @@ debug wireless mac &lt;mac&gt; monitor-time &lt;sec&gt;</pre>
       <p><span class="status good"><span class="sw"></span>documented</span> as intentional. Cisco's CWA chapter says CWA "initiates user redirection and authentication at Layer 2, often in combination with MAC filtering or 802.1X authentication." Dot1x-then-webauth is sanctioned design, not an accidental overlap.</p>
     </div>
 
-    <h3>Open documentation gaps</h3>
+    <h3>Open documentation gaps &mdash; confirmed unresolved across two research passes</h3>
     <table>
       <tr><th>Question</th><th>Status</th></tr>
       <tr><td>Does the FT PMK cache survive while a client sits in CWA / <code>WEBAUTH_REQUIRED</code>?</td><td><span class="status alert"><span class="sw"></span>gap</span></td></tr>
       <tr><td>Does the session-timeout timer reset on an FT roam, or keep ticking from the original association?</td><td><span class="status alert"><span class="sw"></span>unconfirmed</span></td></tr>
-      <tr><td>Is "Invalid PMKID" after a roam a mobility/anchor cache-sync defect, not an AAA issue?</td><td><span class="status alert"><span class="sw"></span>unconfirmed</span></td></tr>
-      <tr><td>Does Cisco discourage pairing 802.11r with CWA/guest portals?</td><td><span class="status alert"><span class="sw"></span>no statement found</span></td></tr>
+      <tr><td>Is "Invalid PMKID" after a roam a mobility/anchor cache-sync defect, not an AAA issue?</td><td><span class="status alert"><span class="sw"></span>unconfirmed &mdash; Bug Search Tool is login-gated, blocked both passes</span></td></tr>
+      <tr><td>Does Cisco discourage pairing 802.11r with CWA/guest portals?</td><td><span class="status alert"><span class="sw"></span>no statement found &mdash; neither chapter references the other feature at all</span></td></tr>
     </table>
+    <div class="panel caution">
+      <p>A second independent research pass re-checked the current 9800 17.12 Fast Transition and CWA/webauth chapters directly. The FT chapter's full restrictions list (LEAP unsupported, TSPEC unsupported, legacy-client association limits, max three FT handshakes with different APs, FT-SAE over-the-DS unsupported in FlexConnect local auth) contains no mention of CWA or web-auth. The webauth chapters contain only a generic, non-roam-specific statement on session timeout: "The switch applies either the session timeout configured locally or provided by the server." Treat these four questions as genuinely undocumented by Cisco, not merely unresearched &mdash; the next step for any of them is a live lab reproduction or a logged-in Bug Search / TAC case, not another documentation search.</p>
+    </div>
 
     <h3>Field recommendation <span class="status caution"><span class="sw"></span>inference</span></h3>
     <p>If a client completes an FT roam, gets deleted seconds later with an AUTH_EXPIRED-style reason, retries FT and fails with <code>Invalid PMKID</code>, then recovers via full 802.1X &mdash; escalate the deletion timing, not the PMKID failure. The PMKID failure is downstream, not the trigger.</p>
@@ -730,8 +737,9 @@ debug wireless mac &lt;mac&gt; monitor-time &lt;sec&gt;</pre>
     <div class="sources">
       <h3>Sources</h3>
       <ul>
-        <li>cisco.com/.../m_fast_transition_ewlc.html</li>
-        <li>cisco.com/.../m_vewlc_central_web_authentication.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_fast_transition_ewlc.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_vewlc_central_web_authentication.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_vewlc_sec_webauth_cg.html</li>
         <li>developer.cisco.com/docs/wireless-troubleshooting-tools/client-delete-reasons/</li>
       </ul>
     </div>
@@ -1078,9 +1086,13 @@ nmsp cloud-services server url &lt;url&gt;
 nmsp cloud-services server token &lt;token&gt;</pre>
     <p>For on-prem CMX instead: NMSP (TCP port 16113) must be open between the controller and the CMX appliance. <code>show nmsp status</code> verifies the connection either way.</p>
 
-    <h3>What's not confirmed</h3>
+    <h3>Cisco Spaces licensing tiers</h3>
+    <div class="panel caution">
+      <p><span class="status caution"><span class="sw"></span>documented, not verbatim-verified</span> &mdash; Cisco publishes three Spaces tiers at spaces.cisco.com/packages/: <strong>Advantage</strong> (bundled into unified/Meraki licensing or added to DNA-Advantage; AI-maps, indoor location, occupancy, Wi-Fi onboarding, Spaces API/data export, Space Utilization Analytics), <strong>Premier</strong> (adds indoor turn-by-turn navigation, space-explorer kiosks, smart desking &mdash; "everything in Advantage" plus those), and a <strong>Collaboration</strong> tier (turns Cisco collaboration devices and the wireless network into sensors &mdash; "everything in Advantage &amp; Premier"). This was retrieved via a summarized fetch rather than raw HTML, so treat the tier names and feature lists as high-confidence but re-check the live page before quoting exact wording to a customer.</p>
+    </div>
+    <h3>Cisco Spaces Connector</h3>
     <div class="panel alert">
-      <p><span class="status alert"><span class="sw"></span>unconfirmed</span> &mdash; license-tier requirements for Cisco Spaces and a dedicated "Cisco Spaces Connector" appliance guide weren't reachable in this research pass. Don't rely on this guide for licensing specifics; confirm against current Cisco documentation directly before quoting a tier to anyone.</p>
+      <p><span class="status alert"><span class="sw"></span>partially confirmed</span> &mdash; a real, current Connector doc tree exists (on-prem appliance bridging infrastructure to the Spaces cloud, now on "Connector 3," service-oriented/modular architecture). The specific Configuration/Deployment Guide with OVA sizing and ordering detail could not be reached directly &mdash; every guessed exact URL 404'd. Start from the confirmed-live installation-guides index rather than guessing a path, since Cisco's Spaces doc URLs shift frequently: cisco.com/c/en/us/support/wireless/dna-spaces/products-installation-guides-list.html</p>
     </div>
 
     <div class="sources">
@@ -1089,6 +1101,9 @@ nmsp cloud-services server token &lt;token&gt;</pre>
         <li>cisco.com/c/en/us/td/docs/wireless/controller/8-10/config-guide/b_cg810/location_services.html</li>
         <li>cisco.com/c/en/us/td/docs/wireless/mse/10-6/cmx_config/b_cg_cmx106/the_cisco_cmx_detect_and_locate_service.html</li>
         <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_cmx_cloud.html</li>
+        <li>spaces.cisco.com/packages/</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/spaces/connector/article/m-migrating.html</li>
+        <li>cisco.com/c/en/us/support/wireless/dna-spaces/products-installation-guides-list.html</li>
       </ul>
     </div>
   </div>
@@ -1125,7 +1140,22 @@ test wireless redundancy packetdump start
 test wireless redundancy rping</pre>
     <div class="panel caution">
       <p>Documented caveat on <code>show chassis</code>: "When the peer timeout and retries are configured, the <code>show chassis ha-status</code> command output may show incorrect values." Don't trust that field blindly if custom peer-timeout values are in play.</p>
-      <p><span class="status alert"><span class="sw"></span>unverified</span> &mdash; no 9800-specific sample output for <code>show redundancy states</code> could be confirmed in this research pass. The classic "Current Software state = ACTIVE/STANDBY HOT" phrasing is well known from the general IOS-XE redundancy framework, but it is not independently confirmed in a 9800-specific document. Verify directly against a live 9800 before quoting it as exact output.</p>
+    </div>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; the 9800's <code>show redundancy states</code> output is <strong>not</strong> the classic IOS/IOS-XR "Current Software state = ACTIVE" phrasing. The real field names are <code>my state</code> and <code>peer state</code>, each a numeric code with the human label appended after a dash:</p>
+      <pre>Device# show redundancy states
+my state = 13 -ACTIVE
+peer state = 8  -STANDBY HOT
+Mode = Duplex
+Unit = Primary
+Unit ID = 1
+Redundancy Mode (Operational) = sso
+Redundancy Mode (Configured) = sso
+Redundancy State = sso
+Maintenance Mode = Disabled
+Manual Swact = enabled
+Communications = Up</pre>
+      <p>On the standby unit, <code>Manual Swact</code> reads "cannot be initiated from this the standby unit" (Cisco's own grammar, not a transcription error) &mdash; a quick way to confirm which box you're actually logged into before issuing a swact.</p>
     </div>
 
     <h3>What a clean SSO actually preserves</h3>
@@ -1134,9 +1164,10 @@ test wireless redundancy rping</pre>
     </div>
     <p>What does <strong>not</strong> survive a switchover, documented explicitly: clients not yet in RUN state are removed, and purged entirely after 300 seconds if they haven't reconnected; NBAR flow state in local mode is lost; AVC flow context must be relearned; voice calls can't be recognized post-switchover because RTP/RTCP-based policy breaks; TCP sessions must re-establish; statistics tables aren't synchronized at all.</p>
 
-    <h3>N+1 — a terminology gap worth stating plainly</h3>
-    <div class="panel alert">
-      <p><span class="status alert"><span class="sw"></span>unconfirmed terminology</span> &mdash; the mechanism most engineers mean by "N+1" (AP failover to a separate standby controller, not a chassis pair) maps to Cisco's documented <strong>AP priming profile</strong> system: primary/secondary/tertiary controller statements pushed to APs via <code>priming-override</code>, mapped by name-regex filter or directly by AP MAC address. But the 9800 config guide itself never uses the term "N+1" for this mechanism &mdash; it reserves "N+1" for a separate, unrelated feature (rolling AP image upgrades across sites). Don't present the priming/N+1 equivalence as confirmed Cisco terminology; treat it as the closest documented mechanism, not a verified rename.</p>
+    <h3>N+1 — a terminology gap, now resolved with sourced nuance</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; the mechanism most engineers mean by "N+1" (AP failover to a separate standby controller, not a chassis pair) maps to Cisco's documented <strong>AP priming profile</strong> system: primary/secondary/tertiary controller statements pushed to APs via <code>priming-override</code>, mapped by name-regex filter or directly by AP MAC address. Confirmed directly against the 9800 config guide: the term "N+1" there primarily names the <strong>N+1 Hitless Rolling AP Upgrade</strong> feature &mdash; "a controller-assisted method that migrates APs to a temporary controller during upgrade, avoiding service disruption" &mdash; not chassis HA SSO.</p>
+      <p>The same chapter does use "N+1" once in a looser, redundancy-architecture sense, under "Best practices for N+1 redundancy deployments": "Use spare controllers in N+1 redundancy deployments to allow APs to fail over when the primary controller becomes non-operational. This approach ensures minimal network downtime, typically lasting 30 to 40 seconds, as APs discover and join the network in local mode." That's the spare-controller failover idea engineers mean &mdash; but Cisco never equates it with AP priming terminology in any reachable document. Treat "N+1" on the 9800 as the rolling-upgrade/spare-controller term, and AP priming as the separate, actual failover mechanism &mdash; related in effect, not the same documented concept.</p>
     </div>
     <p>Documented failover logic: an AP always returns to its primary once that controller is available again. Tertiary is only used if both primary and secondary are down, and if secondary recovers while primary is still down, the AP <strong>stays on tertiary</strong> &mdash; there's no mid-outage fallback to secondary.</p>
     <pre>show ap filters all type priming
@@ -1159,6 +1190,8 @@ show ap name &lt;ap-name&gt; config general | sec Priming   ! Priming Profile, O
       <ul>
         <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-9/config-guide/b_wl_17_9_cg/m_vewlc_high_availability.html</li>
         <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-9/config-guide/b_wl_17_9_cg/m_ap_fb_wlcs.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_vewlc_high_availability.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_hitless_upgrade.html</li>
       </ul>
     </div>
   </div>
@@ -1191,8 +1224,18 @@ show ap name &lt;ap-name&gt; config general | sec Priming   ! Priming Profile, O
     </div>
 
     <h3>Why this gets misdiagnosed as an active failure</h3>
-    <div class="panel alert">
-      <p><span class="status alert"><span class="sw"></span>unconfirmed field names</span> &mdash; this research could not confirm the exact <code>show wireless client mac-address &lt;mac&gt; detail</code> field name for exclusion state, nor an exact syslog string, on 9800/IOS-XE despite extensive attempts. What <em>is</em> documented is the exclusion-list mechanism itself: <code>show exclusionlist</code> lists MAC address, exclusion reason, and time remaining. A client that's actively failing right now will not appear in that list at all &mdash; a client that's been excluded will. That's the practical way to tell the two apart even without a confirmed field name: check the exclusion list first, before spending time on a live trace.</p>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; the exclusion-state field does <strong>not</strong> live where most engineers look first. <code>show wireless client mac-address &lt;mac&gt; detail</code> carries no exclusion field at all (confirmed against the full documented field list for that command). The real command is <code>show wireless exclusionlist client mac &lt;mac&gt; detail</code>, which documents exactly these fields:</p>
+      <pre>Device# show wireless exclusionlist client mac 12da.4820.cce9 detail
+Client State : Excluded
+Client MAC Address : 12da.4820.cce9
+Client IPv4 Address: 20.20.20.6
+Exclusion Reason : IP address theft
+AP Name: charlie2
+Wireless LAN Name: mhe-ewlc
+VLAN Id : 20</pre>
+      <p>A client that's actively failing right now will show up in neither the plain client-detail output nor the exclusion list with a current reason &mdash; a client that's been excluded will show <code>Client State : Excluded</code> here. Check this specific command first, before spending time on a live trace.</p>
+      <p><span class="status caution"><span class="sw"></span>community-sourced, not Cisco-documented</span> &mdash; a real-world controller log posted to Cisco Community shows the exclusion syslog facility as <code>%CLIENT_EXCLUSION_SERVER-5-ADD_TO_EXCLUSIONLIST_REASON_DYNAMIC</code>, e.g. "...was added to exclusion list associated with AP Name:AP013... reason:Wrong PSK." This string could not be located on any official Cisco documentation page &mdash; treat it as field-observed, not vendor-confirmed, until seen on your own box.</p>
     </div>
     <p>The failure pattern worth knowing by heart: fixed threshold &rarr; timed exclusion &rarr; client retries once the timer expires &rarr; same threshold trips again. From the outside this looks exactly like a continuous, unresolved auth failure. It is not currently failing — it's cycling through a timeout. <span class="status caution"><span class="sw"></span>inference</span>, consistent with the documented mechanics above but not a named Cisco troubleshooting pattern in any single source found.</p>
 
@@ -1223,6 +1266,8 @@ show wireless wps rogue rule summary</pre>
         <li>cisco.com/c/en/us/support/docs/lan-switching/8021x/214466-802-1x-client-exclusion-on-an-aireos-wlc.html</li>
         <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-9/config-guide/b_wl_17_9_cg/m_manage_rogue.html</li>
         <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-9/config-guide/b_wl_17_9_cg/m_classify_rogue_aps_ewlc.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-18/config-guide/b_wl_17_18_cg/m_ip_theft.html</li>
+        <li>community.cisco.com/t5/wireless/9800-cl-wlc-repeated-client-exclusion-for-wrong-psk/td-p/5013067 (community-sourced, not official docs)</li>
       </ul>
     </div>
   </div>
@@ -1261,8 +1306,11 @@ more bootflash:ra_trace_MAC_&lt;mac&gt;_*.log
 show wireless client mac-address &lt;mac&gt; detail | inc Policy Profile
 show logging profile wireless internal filter</pre>
     <p>Cisco's own distinction, stated directly: an EAP timeout (client never answers) is client-side; <code>"ACL acl-sent-by-ise is missing in configuration for mac"</code> or an EPM VLAN plug-in conflict — "the ACL/VLAN sent by the RADIUS server does not exist on 9800 WLC" — is server-side. That single line is the fastest way to know which team to involve before escalating.</p>
-    <div class="panel alert">
-      <p><span class="status alert"><span class="sw"></span>unverified</span> &mdash; the exact field name for Policy Manager State (or equivalent) inside <code>show wireless client mac-address &lt;mac&gt; detail</code> output could not be confirmed in this research pass despite repeated attempts across two independent research passes. If this field is load-bearing for your troubleshooting flow, confirm it against a live 9800 CLI reference directly.</p>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; <code>Policy Manager State</code> is a real, confirmed field in <code>show wireless client mac-address &lt;mac&gt; detail</code> output, after two research passes failed to pin it down. Sample output shows:</p>
+      <pre>Policy Manager State: Run
+Last Policy Manager State : IP Learn Complete</pre>
+      <p>A client stuck mid-CWA shows the transition state <code>Webauth_reqd</code> instead of <code>Run</code> &mdash; documented separately in Cisco's DNA Spaces captive-portal integration doc as the state the client policy manager moves to during web-auth redirect. That's the field to grep for when you need to know whether a client is actually stuck in web-auth versus everywhere else in the join sequence.</p>
     </div>
 
     <h3>The decision rule for not escalating prematurely</h3>
@@ -1277,6 +1325,9 @@ show logging profile wireless internal filter</pre>
         <li>cisco.com/c/en/us/support/docs/security/identity-services-engine/226277-troubleshooting-5440-endpoint.html</li>
         <li>cisco.com/c/en/us/support/docs/security/identity-services-engine/226150-troubleshoot-ise-3-4-vpn-and-radius.html</li>
         <li>cisco.com/c/en/us/support/docs/wireless/catalyst-9800-series-wireless-controllers/213949-wireless-debugging-and-log-collection-on.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-6/config-guide/b_wl_17_6_cg/m_client_roaming_policy_profile.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-15/config-guide/b_wl_17_15_cg/m-802-11w.html</li>
+        <li>cisco.com/c/en/us/support/docs/wireless/dna-spaces/215423-dna-spaces-captive-portal-with-9800-cont.html</li>
       </ul>
     </div>
   </div>
@@ -1331,7 +1382,7 @@ show mdns-sd statistics
 show mdns-sd ap</pre>
 
     <div class="panel alert">
-      <p><span class="status alert"><span class="sw"></span>unconfirmed</span> &mdash; no confirmed 9800-side AP debug command exists for "packet reached the AP but not the client" diagnosis; the AireOS equivalent is <code>debug ap command "show capwap mcast mgid all" &lt;AP&gt;</code>, but a direct 9800 equivalent couldn't be verified. Also unconfirmed: any Cisco statement that standard WLAN QoS profiles rate-limit multicast specifically — the one documented QoS-adjacent interaction found was Media Stream's own retry-percentage-driven demotion, not a general QoS policy effect.</p>
+      <p><span class="status alert"><span class="sw"></span>confirmed gap, two research passes</span> &mdash; the 9800 multicast config guide's own verification table lists WLC-side commands only (<code>show wireless multicast group summary</code>, <code>show ip igmp snooping wireless mgid</code>, <code>show ap multicast mom</code> for AP multicast-over-multicast receipt). No AP-side debug/trace command analogous to AireOS's <code>debug ap command "show capwap mcast mgid all" &lt;AP&gt;</code> exists in that document — this looks like a genuine capability gap, not just an unresearched one. Also still unconfirmed after a second pass: any Cisco statement that standard WLAN QoS profiles rate-limit multicast specifically — the only documented QoS-adjacent interaction remains Media Stream's own retry-percentage-driven demotion.</p>
     </div>
 
     <div class="sources">
@@ -1418,14 +1469,31 @@ show controllers dot11Radio 1 | begin EDCA         ! AP-side</pre>
     <pre>show ntp status          ! "Clock is synchronized, stratum 2, reference is 10.4.2.254"
 show ntp associations    ! * = synced/configured, # = selected but unsynced
 show clock detail</pre>
-    <p>A clock divergence beyond roughly 4000 seconds from the reference is Cisco's own documented threshold for flagging a real problem. <span class="status alert"><span class="sw"></span>gap</span> &mdash; no verified IOS-XE sample output for <code>show clock detail</code> specifically could be confirmed (an IOS-XR variant exists but is the wrong platform; don't substitute it).</p>
+    <p>A clock divergence beyond roughly 4000 seconds from the reference is Cisco's own documented threshold for flagging a real problem.</p>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; confirmed sample <code>show clock detail</code> output from Cisco's own IOS/IOS-XE Configuration Fundamentals Command Reference (general command surface, not a 9800-specific capture, but applies directly to IOS-XE):</p>
+      <pre>Router&gt; show clock detail
+15:29:03.158 PST Tue Feb 25 2003
+Time source is NTP</pre>
+      <p>Prefix symbols carry the real signal: no prefix = authoritative/in sync; <code>.</code> prefix = authoritative but NTP has since lost contact with all configured servers; <code>*</code> prefix = not authoritative, never synced or clock never set. Check for that leading <code>.</code> specifically &mdash; it's the signature of a clock that was fine and silently drifted.</p>
+    </div>
 
     <h3>The one confirmed syslog tie-in</h3>
     <div class="panel">
       <p>The 9800 Data DTLS guide documents a "MIC expiration bypass for AP join" feature alongside real CAPWAP cert-validation failure syslogs: <code>%DTLS_TRACE_MSG-3-WLC_DTLS_ERR...Certificate validation failed</code> and <code>%CAPWAPAC_SMGR_TRACE_MESSAGE-5-AP_JOIN_DISJOIN...cause: DTLS handshake error</code>. This confirms the mechanism exists and has real log output — it does not confirm that clock skew specifically (versus an actually-expired cert) is what triggers it.</p>
     </div>
-    <div class="panel alert">
-      <p><span class="status alert"><span class="sw"></span>unverified</span> &mdash; <code>%PKI-3-CERTIFICATE_INVALID_EXPIRED</code> and a corresponding not-yet-valid variant are plausible, commonly-cited PKI message IDs, but their exact text could not be confirmed on any live Cisco page this pass. Methodology to distinguish real expiry from skew-induced false rejection either way: compare <code>show clock detail</code> on the WLC, AP, and ISE against the NotBefore/NotAfter fields from <code>show crypto pki certificates</code> on each device.</p>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; confirmed verbatim in Cisco's System Error Messages Guide for Access and Edge Routers:</p>
+      <pre>%PKI-3-CERTIFICATE_INVALID_EXPIRED: Certificate chain validation has
+  failed. The certificate (SN: [chars]) has expired. Validity period
+  ended on [chars]
+  Recommended Action: Check the system clock to see if its set correctly
+
+%PKI-3-CERTIFICATE_INVALID_NOT_YET_VALID: Certificate chain validation
+  has failed. The certificate (SN: [chars]) is not yet valid
+  Validity period starts on [chars]
+  Recommended Action: Check the system clock to see if its set correctly</pre>
+      <p>Cisco's own recommended action for <em>both</em> messages is literally "check the system clock" — direct confirmation that the clock-skew hypothesis above is the vendor's own first troubleshooting step, not just field reasoning. Methodology to distinguish real expiry from skew-induced false rejection: compare <code>show clock detail</code> on the WLC, AP, and ISE against the NotBefore/NotAfter fields from <code>show crypto pki certificates</code> on each device.</p>
     </div>
 
     <h3>Shared NTP source — this one is directly documented</h3>
@@ -1449,6 +1517,8 @@ show clock detail</pre>
         <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-3/config-guide/b_wl_17_3_cg/m_data_dtls.html</li>
         <li>cisco.com/c/en/us/td/docs/security/ise/3-4/admin_guide/b_ise_admin_3_4/b_ISE_admin_deployment.html</li>
         <li>cisco.com/c/en/us/td/docs/wireless/controller/ewc/17-6/config-guide/ewc_cg_17_6/ap-group_ntp-server.html</li>
+        <li>cisco.com/c/en/us/td/docs/ios-xml/ios/16_xe/smg/ent-rout-smg.html</li>
+        <li>cisco.com/c/en/us/td/docs/ios-xml/ios/bsm/command/bsm-cr-book/m_bsm-cr-n1.html</li>
       </ul>
     </div>
   </div>
@@ -1537,12 +1607,57 @@ install auto-abort-timer stop        ! disables the timer; still requires a manu
       <p>All of these models separately document a <strong>thermal derating</strong> behavior above 40&deg;C ambient (e.g., 8x8&rarr;4x4 on 5GHz) that is completely independent of PoE class — a hot IDF closet can reproduce the exact same symptom as an underpowered port.</p>
     </div>
 
-    <h3>Reading the switch-side power state</h3>
+    <h3>AP-side LED signature for underpower — confirmed, documented</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; all five current Wi-Fi 6/6E/7 AP hardware guides (9130AX, 9136, 9166, 9178, and the 9164I guide covering the 9163E's chassis family) carry an identical LED Status Indications table with a row specifically for insufficient inline power:</p>
+      <table>
+        <tr><th>LED pattern</th><th>Category</th><th>Meaning</th></tr>
+        <tr><td>Cycling Red &rarr; Off &rarr; Green &rarr; Off &rarr; Blue &rarr; Off</td><td>Access point operating system errors</td><td>General warning; insufficient inline power</td></tr>
+        <tr><td>Steady Green / Blue</td><td>Normal</td><td>Associated, operating normally</td></tr>
+        <tr><td>Blinking Green</td><td>Boot error</td><td>Boot loader signature failure</td></tr>
+        <tr><td>Blinking Blue</td><td>In progress</td><td>Software upgrade in progress</td></tr>
+        <tr><td>Alternating Green / Red</td><td>In progress</td><td>Controller discovery/join in progress</td></tr>
+      </table>
+      <p>This is genuinely diagnostic, not a generic fault light — the underpower pattern is distinct from boot failure, upgrade-in-progress, and discovery/join states. No 9163E-titled guide exists separately from the 9164I family document; the table is identical across both.</p>
+    </div>
+    <div class="panel alert">
+      <p><span class="status alert"><span class="sw"></span>confirmed gap, real search effort</span> &mdash; no AP-side syslog string (visible via <code>show logging</code> on the AP console/SSH, or in a radioactive trace) explicitly meaning "underpowered" or "reduced power mode" was found. Checked: the IOS-XE System Message Guide, AP command references, and candidate substrings <code>LWAPP_POWER</code>, <code>CAPWAP_POWER</code>, <code>AP_POWER</code> — only a generic <code>AP_POWER_PROFILE_TRACE_MESSAGE-3-WLC_GEN_ERR</code> facility turned up, unrelated to power deficiency specifically. The LED pattern above is the only confirmed AP-side underpower signal; the switch-side <code>ILPOWER_POWER_DENY</code> counter below remains the only confirmed log-based signal, and it lives on the switch, not the AP.</p>
+    </div>
+
+    <h3>Reading the switch-side power state — per port</h3>
     <pre>show power inline detail
 show platform software ilpower system 1
 show environment all
 show environment power</pre>
     <p>Key fields: Device Detected, Device Type, Connection Check, IEEE Class (Alt-A/B), discovery mechanism ("Ieee and Cisco"), Power Allocated vs. actual consumption, and fault counters — Absent, Over Current, Short Current, Invalid Signature, and critically, <strong>Power Denied</strong>. A nonzero Power Denied counter plus an operational state of "off" is the documented signature of a port that asked for power and didn't get it.</p>
+
+    <h3>Reading the switch-side power state — the whole chassis/stack budget</h3>
+    <div class="panel caution">
+      <p>Every individual port can negotiate successfully while the <strong>switch as a whole</strong> runs out of total PoE wattage &mdash; a wiring closet populated with enough 802.3bt/UPOE Wi-Fi 6E APs to exceed the stack's aggregate budget is a different failure mode than a single port being denied, and it's the one engineers miss most often when planning a deployment.</p>
+    </div>
+    <pre>show power inline                      ! per-module Available/Used/Remaining (Watts), Catalyst 9300
+show power                             ! chassis-level System Power / Inline Power totals, Catalyst 9400
+show env power switch [switch-number]  ! internal PSU status per stack member</pre>
+    <p>Catalyst 9300 example fields: a module row reading <code>3   1310.0   660.0   650.0</code> under <code>Available / Used / Remaining (Watts)</code> headers. Catalyst 9400 chassis-level <code>show power</code> shows paired totals like <code>System Power 3505 3505</code> and <code>Inline Power 0 9295</code>.</p>
+
+    <h3>PSU redundancy mode — a direct tradeoff against usable PoE budget</h3>
+    <div class="panel">
+      <p>On Catalyst 9400 (modular chassis, multiple internal PSUs): <code>power redundancy-mode redundant n+1 &lt;standby-PS-slot&gt;</code> or <code>n+n &lt;slots&gt;</code> reserves one or more PSUs purely as failover capacity. <code>power redundancy-mode combined</code> instead sums every PSU's capacity into the usable budget &mdash; roughly doubling available PoE wattage, at the cost of zero failover protection: "If you have too many IP phones drawing power from the system, power to IP phones is cut" is Cisco's own stated consequence of running too close to budget in combined mode.</p>
+      <p>Catalyst 9300 (fixed-config stack) doesn't expose this same <code>power redundancy-mode</code> command &mdash; it uses <strong>StackPower</strong> instead, which pools PSU capacity across up to 4 stack members (8 with an XPS-2200 appliance). Cisco's own recommendation: "Power-sharing mode is the recommended configuration for Cisco Catalyst 9300 Series Switches." Not supported on 9300L models.</p>
+    </div>
+
+    <h3>Planning the budget before you rack anything</h3>
+    <div class="panel caution">
+      <p>Catalyst 9300 total PoE budgets are PSU-combination-specific, not flat per-tier numbers &mdash; check the actual datasheet row for the exact PSU pairing you're ordering, not a rule of thumb:</p>
+      <table>
+        <tr><th>Model</th><th>Single PSU</th><th>Dual/max PSU</th></tr>
+        <tr><td>C9300-24P</td><td>445W</td><td>720W ("limited by port number and port rating")</td></tr>
+        <tr><td>C9300-48U</td><td>822W</td><td>1800W ("limited by design")</td></tr>
+        <tr><td>C9300X-48HX</td><td>590W</td><td>up to 2490W depending on secondary PSU</td></tr>
+        <tr><td>C9300L-48PF-4G</td><td>890W</td><td>1440W</td></tr>
+      </table>
+      <p>Cisco's datasheet gives worked per-port examples rather than one formula sentence: e.g. "PoE+ on all ports (30W per port)" or "UPOE+ (90W per port) / 802.3bt Type 4 on 21 ports" as the way to size a chassis against planned load. The practical check for an AP deployment: multiply planned AP count by the <strong>actual</strong> negotiated class (not nameplate max &mdash; most Wi-Fi 6E APs draw well under their 60W 802.3bt ceiling in real operation) and compare against the Available/Remaining fields above, not just whether each individual port came up.</p>
+    </div>
 
     <h3>CDP/LLDP negotiation — the silent failure mode</h3>
     <div class="panel caution">
@@ -1559,10 +1674,6 @@ show environment power</pre>
     </table>
     <p>Cabling: 100m max total run including patch panels, with cutoff power calculated as rated PD consumption plus worst-case cable power loss. UPOE requires Class D or better cabling; 802.3bt requires Category 5e or above. Cisco documents <strong>cable category/quality</strong>, not a shorter max length, as the lever at higher power classes. Diagnostics: <code>show post</code>, platform-specific <code>DiagPoETest</code>/<code>TestPoE</code>, <code>debug ilpower event/controller/powerman</code>.</p>
 
-    <div class="panel alert">
-      <p><span class="status alert"><span class="sw"></span>unverified</span> &mdash; exact AP-side syslog text or LED blink codes specifically diagnostic of underpower (as distinct from simply failing to boot) could not be confirmed in this research pass. The documented symptom is the feature-loss table above, not a specific log line on the AP itself.</p>
-    </div>
-
     <div class="sources">
       <h3>Sources</h3>
       <ul>
@@ -1570,8 +1681,66 @@ show environment power</pre>
         <li>cisco.com/c/en/us/products/collateral/wireless/catalyst-9100ax-access-points/nb-06-cat-9130-ser-ap-ds-cte-en.html</li>
         <li>cisco.com/c/en/us/products/collateral/wireless/catalyst-9100ax-access-points/nb-06-cat9136-access-point-ds-cte-en.html</li>
         <li>cisco.com/c/en/us/td/docs/wireless/access_point/9130ax/quick/guide/ap9130ax-getstart.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/access_point/c9136i/install-guide/b-hig-9136i/configure-and-deploy-your-ap.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/access_point/cw916x/cw9166/install-guide/b-hig-cw9166i/configure-and-deploy-your-ap.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/access_point/cw917x/c9178I/b-hig-cw9178i/configure-and-deploy-your-ap/controller-discovery-process.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/access_point/cw916x/cw9164/install-guide/b-hig-cw9164i/configure-and-deploy-your-ap.html</li>
         <li>cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/int_hw/b_1712_int_and_hw_9300_cg/configuring_2_event_classification.html</li>
         <li>cisco.com/c/en/us/support/docs/switches/catalyst-9200-series-switches/215636-troubleshooting-power-over-ethernet-poe.html</li>
+        <li>cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-9/configuration_guide/int_hw/b_179_int_and_hw_9300_cg/configuring_poe.html</li>
+        <li>cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-6/configuration_guide/sys_mgmt/b_176_sys_mgmt_9400_cg/environmental_monitoring_and_power_management.html</li>
+        <li>cisco.com/c/en/us/products/collateral/switches/catalyst-9300-series-switches/nb-06-cat9300-ser-data-sheet-cte-en.html</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- LAYER 2 SWITCHING -->
+  <div class="topic" id="l2-switching">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="4" rx="1"/><rect x="3" y="15" width="18" height="4" rx="1"/><path d="M7 9v6M12 9v6M17 9v6"/></svg>
+      <div>
+        <h2>Layer 2 switching for AP uplinks</h2>
+        <div class="conf">mixed confidence &mdash; see panels. Scope: Layer 2 only, no routing/L3</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p>This is the section to bounce back to whenever a client-side or AAA investigation stalls, and the real cause turns out to be sitting one layer down. Everything here is <strong>Layer 2 switching only</strong> &mdash; trunk/access ports, 802.1Q tagging, native VLAN. No routing protocols, no SVIs, no inter-VLAN routing. An AP that never joins the WLC is extremely often an untagged-VLAN or trunk/access mismatch, not an AAA/RADIUS problem &mdash; misdiagnosing which layer the fault lives on wastes more field time than almost anything else in this guide.</p>
+    </div>
+
+    <h3>Trunk vs. access port &mdash; what's actually documented for AP uplinks</h3>
+    <div class="panel caution">
+      <p><span class="status good"><span class="sw"></span>documented</span> for FlexConnect specifically: Cisco's 9800 FlexConnect chapter shows the AP uplink on a <strong>trunk</strong> port, explicitly for wired-VLAN separation of locally-switched WLANs: <code>switchport mode trunk</code>, <code>switchport trunk native vlan 100</code>, <code>switchport trunk allowed vlan 101</code>, with the AP needing "IP connectivity on the native VLAN."</p>
+      <p><span class="status caution"><span class="sw"></span>inference</span> &mdash; for standard local-mode/central-switching deployments, Cisco never states outright "configure the AP switchport as access mode." That's near-universal field practice, consistent with how CAPWAP actually works: in local/central-switching mode, client VLAN tagging happens inside the CAPWAP tunnel at the WLC, not via 802.1Q on the AP's physical wire &mdash; so the AP's own uplink only needs a single VLAN (access mode) to reach the controller. FlexConnect is the one mode Cisco's own docs show genuinely needing a trunk, because that's the mode where VLANs are switched locally at the AP instead of tunneled to the WLC.</p>
+    </div>
+
+    <h3>802.1Q native VLAN &mdash; the documented mismatch symptom isn't what most engineers expect</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; Cisco's Catalyst 9300 VLAN Trunks guide is explicit: "the device forwards untagged traffic in the native VLAN configured for the port," and "make sure the native VLAN for an IEEE 802.1Q trunk is the same on both ends of the trunk link." The documented <em>symptom</em> of a mismatch is a <strong>spanning-tree loop</strong> &mdash; "if the native VLAN on one end of the trunk is different from the native VLAN on the other end, spanning-tree loops might result" &mdash; not primarily a clean error message.</p>
+      <p>CDP does have a documented mismatch-detection role: an "enhanced reporting mechanism" flags "mismatched native VLAN IDs (IEEE 802.1Q) on connected ports," with messages sendable "to the console or to a logging server." <span class="status caution"><span class="sw"></span>unverified</span> &mdash; the specific, widely field-quoted syslog string <code>%CDP-4-NATIVE_VLAN_MISMATCH</code> could not be confirmed on any live Cisco.com page despite real search effort. Treat that exact mnemonic as commonly-seen-in-the-field, not vendor-confirmed, until you see it on your own switch.</p>
+    </div>
+
+    <h3>Why the untagged VLAN matters for AP join specifically</h3>
+    <p>When no client VLAN is explicitly configured for a policy profile, Cisco documents that "the AP native VLAN is used" &mdash; so an AP sitting on the wrong native/untagged VLAN doesn't throw a clean "wrong VLAN" error. It silently loses IP reachability to the controller, and the symptom shows up as a stuck or endlessly-retrying CAPWAP discovery, which is easy to misroute to an AAA/RADIUS investigation that was never going to find anything. Rule out the native VLAN before escalating a join failure as an authentication problem.</p>
+
+    <h3>Verification commands &mdash; confirmed field names</h3>
+    <pre>show interfaces interface-id trunk      ! trunk config, allowed/active VLANs
+show interfaces interface-id switchport ! Administrative Mode, Trunking Native Mode VLAN, Trunking VLANs Enabled
+show vlan                               ! confirms the VLAN actually exists in the database</pre>
+    <p><span class="status caution"><span class="sw"></span>unverified</span> &mdash; <code>show vlan brief</code> is standard IOS-XE syntax and almost certainly works, but wasn't quote-confirmed against a fetched Cisco page this pass; the three commands above are the ones with confirmed exact field names.</p>
+
+    <h3>CDP/LLDP automatic VLAN assignment for APs &mdash; not documented, don't assume it</h3>
+    <div class="panel alert">
+      <p><span class="status alert"><span class="sw"></span>not found</span> &mdash; no Cisco documentation confirms CDP/LLDP-based automatic VLAN assignment for AP ports analogous to the IP-phone voice-VLAN mechanism. CDP/LLDP power negotiation for APs is real and documented (see the PoE section), but automatic data-VLAN assignment via the same discovery protocols is not &mdash; don't present that as a thing to rely on.</p>
+    </div>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-9/config-guide/b_wl_17_9_cg/m_vewlc_flex_connect.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-9/config-guide/b_wl_17_9_cg/m_config_vlan_ewlc_cg.html</li>
+        <li>cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-9/configuration_guide/vlan/b_179_vlan_9300_cg/configuring_vlan_trunks.html</li>
+        <li>cisco.com/c/en/us/td/docs/ios-xml/ios/cdp/configuration/15-mt/cdp-15-mt-book/nm-cdp-discover.html</li>
       </ul>
     </div>
   </div>
