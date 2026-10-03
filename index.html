@@ -109,6 +109,22 @@
   }
   .search-wrap input::placeholder { color: var(--mist-dim); }
   .search-wrap input:focus { border-color: var(--signal); }
+  :focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+  .filter-empty {
+    margin: 0 20px 10px;
+    font-size: 12.5px;
+    color: var(--mist-dim);
+  }
+  .filter-empty-link {
+    background: none;
+    border: none;
+    color: var(--signal);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 12.5px;
+    font-family: inherit;
+    padding: 0;
+  }
 
   .rack {
     flex: 1;
@@ -269,7 +285,8 @@
   .status.caution .sw { background: var(--caution); }
   .status.alert .sw { background: var(--alert); }
 
-  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 13px; }
+  .table-wrap { overflow-x: auto; margin: 14px 0; }
+  table { border-collapse: collapse; width: 100%; margin: 0; font-size: 13px; }
   th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
   th { background: var(--ink-2); color: var(--mist-dim); font-weight: 500; font-size: 12px; }
   td { color: var(--mist); }
@@ -364,6 +381,16 @@
     flex-direction: column;
     gap: 8px;
   }
+  .ts-category { margin-bottom: 22px; }
+  .ts-category-label {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--signal);
+    margin: 0 0 8px;
+  }
   .ts-choice {
     text-align: left;
     background: var(--ink-2);
@@ -421,8 +448,9 @@
     <p>Cisco platform troubleshooting, organized by architecture — RF theory is out of scope</p>
   </div>
   <div class="search-wrap">
-    <input id="filter" type="text" placeholder="filter topics&hellip;" autocomplete="off">
+    <input id="filter" type="text" placeholder="filter topics&hellip;" autocomplete="off" aria-label="Filter topics">
   </div>
+  <p id="filter-empty" class="filter-empty" hidden>No topics match. Try the <button type="button" class="filter-empty-link" data-topic="troubleshooter">Troubleshoot by symptom</button> tree instead.</p>
   <div class="rack" id="rack">
 
     <div class="rack-group" data-group="start">
@@ -443,17 +471,29 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="10" width="4" height="4"/><rect x="10.5" y="4" width="4" height="4"/><rect x="18" y="10" width="4" height="4"/><path d="M7 12h3.5M14.5 8v2.5M14.5 10.5L18 11"/></svg>
         <span>AP join &amp; AAA</span><span class="count">6</span>
       </button>
-      <button class="rack-unit" data-topic="redirect-acl">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16M4 12h10M4 18h16" stroke-dasharray="2 2"/><path d="M16 10l3 2-3 2"/></svg>
-        <span>CWA redirect ACL</span><span class="count">5</span>
+      <button class="rack-unit" data-topic="ap-license">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 3h10l2 4-7 14-7-14z"/><path d="M7 7h10"/></svg>
+        <span>AP &amp; license limits</span><span class="count">4</span>
       </button>
-      <button class="rack-unit" data-topic="ft-cwa">
+      <button class="rack-unit" data-topic="ap-crashloop">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v4M12 21a8 8 0 01-6-13.3M12 21a8 8 0 006-13.3"/><path d="M6 7h3V4"/></svg>
+        <span>AP crash &amp; reboot loops</span><span class="count">4</span>
+      </button>
+      <button class="rack-unit" data-topic="ap-mass-disconnect">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="6" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><path d="M5 8v10M12 8v10M19 8v10"/></svg>
+        <span>Mass AP disconnects</span><span class="count">4</span>
+      </button>
+      <button class="rack-unit" data-topic="ft-roaming">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M8.3 10.3L15.7 13.7M8.3 13.7L15.7 10.3"/></svg>
-        <span>FT roam + CWA</span><span class="count">4</span>
+        <span>Roaming: FT, 11k, 11v</span><span class="count">9</span>
+      </button>
+      <button class="rack-unit" data-topic="mobility-flex">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="9" width="6" height="6" rx="1"/><rect x="16" y="9" width="6" height="6" rx="1"/><path d="M8 10.5h8M8 13.5h8"/></svg>
+        <span>Mobility &amp; FlexConnect</span><span class="count">8</span>
       </button>
       <button class="rack-unit" data-topic="ise-sizing">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>
-        <span>ISE deployment sizing</span><span class="count">7</span>
+        <span>ISE: sizing &amp; CWA</span><span class="count">15</span>
       </button>
       <button class="rack-unit" data-topic="intermittent">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 14h3l2-7 4 11 2-7 2 4h5"/></svg>
@@ -462,26 +502,14 @@
     </div>
 
     <div class="rack-group" data-group="meraki">
-      <div class="rack-label">Meraki cloud-managed</div>
+      <div class="rack-label">Platform-specific &middot; cloud &amp; outdoor</div>
       <button class="rack-unit" data-topic="meraki">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="16" width="6" height="4"/><path d="M7 14a4 4 0 010-8 5 5 0 019.5-1.5A4 4 0 0117 14H7z"/></svg>
-        <span>MR access points</span><span class="count">6</span>
+        <span>MR access points</span><span class="count">8</span>
       </button>
-    </div>
-
-    <div class="rack-group" data-group="aireos">
-      <div class="rack-label">AireOS &amp; Mobility Express</div>
-      <button class="rack-unit" data-topic="aireos">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="9" width="5" height="6"/><rect x="16" y="9" width="5" height="6"/><path d="M8 12h8"/></svg>
-        <span>AireOS &amp; ME</span><span class="count">6</span>
-      </button>
-    </div>
-
-    <div class="rack-group" data-group="outdoor">
-      <div class="rack-label">Outdoor &amp; mesh</div>
       <button class="rack-unit" data-topic="outdoor">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><path d="M12 8L5 16M12 8l7 8"/></svg>
-        <span>Outdoor &amp; mesh</span><span class="count">5</span>
+        <span>Outdoor &amp; mesh</span><span class="count">7</span>
       </button>
     </div>
 
@@ -513,7 +541,7 @@
       </button>
       <button class="rack-unit" data-topic="qos-voice">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 15V9M8 18V6M12 20V4M16 18V6M20 15V9"/></svg>
-        <span>QoS &amp; voice/video</span><span class="count">4</span>
+        <span>QoS, voice/video &amp; throughput</span><span class="count">10</span>
       </button>
       <button class="rack-unit" data-topic="ntp-certs">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.5 2"/></svg>
@@ -530,6 +558,14 @@
       <button class="rack-unit" data-topic="l2-switching">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="4" rx="1"/><rect x="3" y="15" width="18" height="4" rx="1"/><path d="M7 9v6M12 9v6M17 9v6"/></svg>
         <span>Layer 2 switching for AP uplinks</span><span class="count">6</span>
+      </button>
+    </div>
+
+    <div class="rack-group" data-group="aireos">
+      <div class="rack-label">Legacy &middot; AireOS &amp; Mobility Express</div>
+      <button class="rack-unit" data-topic="aireos">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="9" width="5" height="6"/><rect x="16" y="9" width="5" height="6"/><path d="M8 12h8"/></svg>
+        <span>AireOS &amp; ME</span><span class="count">8</span>
       </button>
     </div>
 
@@ -553,9 +589,9 @@
     <p class="lede">A platform-implementation reference for engineers supporting Cisco's wireless portfolio — Catalyst 9800, Meraki, AireOS, Mobility Express, outdoor mesh, and location services. Each finding is marked by its level of confirmation, so documented behavior can be distinguished from inference that still requires validation through TAC or Bug Search.</p>
 
     <div class="readout-row">
-      <div class="readout"><div class="num">16</div><div class="label">topics covered</div></div>
-      <div class="readout"><div class="num">85+</div><div class="label">documented findings</div></div>
-      <div class="readout"><div class="num">20+</div><div class="label">flagged inference / unconfirmed</div></div>
+      <div class="readout"><div class="num">21</div><div class="label">topics covered</div></div>
+      <div class="readout"><div class="num">50+</div><div class="label">documented findings</div></div>
+      <div class="readout"><div class="num">35+</div><div class="label">flagged inference / unconfirmed</div></div>
     </div>
 
     <h3>How confidence is marked</h3>
@@ -582,13 +618,13 @@
     </div>
     <p>This walks the same documented findings as the rest of the guide, just reached by symptom instead of by platform. Nothing here is a new claim &mdash; every stop links back to its full writeup and sources.</p>
 
-    <div id="ts-root"></div>
+    <div id="ts-root" aria-live="polite"></div>
   </div>
 
   <!-- AP JOIN -->
   <div class="topic" id="ap-join">
     <div class="sheet-head">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="var(--signal)"><rect x="3" y="10" width="4" height="4"/><rect x="10.5" y="4" width="4" height="4"/><rect x="18" y="10" width="4" height="4"/><path d="M7 12h3.5M14.5 8v2.5M14.5 10.5L18 11"/></svg>
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--signal)" stroke-width="1.5"><rect x="3" y="10" width="4" height="4"/><rect x="10.5" y="4" width="4" height="4"/><rect x="18" y="10" width="4" height="4"/><path d="M7 12h3.5M14.5 8v2.5M14.5 10.5L18 11"/></svg>
       <div>
         <h2>AP join failures &amp; AAA</h2>
         <div class="conf">Catalyst 9800 (IOS-XE) &middot; mostly <span class="status good"><span class="sw"></span>documented</span></div>
@@ -640,122 +676,259 @@ show dtls connection          (AP-side)</pre>
     </div>
   </div>
 
-  <!-- REDIRECT ACL -->
-  <div class="topic" id="redirect-acl">
+  <!-- AP & LICENSE LIMITS -->
+  <div class="topic" id="ap-license">
     <div class="sheet-head">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h10M4 18h16" stroke-dasharray="2 2"/><path d="M16 10l3 2-3 2"/></svg>
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10l2 4-7 14-7-14z"/><path d="M7 7h10"/></svg>
       <div>
-        <h2>CWA redirect ACL logic</h2>
-        <div class="conf"><span class="status good"><span class="sw"></span>documented</span></div>
+        <h2>AP count &amp; license limits</h2>
+        <div class="conf">Catalyst 9800 (IOS-XE) &middot; mixed confidence, see panels</div>
       </div>
     </div>
 
-    <h3>The core mechanism</h3>
-    <div class="panel">
-      <p>Cisco's own CWA troubleshooting docs call the 9800 redirect ACL a <strong>punt ACL, not a security ACL</strong>:</p>
-      <ul>
-        <li><code>permit</code> &mdash; traffic <strong>is redirected</strong> to the portal</li>
-        <li><code>deny</code> &mdash; traffic is <strong>exempted</strong> from redirection, passes through normally</li>
-      </ul>
-      <p>That's the inverse of normal ACL semantics, confirmed verbatim by two independent Cisco sources.</p>
+    <h3>9800-CL without Smart Licensing &mdash; a hard, enforced cap</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; Cisco states "there is a limit of 50 access points enforced on the device" for a 9800-CL that isn't connected to Smart Licensing/CSSM. This is a real technical cap, not a compliance warning &mdash; the restriction "disappears" once the box reports to CSSM or a CSLU satellite. Confirm connectivity before chasing anything else:</p>
+      <pre>show license status
+show license summary</pre>
     </div>
 
-    <h3>Correct ACL shape</h3>
-    <pre>ip access-list extended REDIRECT
- deny ip any host &lt;ISE-IP&gt;
- deny ip host &lt;ISE-IP&gt; any
- deny udp any any eq domain
- deny udp any eq domain any
- permit tcp any any eq 80</pre>
-    <p>Deny traffic to ISE PSNs and DNS; permit the rest to redirect. Skip the DNS/ISE exemptions and you get a redirect loop.</p>
-
-    <h3>The AireOS trap</h3>
-    <div class="panel alert">
-      <p>Semantics flip <em>again</em> on legacy AireOS: there, <code>deny</code> means redirect and <code>permit</code> means pass-through &mdash; exactly backwards from 9800. An engineer carrying habits from one platform to the other will build the ACL exactly backwards, with no obvious error on screen.</p>
+    <h3>Licensed platforms over their purchased AP count</h3>
+    <div class="panel caution">
+      <p>On a licensed (non-CL) platform, APs beyond the purchased count are <strong>not</strong> blocked from joining &mdash; Cisco frames this as an audit/compliance matter: APs over the licensed count are simply "out of compliance," and "Cisco retains the right to conduct audits to check license compliance." <span class="status caution"><span class="sw"></span>inference</span> &mdash; a 90-day evaluation license expiring does "not affect Catalyst 9800 functionalities" beyond syslog warnings; don't expect APs to drop on day 91.</p>
+      <p><span class="status alert"><span class="sw"></span>unconfirmed</span> &mdash; Cisco's Smart Licensing Using Policy (SLUP) documentation describes evolving "Day 0 enforcement for unlicensed APs and Day N enforcement for devices with expired licenses" tied to image upgrades. Check the current SLUP documentation against your running release before assuming today's non-enforcement behavior still holds on a future upgrade.</p>
+      <pre>show license summary
+show license status
+show license air entities summary   ! per-AP license reporting detail</pre>
     </div>
 
-    <h3>FlexConnect caveat</h3>
-    <p>For locally-switched APs, the controller swaps every permit/deny when pushing the ACL to the AP. The AP-local view (<code>show ip access list</code>) looks inverted relative to the WLC side &mdash; expected, not corruption.</p>
-
-    <h3>Most common real failure</h3>
-    <div class="panel">
-      <p><strong>ACL name mismatch</strong> between what ISE sends and what's configured on the WLC. Surfaces as:</p>
-      <pre>SANET_AUTHZ_FAILURE - Redirect ACL Failure
-Failed attribute name REDIRECT</pre>
-      <p>ISE's default ACL name is <code>ACL_WEBAUTH_REDIRECT</code> (underscores) &mdash; frequently retyped with dashes, which breaks the match silently.</p>
-    </div>
-
-    <h3>Verifying it</h3>
-    <pre>show wireless client mac-address &lt;mac&gt; detail   (ACL under "Server Policies")
-show ip access list                               (AP CLI, FlexConnect only)
-debug wireless mac &lt;mac&gt; monitor-time &lt;sec&gt;</pre>
-    <p><span class="status alert"><span class="sw"></span>unconfirmed</span> &mdash; <code>show ip access-lists</code> (plural, WLC-side) with hit counters for this specific flow is a standard IOS-XE command that almost certainly works, but no CWA-specific doc spells out this exact use.</p>
+    <h3>Field takeaway</h3>
+    <p>No Cisco documentation gives a hard numeric join-blocking threshold for any platform except the 9800-CL's 50-AP no-license cap. Everywhere else, "over the license count" is a compliance finding to resolve, not a join failure to troubleshoot.</p>
 
     <div class="sources">
       <h3>Sources</h3>
       <ul>
-        <li>cisco.com/.../220852-troubleshoot-central-web-authentication.html</li>
-        <li>cisco.com/.../213920-central-web-authentication-cwa-on-cata.html</li>
-        <li>cisco.com/.../216500-catalyst-9800-central-web-authenticati.html</li>
-        <li>cisco.com/.../221941-configure-troubleshoot-downloadable-ac.html</li>
-        <li>community.cisco.com/t5/security-knowledge-base/ise-and-catalyst-9800-series-integration-guide/ta-p/3753060</li>
-        <li>ciscopress.com/articles/article.asp?p=3100059&amp;seqNum=3</li>
+        <li>cisco.com/c/en/us/products/collateral/wireless/catalyst-9800-series-wireless-controllers/impl-catalyst-9800-wrls-lan-ctrlr-licens-faq.html</li>
+        <li>cisco.com/c/en/us/support/docs/wireless/catalyst-9800-series-wireless-controllers/217348-configure-troubleshoot-catalyst-9800-w.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-16/config-guide/b_wl_17_16_cg/m_slup.html</li>
       </ul>
     </div>
   </div>
 
-  <!-- FT + CWA -->
-  <div class="topic" id="ft-cwa">
+  <!-- AP CRASH & REBOOT LOOPS -->
+  <div class="topic" id="ap-crashloop">
     <div class="sheet-head">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M8.3 10.3L15.7 13.7M8.3 13.7L15.7 10.3"/></svg>
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v4M12 21a8 8 0 01-6-13.3M12 21a8 8 0 006-13.3"/><path d="M6 7h3V4"/></svg>
       <div>
-        <h2>802.11r FT roaming + CWA</h2>
-        <div class="conf">mixed confidence, see below</div>
+        <h2>AP crash &amp; reboot loops</h2>
+        <div class="conf">Catalyst 9800 (IOS-XE) &middot; mostly <span class="status good"><span class="sw"></span>documented</span></div>
       </div>
     </div>
 
-    <h3>Is combining FT with CWA on one WLAN supported?</h3>
+    <h3>Stuck pre-join: a corrupted-image boot loop</h3>
     <div class="panel good">
-      <p><span class="status good"><span class="sw"></span>documented</span> as intentional. Cisco's CWA chapter says CWA "initiates user redirection and authentication at Layer 2, often in combination with MAC filtering or 802.1X authentication." Dot1x-then-webauth is sanctioned design, not an accidental overlap.</p>
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; Field Notice FN74109 (CSCvx32806, plus CSCwc72021/CSCwd90081) documents Wave 2 11ac APs (2800/3800/4800/1560/IW6330/ESW6300) and Catalyst 9100 Wi-Fi 6/6E APs downloading a corrupted image over CAPWAP from a 9800 controller, then boot-looping on it. Exact console signature:</p>
+      <pre>verify signature failed for /bootpart/part1/ramfs_data_cisco.cpio.lzma
+Image signature verification failure: -3</pre>
+      <p>On the uplink switch, the affected AP shows as generic <strong>"Ieee PD"</strong> rather than its model name in <code>show power inline</code>. Fixed in 8.10.185.0, 17.3.7, 17.6.6, 17.9.3, and 17.11.1+. APs with the alt-boot enhancement self-recover after 5 failed attempts by falling back to their backup partition; older u-boot versions need console-level <code>ubi remove</code>/<code>ubi create</code> recovery.</p>
     </div>
 
-    <h3>Open documentation gaps &mdash; confirmed unresolved across two research passes</h3>
-    <table>
-      <tr><th>Question</th><th>Status</th></tr>
-      <tr><td>Does the FT PMK cache survive while a client sits in CWA / <code>WEBAUTH_REQUIRED</code>?</td><td><span class="status alert"><span class="sw"></span>gap</span></td></tr>
-      <tr><td>Does the session-timeout timer reset on an FT roam, or keep ticking from the original association?</td><td><span class="status alert"><span class="sw"></span>unconfirmed</span></td></tr>
-      <tr><td>Is "Invalid PMKID" after a roam a mobility/anchor cache-sync defect, not an AAA issue?</td><td><span class="status alert"><span class="sw"></span>unconfirmed &mdash; Bug Search Tool is login-gated, blocked both passes</span></td></tr>
-      <tr><td>Does Cisco discourage pairing 802.11r with CWA/guest portals?</td><td><span class="status alert"><span class="sw"></span>no statement found &mdash; neither chapter references the other feature at all</span></td></tr>
-    </table>
-    <div class="panel caution">
-      <p>A second independent research pass re-checked the current 9800 17.12 Fast Transition and CWA/webauth chapters directly. The FT chapter's full restrictions list (LEAP unsupported, TSPEC unsupported, legacy-client association limits, max three FT handshakes with different APs, FT-SAE over-the-DS unsupported in FlexConnect local auth) contains no mention of CWA or web-auth. The webauth chapters contain only a generic, non-roam-specific statement on session timeout: "The switch applies either the session timeout configured locally or provided by the server." Treat these four questions as genuinely undocumented by Cisco, not merely unresearched &mdash; the next step for any of them is a live lab reproduction or a logged-in Bug Search / TAC case, not another documentation search.</p>
+    <h3>Joins fine, then reboots/rejoins repeatedly afterward</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; work this from the WLC side first, not the AP console:</p>
+      <pre>show ap crash                                              ! AP crash files stored on the WLC
+dir all | i crash
+show wireless stats ap history mac-address &lt;mac&gt;           ! last reboot type/reason
+show wireless stats ap mac &lt;radio-mac&gt; join detailed        ! disconnect type/reason/count</pre>
+      <p>Cisco's own diagnostic logic: look for APs with abnormally low "Assoc Uptime" relative to overall uptime (a sign of repeated reload), then check whether the affected APs share a switch, a wncd process, or a recent config change:</p>
+      <pre>show wireless loadbalance ap affinity mac &lt;mac&gt;
+sh proc cpu platform | i wncd</pre>
     </div>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/support/docs/field-notices/741/fn74109.html</li>
+        <li>cisco.com/c/en/us/support/docs/wireless/catalyst-9800-series-wireless-controllers/220443-how-to-avoid-boot-loop-due-to-corrupted.html</li>
+        <li>cisco.com/c/en/us/support/docs/wireless/catalyst-9800-series-wireless-controllers/218396-troubleshoot-catalyst-9800-ap-join-or-di.html</li>
+        <li>community.cisco.com/t5/networking-knowledge-base/continuous-reboot-of-the-access-point-due-to-a-corrupted/ta-p/3132543</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MASS AP DISCONNECTS -->
+  <div class="topic" id="ap-mass-disconnect">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="6" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><path d="M5 8v10M12 8v10M19 8v10"/></svg>
+      <div>
+        <h2>Mass AP disconnects</h2>
+        <div class="conf">Catalyst 9800 (IOS-XE) &middot; mostly <span class="status good"><span class="sw"></span>documented</span></div>
+      </div>
+    </div>
+
+    <h3>Same switch or stack</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; Cisco's documented correlation step for simultaneous AP drops is explicitly to check "if those APs were in same switch." A shared uplink, a switch reload, a spanning-tree event, or total PoE power-budget exhaustion on that one switch (see the PoE &amp; AP power section &mdash; <code>ILPOWER_POWER_DENY</code>) all produce this exact signature.</p>
+    </div>
+
+    <h3>Scattered across different, unrelated switches</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; this points at the controller side, specifically per-process load, not the access layer. Cisco's own troubleshooting flow checks <strong>wncd</strong> (the per-AP-group wireless control process) utilization: "disconnections could be due to high wncd CPU utilization and WLC not been able to process packets received from APs."</p>
+      <pre>show wireless loadbalance ap affinity wncd &lt;0-7&gt;   ! which APs share a wncd instance
+sh proc cpu platform | i wncd                       ! per-process CPU</pre>
+      <p>If every affected AP maps to the same wncd instance, that instance &mdash; not the network &mdash; is the shared cause.</p>
+    </div>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/support/docs/wireless/catalyst-9800-series-wireless-controllers/218396-troubleshoot-catalyst-9800-ap-join-or-di.html</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ROAMING: FT / 11k / 11v -->
+  <div class="topic" id="ft-roaming">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M8.3 10.3L15.7 13.7M8.3 13.7L15.7 10.3"/></svg>
+      <div>
+        <h2>Roaming: Fast Transition (802.11r), 802.11k, 802.11v</h2>
+        <div class="conf">Catalyst 9800 (IOS-XE 17.12) &middot; mostly <span class="status good"><span class="sw"></span>documented</span></div>
+      </div>
+    </div>
+
+    <h3>802.11r Fast Transition &mdash; what it actually does</h3>
+    <div class="panel">
+      <p>FT lets a client pre-negotiate keys with a target AP <em>before</em> it roams: "enables the initial handshake with a new AP even before the corresponding client roams to the target access point," letting client and AP "do the Pairwise Transient Key (PTK) calculation in advance." Keys are applied "after the client responds to the reassociation request." The WLAN config carries this as its own AKM type &mdash; Fast Transition (FT) &mdash; separate from the WPA2/802.1X AKMs.</p>
+    </div>
+
+    <h3>Over-the-Air vs. Over-the-DS</h3>
+    <ul>
+      <li><strong>Over-the-Air:</strong> "The client communicates directly with the target AP using IEEE 802.11 authentication with the FT authentication algorithm."</li>
+      <li><strong>Over-the-DS:</strong> "The client communicates with the target AP through the current AP" &mdash; FT action frames are relayed via the current AP/controller.</li>
+      <li>FT-SAE uses a new AKM OUI (<code>00-0F-AC:9</code>); the STA includes a Mobility Domain Element (MDE) and RSNE in the (re)association request, the AP echoes FTE/MDE/RSNE back, and the two sides run a Fast Transition 4-way handshake after SAE auth. A mismatched MDE returns <code>STATUS_INVALID_MDE</code>; an AKM mismatch returns <code>STATUS_INVALID_AKMP</code>.</li>
+    </ul>
+
+    <h3>Mobility Domain ID (MDID) &mdash; the roaming boundary FT actually uses</h3>
+    <div class="panel">
+      <p>"The MDID is used by 802.11r to define the network boundary where fast roaming is supported." Inside one domain, "APs share PMKs," letting clients "roam quickly without fully reauthenticating." Two ways to form a domain: static MDID assignment, or dynamic site-tag-based grouping. <strong>If an MDID is configured, it overrides the site tag for PMK sharing control</strong> &mdash; a frequent source of "FT works on some APs but not others" when a subset of APs got an explicit MDID and the rest didn't.</p>
+      <p>MDID has no CLI/GUI path &mdash; "you can configure MDID only through the open configuration model" (RESTCONF/NETCONF/YANG). Scale: up to 100 APs and 1,000 PMK cache entries per AP per domain (17.2.1). It does <strong>not</strong> function for Flex APs in standalone mode, since controller coordination is required.</p>
+    </div>
+
+    <h3>Configuration (CLI)</h3>
+    <pre>wlan &lt;profile-name&gt;
+ shutdown
+ security ft
+ security wpa akm ft dot1x        ! or: ft psk | ft sae
+ no shutdown</pre>
+    <p>Disabling specific behavior: <code>no security ft {adaptive | over-the-ds | reassociation-timeout &lt;sec&gt;}</code>. FT-over-DS is <strong>enabled by default</strong> on WLAN creation &mdash; a WLAN can be "FT-capable" without anyone deliberately turning on the DS path.</p>
+
+    <h3>Restrictions &mdash; the real failure modes, quoted directly</h3>
+    <ul>
+      <li>"EAP LEAP method is not supported."</li>
+      <li>"Traffic Specification (TSPEC) is not supported for 802.11r fast roaming. Therefore, RIC IE handling is not supported."</li>
+      <li>"Legacy clients cannot associate with a WLAN that has 802.11r enabled if the driver of the supplicant&hellip;is old and not aware of the additional AKM suites in the IE." Workaround: run two SSIDs with the same name but different security settings (FT vs. non-FT) &mdash; or clients that are 802.11r-capable can still associate as plain 802.11i if both AKM types are enabled on the WLAN.</li>
+      <li>"To avoid any Denial of Service (DoS) attack, each Cisco WLC allows a maximum of three Fast Transition handshakes with different APs."</li>
+      <li>"FT-SAE Over-the-DS roam is not supported in FlexConnect local authentication mode." Cisco's general recommendation is Over-the-Air FT for FlexConnect deployments.</li>
+      <li>"In Cisco Wave 2 APs, local switching local authentication with 802.11r is not supported."</li>
+      <li>FlexConnect local-auth FT specifically: supports Over-the-Air roaming only (no Over-the-DS); supports adaptive 11r for Apple clients; supports both FT+802.1X and FT+PSK; up to 100 APs per PMK-sharing group by default (300 in high-scale mode), 1,000 PMK entries/AP. Pre-17.2.1, local-auth FlexConnect clients couldn't use FT at all &mdash; only centrally authenticated clients could.</li>
+    </ul>
+
+    <h3>OKC &mdash; the non-11r fast-roam alternative, for context</h3>
+    <p>Opportunistic Key Caching caches one PMK per client across APs sharing a WLAN, "even when roaming between multiple APs," and "works with WPA2-EAP as a fast roaming technique." Client support splits by vendor: "Microsoft and some Android clients support OKC," while "Apple and few Android clients support 802.11r." OKC is on by default per WLAN (<code>okc</code> / <code>no okc</code> under the WLAN); disabling it disables it even for clients that could use it. If a mixed-client SSID shows some clients fast-roaming and others doing full reauth, this split is the first thing to check &mdash; not a controller defect.</p>
+
+    <h3>Verification</h3>
+    <pre>show wireless client summary                         ! shows FT-SAE role
+show wireless client mac-address &lt;mac&gt; detail        ! "Authentication Key Management : FT-SAE"
+show wireless client mac-address &lt;mac&gt; mobility history
+show wireless pmk-cache                               ! cache type "Dot11R"
+show wlan name &lt;profile&gt;                              ! "FT SAE : [Enabled|Disabled]"
+show wireless stats client detail | sec roam           ! 11r ft auth requests, PMKR0-Name mismatch counters
+show flexconnect dot11R                                ! AP-side, FlexConnect FT cache entries</pre>
+
+    <h3>802.11k &mdash; Assisted Roaming (neighbor reports)</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; "Assisted Roaming" on the 9800 is really two features. First, genuine 802.11k: the controller "allows an AP to inform 802.11k-capable clients of neighboring BSSIDs (APs in the same SSID)" so the client doesn't have to blind-scan every channel to find a roam target. Second, a Cisco-proprietary addition for clients that <em>don't</em> speak 802.11k: a prediction neighbor list built from each client's probe-RSSI history, which the controller then uses to actively deny association to a sub-optimal AP (up to a configurable denial count) if the client ignores the predicted list.</p>
+    </div>
+    <ul>
+      <li><strong>Restriction:</strong> "This feature is supported only on 802.11n capable indoor access points."</li>
+      <li>Single-band WLANs advertise up to 6 neighbors; dual-band up to 12.</li>
+      <li>"You can configure assisted roaming only using the CLI" &mdash; beyond the WLAN-level enable checkboxes, there's no GUI path for the prediction/denial tuning parameters.</li>
+      <li>Avoid two SSIDs sharing the exact same name &mdash; Cisco calls this out as a cause of roaming issues independent of 11k.</li>
+    </ul>
+
+    <h3>802.11k configuration (CLI)</h3>
+    <pre>! Global:
+wireless assisted-roaming floor-bias &lt;5-25 dBm&gt;        ! default 15
+wireless assisted-roaming prediction-minimum &lt;count&gt;   ! default 3
+wireless assisted-roaming denial-maximum &lt;1-10&gt;        ! default 5
+
+! Per-WLAN:
+wlan &lt;wlan-id&gt;
+ assisted-roaming neighbor-list     ! 11k neighbor list — ON by default at WLAN creation
+ assisted-roaming dual-list         ! dual-band list — ON by default
+ assisted-roaming prediction        ! prediction-list denial feature — OFF by default</pre>
+    <div class="panel alert">
+      <p>Turning on <code>assisted-roaming prediction</code> on a WLAN that already has load balancing enabled <strong>silently disables load balancing</strong> on that WLAN (Cisco documents a warning being shown, but it's easy to miss in a scripted push). If client distribution across APs changes right after someone enables assisted-roaming prediction, this is the first thing to check.</p>
+    </div>
+    <p>Verification: <code>show wlan id &lt;wlan-id&gt;</code> shows the neighbor-list/dual-list/prediction state per WLAN.</p>
+
+    <h3>802.11v &mdash; BSS Transition Management</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; 802.11v covers two different benefits that are easy to conflate: <strong>network-assisted power savings</strong> (Directed Multicast Service, BSS Max Idle Period) and <strong>network-assisted roaming</strong> (BSS Transition Management, "BTM"). BTM covers three triggers: a client-initiated query before it roams on its own; an AP-initiated request "when an AP is heavily loaded"; and an AP-initiated request "when a client's RSSI and rate do not meet the requirements."</p>
+    </div>
+    <div class="panel alert">
+      <p><strong>The request is advisory unless you force it.</strong> Cisco states plainly that a BTM request "is a suggestion (or advice) given to a client, which the client can choose to follow or ignore" &mdash; unless <code>disassociation-imminent</code> is enabled, which turns it into a forced transition. A client "ignoring" a steering attempt is often this setting, not a client-side bug.</p>
+    </div>
+
+    <h3>802.11v configuration (CLI)</h3>
+    <pre>wlan &lt;profile-name&gt;
+ shutdown
+ bss-transition
+ bss-transition disassociation-imminent   ! optional — forces the transition
+ no shutdown</pre>
+    <p>GUI equivalents (Configuration &gt; Tags &amp; Profiles &gt; WLANs &gt; Advanced): <strong>BSS Transition</strong> (the base enable), <strong>Dual Neighbor List</strong> (includes neighbors from the AP's other radio slot &mdash; 2.4/5 GHz &mdash; in the BTM response), <strong>BSS Max Idle Service</strong> / <strong>BSS Max Idle Protected</strong> (power-save idle timer; "Protected" requires authenticated frames to reset the counter), and <strong>Directed Multicast Service</strong> (converts a multicast stream to unicast for any DMS-capable client).</p>
+
+    <h3>802.11v prerequisites and restrictions</h3>
+    <ul>
+      <li>"Client needs to support 802.11v BSS Transition" &mdash; there's no fallback behavior for clients that don't; a BTM request to a non-supporting client is simply ignored.</li>
+      <li>Explicitly called out for "Apple clients like Apple iPad, iPhone&hellip;that run on Apple iOS version 7 or later."</li>
+      <li>"Supports local mode; also supports FlexConnect access points in central authentication modes only" &mdash; BTM on a FlexConnect AP doing local authentication is not supported.</li>
+    </ul>
+    <p><span class="status alert"><span class="sw"></span>gap</span> &mdash; no dedicated <code>show</code>/verification command for BSS Transition Management state appears in the 9800 17.12 config guide chapter itself; the only confirmed check is reading the WLAN's configured BTM settings back via <code>show wlan name &lt;profile&gt;</code> / <code>show run wlan</code>, by analogy with how OKC and assisted-roaming settings are verified elsewhere in the same guide. Treat that command as a reasonable inference, not a cited one-to-one for this specific feature.</p>
 
     <h3>Field recommendation <span class="status caution"><span class="sw"></span>inference</span></h3>
-    <p>If a client completes an FT roam, gets deleted seconds later with an AUTH_EXPIRED-style reason, retries FT and fails with <code>Invalid PMKID</code>, then recovers via full 802.1X &mdash; escalate the deletion timing, not the PMKID failure. The PMKID failure is downstream, not the trigger.</p>
+    <p>If a client completes an FT roam, gets deleted seconds later with an AUTH_EXPIRED-style reason, retries FT and fails with <code>Invalid PMKID</code>, then recovers via full 802.1X &mdash; escalate the deletion timing, not the PMKID failure. The PMKID failure is downstream, not the trigger. (This pattern was originally observed on a WLAN with no CWA involved; if you hit it on a CWA WLAN, see the Identity Services Engine section for the open questions specific to that overlap.)</p>
 
     <div class="sources">
       <h3>Sources</h3>
       <ul>
         <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_fast_transition_ewlc.html</li>
-        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_vewlc_central_web_authentication.html</li>
-        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_vewlc_sec_webauth_cg.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_dot11r.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_11i_mdid.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_okc.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_assisted_roam_9800.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_802_11v_ewlc.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_vewlc_mobility.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_client_roaming_policy_profile.html</li>
         <li>developer.cisco.com/docs/wireless-troubleshooting-tools/client-delete-reasons/</li>
       </ul>
     </div>
   </div>
 
-  <!-- ISE SIZING -->
+  <!-- ISE: DEPLOYMENT, PSN SIZING & CWA -->
   <div class="topic" id="ise-sizing">
     <div class="sheet-head">
       <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>
       <div>
-        <h2>ISE deployment &amp; PSN sizing</h2>
-        <div class="conf">mostly <span class="status good"><span class="sw"></span>documented</span></div>
+        <h2>Identity Services Engine (ISE)</h2>
+        <div class="conf">deployment &amp; PSN sizing, plus Central Web Authentication &middot; mixed confidence, see panels</div>
       </div>
     </div>
 
-    <h3>Sizing is session-based, not WLC-based</h3>
+    <h3>Deployment &amp; PSN sizing</h3>
+
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;">Sizing is session-based, not WLC-based</h4>
     <div class="panel">
       <table>
         <tr><th>Tier</th><th>Concurrent sessions</th><th>Max PSNs</th></tr>
@@ -766,13 +939,7 @@ debug wireless mac &lt;mac&gt; monitor-time &lt;sec&gt;</pre>
       <p>There's no fixed PSN-per-WLC ratio. Redundancy is built per workload group &mdash; RADIUS/Guest/CWA, 802.1X, TACACS+ &mdash; not per controller.</p>
     </div>
 
-    <h3>CWA doesn't support PSN load balancing</h3>
-    <div class="panel alert">
-      <p>CWA's flow is multi-stage: MAB auth &rarr; redirect &rarr; second RADIUS auth &rarr; CoA, and all of it must land on the <em>same</em> PSN. A load balancer that splits the second-stage auth or CoA to a different node breaks the flow intermittently &mdash; exactly the shape of a "random" failure that's hard to reproduce on demand. Cisco's own "least outstanding" method is called out as unsuitable here.</p>
-      <p><strong>Documented alternative:</strong> a WLC-driven ordered RADIUS server list with dead-server detection tuned, not an external load balancer, unless it specifically guarantees affinity across the whole CWA flow.</p>
-    </div>
-
-    <h3>Hardware &amp; placement gotchas</h3>
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;">Hardware &amp; placement gotchas</h4>
     <ul>
       <li>ISE appliance hardware can't be upgraded after purchase &mdash; undersizing at buy time is permanent.</li>
       <li>SNS-3895 is PAN/MnT-only; using it as a PSN gives "no additional value" per Cisco.</li>
@@ -781,12 +948,79 @@ debug wireless mac &lt;mac&gt; monitor-time &lt;sec&gt;</pre>
       <li>Mismatched ISE versions between PAN and a joining node blocks registration outright.</li>
     </ul>
 
-    <h3>9800-side pairing gotchas</h3>
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;">9800-side pairing gotchas</h4>
     <ul>
       <li>Mobility MAC defaults to chassis base MAC; in HA SSO pairs, set it manually or it changes on failover and silently breaks mobility tunnels.</li>
       <li>N+1 is not HA SSO &mdash; SSO is a same-chassis stateful pair, N+1 is AP site-tag failover to a separate standby. Different mechanisms, often conflated.</li>
       <li>On a Catalyst-Center-managed 9800, manual CLI changes get silently overwritten on the next provisioning sync.</li>
     </ul>
+
+    <h3>Central Web Authentication (CWA)</h3>
+
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;" id="cwa-redirect-acl">Redirect ACL logic &mdash; the core mechanism</h4>
+    <div class="panel">
+      <p>Cisco's own CWA troubleshooting docs call the 9800 redirect ACL a <strong>punt ACL, not a security ACL</strong>:</p>
+      <ul>
+        <li><code>permit</code> &mdash; traffic <strong>is redirected</strong> to the portal</li>
+        <li><code>deny</code> &mdash; traffic is <strong>exempted</strong> from redirection, passes through normally</li>
+      </ul>
+      <p>That's the inverse of normal ACL semantics, confirmed verbatim by two independent Cisco sources.</p>
+    </div>
+
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;">Correct ACL shape</h4>
+    <pre>ip access-list extended REDIRECT
+ deny ip any host &lt;ISE-IP&gt;
+ deny ip host &lt;ISE-IP&gt; any
+ deny udp any any eq domain
+ deny udp any eq domain any
+ permit tcp any any eq 80</pre>
+    <p>Deny traffic to ISE PSNs and DNS; permit the rest to redirect. Skip the DNS/ISE exemptions and you get a redirect loop.</p>
+
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;">The AireOS trap</h4>
+    <div class="panel alert">
+      <p>Semantics flip <em>again</em> on legacy AireOS: there, <code>deny</code> means redirect and <code>permit</code> means pass-through &mdash; exactly backwards from 9800. An engineer carrying habits from one platform to the other will build the ACL exactly backwards, with no obvious error on screen.</p>
+    </div>
+
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;">FlexConnect caveat</h4>
+    <p>For locally-switched APs, the controller swaps every permit/deny when pushing the ACL to the AP. The AP-local view (<code>show ip access list</code>) looks inverted relative to the WLC side &mdash; expected, not corruption.</p>
+
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;">Most common real failure</h4>
+    <div class="panel">
+      <p><strong>ACL name mismatch</strong> between what ISE sends and what's configured on the WLC. Surfaces as:</p>
+      <pre>SANET_AUTHZ_FAILURE - Redirect ACL Failure
+Failed attribute name REDIRECT</pre>
+      <p>ISE's default ACL name is <code>ACL_WEBAUTH_REDIRECT</code> (underscores) &mdash; frequently retyped with dashes, which breaks the match silently.</p>
+    </div>
+
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;">Verifying the redirect</h4>
+    <pre>show wireless client mac-address &lt;mac&gt; detail   (ACL under "Server Policies")
+show ip access list                               (AP CLI, FlexConnect only)
+debug wireless mac &lt;mac&gt; monitor-time &lt;sec&gt;</pre>
+    <p><span class="status alert"><span class="sw"></span>unconfirmed</span> &mdash; <code>show ip access-lists</code> (plural, WLC-side) with hit counters for this specific flow is a standard IOS-XE command that almost certainly works, but no CWA-specific doc spells out this exact use.</p>
+
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;">CWA doesn't support PSN load balancing</h4>
+    <div class="panel alert">
+      <p>CWA's flow is multi-stage: MAB auth &rarr; redirect &rarr; second RADIUS auth &rarr; CoA, and all of it must land on the <em>same</em> PSN. A load balancer that splits the second-stage auth or CoA to a different node breaks the flow intermittently &mdash; exactly the shape of a "random" failure that's hard to reproduce on demand. Cisco's own "least outstanding" method is called out as unsuitable here.</p>
+      <p><strong>Documented alternative:</strong> a WLC-driven ordered RADIUS server list with dead-server detection tuned, not an external load balancer, unless it specifically guarantees affinity across the whole CWA flow.</p>
+    </div>
+
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;">Is combining 802.11r FT with CWA on one WLAN supported?</h4>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> as intentional. Cisco's CWA chapter says CWA "initiates user redirection and authentication at Layer 2, often in combination with MAC filtering or 802.1X authentication." Dot1x-then-webauth is sanctioned design, not an accidental overlap.</p>
+    </div>
+
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;">FT + CWA open documentation gaps &mdash; confirmed unresolved across two research passes</h4>
+    <table>
+      <tr><th>Question</th><th>Status</th></tr>
+      <tr><td>Does the FT PMK cache survive while a client sits in CWA / <code>WEBAUTH_REQUIRED</code>?</td><td><span class="status alert"><span class="sw"></span>gap</span></td></tr>
+      <tr><td>Does the session-timeout timer reset on an FT roam, or keep ticking from the original association?</td><td><span class="status alert"><span class="sw"></span>unconfirmed</span></td></tr>
+      <tr><td>Is "Invalid PMKID" after a roam a mobility/anchor cache-sync defect, not an AAA issue?</td><td><span class="status alert"><span class="sw"></span>unconfirmed &mdash; Bug Search Tool is login-gated, blocked both passes</span></td></tr>
+      <tr><td>Does Cisco discourage pairing 802.11r with CWA/guest portals?</td><td><span class="status alert"><span class="sw"></span>no statement found &mdash; neither chapter references the other feature at all</span></td></tr>
+    </table>
+    <div class="panel caution">
+      <p>A second independent research pass re-checked the current 9800 17.12 Fast Transition and CWA/webauth chapters directly. The FT chapter's full restrictions list (LEAP unsupported, TSPEC unsupported, legacy-client association limits, max three FT handshakes with different APs, FT-SAE over-the-DS unsupported in FlexConnect local auth) contains no mention of CWA or web-auth. The webauth chapters contain only a generic, non-roam-specific statement on session timeout: "The switch applies either the session timeout configured locally or provided by the server." Treat these four questions as genuinely undocumented by Cisco, not merely unresearched &mdash; the next step for any of them is a live lab reproduction or a logged-in Bug Search / TAC case, not another documentation search.</p>
+    </div>
+    <p>If you hit this combination in the field: a client completes an FT roam, gets deleted seconds later with an AUTH_EXPIRED-style reason, retries FT and fails with <code>Invalid PMKID</code>, then recovers via full 802.1X and lands in CWA &mdash; escalate the deletion timing, not the PMKID failure or the portal timeout. See the Roaming: Fast Transition section for the pure FT mechanics behind this pattern.</p>
 
     <div class="sources">
       <h3>Sources</h3>
@@ -796,6 +1030,16 @@ debug wireless mac &lt;mac&gt; monitor-time &lt;sec&gt;</pre>
         <li>cisco.com/.../213913-building-mobility-tunnels-on-catalyst-98.html</li>
         <li>cisco.com/.../220277-configure-high-availability-sso-on-catal.html</li>
         <li>cisco.com/c/en/us/td/docs/security/ise/3-4/admin_guide/b_ise_admin_3_4/b_ISE_admin_deployment.html</li>
+        <li>cisco.com/.../220852-troubleshoot-central-web-authentication.html</li>
+        <li>cisco.com/.../213920-central-web-authentication-cwa-on-cata.html</li>
+        <li>cisco.com/.../216500-catalyst-9800-central-web-authenticati.html</li>
+        <li>cisco.com/.../221941-configure-troubleshoot-downloadable-ac.html</li>
+        <li>community.cisco.com/t5/security-knowledge-base/ise-and-catalyst-9800-series-integration-guide/ta-p/3753060</li>
+        <li>ciscopress.com/articles/article.asp?p=3100059&amp;seqNum=3</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_fast_transition_ewlc.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_vewlc_central_web_authentication.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_vewlc_sec_webauth_cg.html</li>
+        <li>developer.cisco.com/docs/wireless-troubleshooting-tools/client-delete-reasons/</li>
       </ul>
     </div>
   </div>
@@ -898,6 +1142,18 @@ ISE:         Live Logs for the same MAC/timestamp</pre>
       <p><strong>"Cable Test" is documented for MS switches, not MR access points.</strong> An engineer looking for it on an AP's tool list won't find it &mdash; easy platform-confusion mistake, not a missing feature on your specific AP.</p>
     </div>
 
+    <h3>No internet access &mdash; AP itself vs. a specific client</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; check which side is actually failing before troubleshooting. The AP converts itself to repeater mode if it "cannot receive an ARP reply packet from the default gateway on the LAN," or "cannot obtain a valid IP address via DHCP" &mdash; in either case it broadcasts a <code>&lt;SSID&gt;-bad-gateway</code> or <code>&lt;SSID&gt;-scanning</code> SSID as the signal, which is an AP-side symptom, not a client-side one. Diagnose with a laptop/Wireshark on the same switch port.</p>
+      <p>For a client that associates fine but has no internet: Meraki's own resolution guide starts with "verify that the gateway is correct and reachable" &mdash; ping the gateway from both the client and the AP (Wireless &gt; Access point &gt; Tools). DNS is called out separately as "one of the most common causes of client connection problems" &mdash; switching the client to a public resolver (8.8.8.8) is Meraki's own suggested isolation step. If that doesn't clear it, check Network-wide &gt; Client for a firewall rule or group policy applied to that client or subnet.</p>
+    </div>
+
+    <h3>DHCP failures &mdash; Bridge mode vs. NAT mode</h3>
+    <div class="panel">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; in <strong>Bridge mode</strong>, "wireless and wired clients connected to Meraki APs receive an IP address from the DHCP server on the wired LAN" &mdash; the AP does no DHCP of its own. Check pool exhaustion first (a sudden client surge is the most commonly cited trigger); then ping the DHCP server from Wireless &gt; Access point &gt; Tools &mdash; no response means "a connection issue exists somewhere upstream from the AP," not a Wi-Fi problem. If the DHCP server sits on a different broadcast domain, confirm an IP helper / DHCP relay agent is configured &mdash; Meraki documents a missing relay as a direct cause of the <code>no_offers_received</code> condition. Last check: an SSID VLAN tag colliding with the upstream trunk's native VLAN, since "the upstream port drops packets tagged with its native VLAN."</p>
+      <p>In <strong>NAT mode</strong>, DHCP is handled entirely by the AP, so the bridge-mode causes (pool/relay/VLAN) don't apply. Capture on the client with Wireshark to confirm an ACK actually comes back &mdash; "the DHCP process will not complete without an ACK message" &mdash; and check the event log (Network Wide &gt; Monitor &gt; Client) for the exact step that failed. If a PSK or RADIUS credential is involved, re-verify it in a private browser window first; a previously-saved key can be stale in a browser's autofill cache.</p>
+    </div>
+
     <h3>Mixed Meraki + Catalyst 9800 fleets</h3>
     <div class="panel">
       <p>Dashboard can cloud-monitor a 9800 via <strong>Cloud-Managed Hybrid Operating Mode</strong> &mdash; a reverse "Meraki Tunnel" from the 9800 to the cloud (<code>show meraki connect</code> on IOS-XE shows tunnel/registration state). This is onboarding/monitoring only, not native MR-equivalent management. Documented gotchas are all 9800-side: onboarding needs privilege-15 credentials with correct AAA (<code>aaa authentication login default local</code> / <code>aaa authorization exec default local</code>), and conflicts can come from VTY line limits, HTTP/NETCONF ACL conflicts, SSH port/rotary conflicts, or unsupported SSH encryption algorithms.</p>
@@ -916,83 +1172,9 @@ ISE:         Live Logs for the same MAC/timestamp</pre>
         <li>documentation.meraki.com/.../Suggested_Actions_on_Unreachable_Devices_Alert</li>
         <li>documentation.meraki.com/.../Using_the_MR_Live_Tools</li>
         <li>documentation.meraki.com/.../Troubleshooting_Dashboard_Connectivity_to_Catalyst_9800_Wireless_Controllers</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- AIREOS & MOBILITY EXPRESS -->
-  <div class="topic" id="aireos">
-    <div class="sheet-head">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="9" width="5" height="6"/><rect x="16" y="9" width="5" height="6"/><path d="M8 12h8"/></svg>
-      <div>
-        <h2>AireOS &amp; Mobility Express</h2>
-        <div class="conf"><span class="status good"><span class="sw"></span>documented</span></div>
-      </div>
-    </div>
-
-    <h3>The CLI isn't just "older" &mdash; it's a different shape</h3>
-    <div class="panel">
-      <p>AireOS is flat and non-modal: commands fully qualify their target in one line (<code>config wlan create</code>, <code>config wlan interface</code>), with no config-mode sub-shell to step into. There's also no running/startup split &mdash; config lives as XML in RAM and only reaches NVRAM via an explicit <code>save config</code>; logging out or resetting prompts you to save first. 9800/IOS-XE uses the modal config-mode convention most engineers already expect.</p>
-    </div>
-
-    <h3>The config model itself is restructured, not just renamed</h3>
-    <p>AireOS binds a WLAN directly to a VLAN interface, with AP Groups remapping that WLAN-to-VLAN binding per site. The 9800 decouples the same idea into five pieces: <strong>WLAN Profile</strong> (SSID/L2 security) + <strong>Policy Profile</strong> (VLAN/ACL/QoS) + <strong>Policy Tag</strong> (binds the two) + <strong>RF Tag</strong> + <strong>Site Tag</strong> + <strong>AP Join Profile</strong>. Changing any tag forces an AP rejoin &mdash; a side effect that surprises engineers used to AireOS's more direct model.</p>
-
-    <h3>Debugging works completely differently</h3>
-    <table>
-      <tr><th>AireOS</th><th>9800 / IOS-XE</th></tr>
-      <tr><td><code>debug client &lt;mac&gt;</code> or <code>debug mac addr</code> &mdash; one global debug session, filterable by up to 10 MACs</td><td><code>debug platform condition feature wireless mac &lt;mac&gt;</code> then <code>debug platform condition start</code> &mdash; radioactive tracing across every process</td></tr>
-      <tr><td><code>save config</code></td><td><code>write memory</code></td></tr>
-    </table>
-    <div class="panel alert">
-      <p>On AireOS, <strong>starting a new debug session kills any other active one</strong> &mdash; a second engineer debugging a different client on the same box will silently stop your trace. There's no equivalent collision on the 9800's condition-based model.</p>
-    </div>
-
-    <h3>Mobility Express is not the same thing as the 9800's EWC</h3>
-    <div class="panel">
-      <p>Classic Mobility Express is <strong>AireOS running on an AP acting as its own controller</strong> &mdash; no separate WLC hardware. Scale depends on which AP holds the Primary role: 1540/1815/1830/1850 top out at 50 APs/1000 clients; 1560/2800/3800/4800 reach 100 APs/2000 clients; the hard ceiling across the line is 100 APs/2000 clients. No Cisco table extends this to Wi-Fi 6 APs under classic ME.</p>
-      <p>Confirm you're looking at an ME deployment, not a true WLC, with <code>show version</code> on the AP &mdash; it reports <code>AP Image Type: MOBILITY EXPRESS IMAGE</code> when it's acting as its own controller.</p>
-    </div>
-    <div class="panel alert">
-      <p><strong>Don't confuse this with the Catalyst 9800 Embedded Wireless Controller (EWC)</strong> &mdash; a separate, IOS-XE-based product, not AireOS ME. EWC itself is now end-of-sale (11/29/2024) with support ending 11/30/2029 and <strong>no replacement product</strong>. If you're inheriting an EWC deployment, there's no "upgrade path" to plan for &mdash; only a platform change.</p>
-    </div>
-
-    <h3>Primary AP election and failover</h3>
-    <p>Election priority, in order: a pinned "User Defined Master" &gt; "Next Preferred Master" &gt; highest-capability hardware &gt; lowest client load &gt; lowest MAC address. Mechanism is VRRP under the hood. No consolidated ME-vs-full-WLC feature parity table exists on Cisco.com &mdash; that gap is confirmed, not just unresearched; don't assume one platform's feature set carries over to the other without checking the specific feature.</p>
-
-    <h3>EOL dates and the IRCM migration path</h3>
-    <table>
-      <tr><th>Platform</th><th>End of Sale</th><th>Last Date of Support</th></tr>
-      <tr><td>3504</td><td>1/31/21</td><td>1/31/27</td></tr>
-      <tr><td>5520</td><td>12/10/21</td><td>1/31/27</td></tr>
-      <tr><td>8540</td><td>1/31/22</td><td>1/31/27</td></tr>
-      <tr><td>WiSM2</td><td>&mdash;</td><td>already passed (4/30/22)</td></tr>
-    </table>
-    <p>Migration path runs through the Technology Migration Program toward 9800-40/9800-CL. For mixed-fleet transitions, <strong>IRCM (Inter-Release Controller Mobility)</strong> lets AireOS and 9800 roam together &mdash; always treated as L3 &mdash; over a Secure Mobility Tunnel (UDP 16666/16667), replacing the older unencrypted AireOS-only EoIP tunnel.</p>
-    <div class="panel alert">
-      <p>IRCM has real exclusions, not just a version floor: it requires 9800 on IOS-XE 16.10.1+ and AireOS on IRCM-specific image 8.5.14x or mainline 8.8.111+. <strong>2504, 7510, and WiSM2 are explicitly unsupported</strong> for IRCM regardless of software version. FlexConnect and Application Visibility &amp; Control (AVC) don't work under IRCM at all &mdash; plan the migration order around what you'd lose mid-transition, not just whether the controllers can see each other.</p>
-    </div>
-
-    <h3>Rough command translation</h3>
-    <pre>debug client &lt;mac&gt;        &rarr;  debug platform condition feature wireless mac &lt;mac&gt;
-                                  debug platform condition start
-save config                 &rarr;  write memory
-AP Groups                   &rarr;  Policy Tag + Site Tag + RF Tag (structural, not a rename)</pre>
-    <p><span class="status alert"><span class="sw"></span>unconfirmed</span> &mdash; no Cisco source directly pairs <code>show client detail</code> against <code>show wireless client mac-address detail</code> as an equivalence. Treat that mapping as reliable general knowledge, not a cited one-to-one.</p>
-
-    <div class="sources">
-      <h3>Sources</h3>
-      <ul>
-        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-8/config-guide/b_cg88/wlans.html</li>
-        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-8/config-guide/b_cg88/managing_configuration.html</li>
-        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-8/config-guide/b_cg88/configuring_ap_groups.html</li>
-        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/config-guide/b_wl_16_10_cg/new-configuration-model.html</li>
-        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-8/config-guide/b_cg88/debugging_on_cisco_wireless_controllers.html</li>
-        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/config-guide/b_wl_16_10_cg/conditional-debug-and-radioactive-tracing.html</li>
-        <li>cisco.com/c/en/us/td/docs/wireless/controller/technotes/8-8/b_cisco_mobility_express_8_8.html</li>
-        <li>cisco.com/c/en/us/td/docs/wireless/controller/technotes/8-8/b_cisco_mobility_express_8_8/m_master_ap_failover.html</li>
-        <li>cisco.com/c/en/us/products/collateral/wireless/embedded-wireless-controller-catalyst-access-points/wireless-ewc-access-point-eol.html</li>
-        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/config-guide/ConfiguringIRCM/b-configuring-inter-release-controller-mobility-in-wireless-deployments-supporting-aireos-and-catalyst-9800-controllers.html</li>
+        <li>documentation.meraki.com/Wireless/Troubleshooting_and_Support/Troubleshooting/Wireless_Issue_Resolution_Guide</li>
+        <li>documentation.meraki.com/Wireless/Troubleshooting_and_Support/Troubleshooting/Troubleshooting_local_connection_issues_using_default_SSID_on_MR_Access_Points</li>
+        <li>documentation.meraki.com/Wireless/Troubleshooting_and_Support/Troubleshooting/DHCP_Option_issue</li>
       </ul>
     </div>
   </div>
@@ -1038,6 +1220,12 @@ AP Groups                   &rarr;  Policy Tag + Site Tag + RF Tag (structural, 
       <li>Weather radar occupies 5600&ndash;5650 MHz (channels 124/128) and triggers DFS "quiet"/"silent" mode &mdash; a mesh link that drops specifically on those channels isn't a config problem.</li>
       <li>Collocated mesh nodes need physical separation &mdash; 10 ft vertical or 100 ft horizontal &mdash; to avoid self-interference between the node's own radios.</li>
     </ul>
+
+    <h3>Backhaul up with decent SNR, but link rate/throughput is still bad</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; confirm antenna gain configuration matches the installed hardware before touching anything RF-related. Cisco states the antenna gain for a mesh AP "must be configured to match that of the antenna installed" (entered in 0.5 dBm units) &mdash; this is a required configuration step, not an optional tuning knob, and a mismatch here is invisible in a basic SNR check. Also confirm backhaul band: the mesh backhaul on these platforms defaults to, and is locked to, 802.11a &mdash; "You cannot change the backhaul interface to 802.11b/g" &mdash; so any plan assuming 2.4 GHz backhaul capacity starts from a wrong premise. Cisco's own recommendation is to leave the backhaul rate set to Auto rather than a fixed rate, which is exactly the setting that self-corrects a rate mismatch like this.</p>
+      <p>If this is specifically two collocated/closely-mounted mesh nodes: the 10 ft vertical / 100 ft horizontal spacing requirement above exists precisely to avoid the nodes' own radios interfering with each other. Nodes mounted closer than that will show self-interference that looks exactly like a generic weak/unstable backhaul, and no channel or power change will fix it.</p>
+    </div>
 
     <div class="sources">
       <h3>Sources</h3>
@@ -1091,8 +1279,8 @@ nmsp cloud-services server token &lt;token&gt;</pre>
       <p><span class="status caution"><span class="sw"></span>documented, not verbatim-verified</span> &mdash; Cisco publishes three Spaces tiers at spaces.cisco.com/packages/: <strong>Advantage</strong> (bundled into unified/Meraki licensing or added to DNA-Advantage; AI-maps, indoor location, occupancy, Wi-Fi onboarding, Spaces API/data export, Space Utilization Analytics), <strong>Premier</strong> (adds indoor turn-by-turn navigation, space-explorer kiosks, smart desking &mdash; "everything in Advantage" plus those), and a <strong>Collaboration</strong> tier (turns Cisco collaboration devices and the wireless network into sensors &mdash; "everything in Advantage &amp; Premier"). This was retrieved via a summarized fetch rather than raw HTML, so treat the tier names and feature lists as high-confidence but re-check the live page before quoting exact wording to a customer.</p>
     </div>
     <h3>Cisco Spaces Connector</h3>
-    <div class="panel alert">
-      <p><span class="status alert"><span class="sw"></span>partially confirmed</span> &mdash; a real, current Connector doc tree exists (on-prem appliance bridging infrastructure to the Spaces cloud, now on "Connector 3," service-oriented/modular architecture). The specific Configuration/Deployment Guide with OVA sizing and ordering detail could not be reached directly &mdash; every guessed exact URL 404'd. Start from the confirmed-live installation-guides index rather than guessing a path, since Cisco's Spaces doc URLs shift frequently: cisco.com/c/en/us/support/wireless/dna-spaces/products-installation-guides-list.html</p>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; a real, current Connector doc tree exists (on-prem appliance bridging infrastructure to the Spaces cloud, now on "Connector 3," service-oriented/modular architecture), including the Configuration/Deployment Guide with OVA sizing: minimum spec is <strong>2 vCPU, 4 GB RAM, 120 GB hard disk</strong>, with a full deployment walkthrough covering Standard/Advanced1/Advanced2 tiers and single- vs. dual-interface options. Cisco's Spaces doc URLs shift frequently, so start from the confirmed-live installation-guides index if the direct link below has moved: cisco.com/c/en/us/support/wireless/dna-spaces/products-installation-guides-list.html</p>
     </div>
 
     <div class="sources">
@@ -1104,6 +1292,7 @@ nmsp cloud-services server token &lt;token&gt;</pre>
         <li>spaces.cisco.com/packages/</li>
         <li>cisco.com/c/en/us/td/docs/wireless/spaces/connector/article/m-migrating.html</li>
         <li>cisco.com/c/en/us/support/wireless/dna-spaces/products-installation-guides-list.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/spaces/connector/config/b_connector_30/m_ova_30.html</li>
       </ul>
     </div>
   </div>
@@ -1745,6 +1934,306 @@ show vlan                               ! confirms the VLAN actually exists in t
     </div>
   </div>
 
+  <!-- MOBILITY & FLEXCONNECT -->
+  <div class="topic" id="mobility-flex">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="9" width="6" height="6" rx="1"/><rect x="16" y="9" width="6" height="6" rx="1"/><path d="M8 10.5h8M8 13.5h8"/></svg>
+      <div>
+        <h2>Mobility &amp; FlexConnect</h2>
+        <div class="conf">Catalyst 9800 (IOS-XE) &middot; mostly <span class="status good"><span class="sw"></span>documented</span>, legacy-vs-current terminology verified directly against current config guides</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p>This section covers everything about wireless traffic and roaming behavior that happens <strong>outside</strong> a single local-mode AP talking to one controller: mobility groups between controllers, anchor/foreign designation for guest traffic, the mobility tunnel that carries all of it, and FlexConnect for branch/remote-site APs. The Roaming: FT/11k/11v section covers 802.11r fast-transition roaming mechanics specifically; this section covers the mobility-tunnel/anchor architecture those roams actually run on top of. The Layer 2 switching section covers switch-side VLAN/trunk config; this section covers what FlexConnect does with those VLANs once traffic reaches the AP.</p>
+    </div>
+
+    <h3>Mobility groups &mdash; still the live mechanism on IOS-XE, not an AireOS holdover</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; a mobility group "defines a set of controllers identified by the same mobility group name" and "enables seamless roaming and state and context sharing for wireless clients." Members "dynamically share information and forward data traffic when inter-controller or inter-subnet roaming occurs," and they "share the context and state of client devices and their list of access points," which "prevents controllers from identifying access points from other controllers as rogue devices." This is current 9800 config-guide language, not an AireOS-era concept carried over by habit &mdash; the CLI below is native IOS-XE.</p>
+      <p>Discovery/peering is explicit, not automatic: "each controller is configured with a list of the other mobility group members." On a client join, "the controller sends a unicast message, or a multicast message if mobility multicast is configured, to all controllers in the mobility group."</p>
+    </div>
+    <pre>! Set the local group name and mobility MAC (do this before adding peers)
+wireless mobility group name Mygroup
+wireless mobility mac-address AAAA.BBBB.CCCC
+
+! Add a peer controller to the group (9800-to-9800)
+wireless mobility group member mac-address 001E.BD0C.5AFF ip 9.12.32.10 group test-group data-link-encryption
+
+! 9800-to-AireOS peer (entered on the 9800 side)
+wireless mobility group member mac-address 001E.BD0C.5AFF ip 9.12.32.10 group test-group
+
+show wireless mobility summary          ! Mobility Group Name, MAC, Keepalive Interval/Count, Domain ID, per-peer status
+show run | i mobility                   ! confirm the mobility MAC is actually saved in the running config</pre>
+    <div class="panel alert">
+      <p><span class="status alert"><span class="sw"></span>not found</span> &mdash; current 9800 documentation does <strong>not</strong> use "mobility controller" (MC) / "mobility agent" (MA) role terminology at all. If you've seen that vocabulary, it's from a different Cisco architecture document (or AireOS-era material); don't present it as the current 9800 model.</p>
+    </div>
+
+    <h3>The documented symptom of a mismatched mobility group</h3>
+    <div class="panel caution">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; the group-name requirement is explicitly tied to <strong>fast Layer 2 roaming</strong>: controllers must share the same mobility group name "when a fast layer2 roam like Fast Transition (FT) or Cisco Centralized Key Management (CCKM) is in use." <span class="status caution"><span class="sw"></span>inference</span> &mdash; this is the direct mechanical explanation for the classic field symptom "client roams to a different controller and does a full 802.1X instead of a fast roam": a mobility group name mismatch (or a controller sitting outside the group entirely) forces the roam down to full re-authentication because the FT/CCKM key material can't be validated against a peer the controller doesn't recognize as a trusted group member.</p>
+      <p><code>show wireless stats mobility</code> tracks this as a named, counted condition &mdash; a <strong>"Group mismatch"</strong> field appears under both "Handoff Status Received" and "Handoff Status Sent." A nonzero counter there is hard evidence, not a guess.</p>
+      <p>Separately documented, not a mobility-group issue: "client roaming is not supported if there is a WLAN profile mismatch" between controllers &mdash; a different root cause with the same symptom (roam fails or falls back to full auth), so don't assume group name is the only thing to check.</p>
+    </div>
+
+    <h3>Anchor vs. foreign &mdash; current 9800 terms and CLI</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> definitions: <strong>"Anchor controller: the original controller where the client is first authenticated and where session anchoring remains, maintaining the primary client database entry."</strong> <strong>"Foreign controller: the new controller to which the client connects after roaming, which receives a copy of the client database entry marked as a foreign entry."</strong> For guest deployments this is the controller pair most engineers mean by "auto-anchor mobility" &mdash; Cisco's current 9800 docs describe the mechanism this way without using that exact phrase as a feature name; the GUI/CLI feature name is <strong>Export Anchor</strong>.</p>
+      <p>Role split, quoted directly from the Cisco TAC configuration doc: <strong>"Foreign controller: This WLC owns layer 2 or the wireless side&hellip; All client traffic for the anchored WLANs is encapsulated into the mobility tunnel to be sent to the anchor."</strong> <strong>"Anchor controller: This is the layer 3 exit point&hellip; decapsulates or terminates the client traffic into the exit point (VLAN)."</strong></p>
+    </div>
+    <div class="panel">
+      <p>A hard matching requirement, stated directly: <strong>"it is mandatory that WLAN and Policy Profile names and configurations match on both foreign 9800 WLC and anchor 9800 WLC with the exception of VLAN under the Policy Profile."</strong> The VLAN itself is intentionally allowed to differ &mdash; that's the whole point of anchoring guest traffic to a DMZ VLAN that doesn't exist on the foreign controller.</p>
+    </div>
+    <pre>! FOREIGN controller (WLAN-based, non-wired guest)
+wireless profile policy anchor-policy
+ mobility anchor 10.88.173.105 priority 3
+ no shutdown
+wireless tag policy PT1
+ wlan anchor-ssid policy anchor-policy
+
+! ANCHOR controller (profile name must match the foreign side exactly)
+wireless profile policy anchor-policy
+ mobility anchor
+ vlan 29
+ no shutdown</pre>
+    <div class="panel caution">
+      <p>Two explicit, documented constraints that produce silent breakage if ignored:</p>
+      <ul>
+        <li><strong>"You must not configure mobility peers and export anchor at the same time. That is an invalid configuration scenario."</strong></li>
+        <li><strong>"You must not use the Export Anchor setting, for any policy profile tied to a WLAN profile on a controller with access points."</strong> (The anchor controller is a Layer-3 exit point, not an AP-serving controller for that WLAN.)</li>
+      </ul>
+    </div>
+    <h4 style="font-size:13px;font-weight:600;color:var(--mist-dim);margin:18px 0 8px;">Wired guest-LAN variant (same anchor/foreign split, different commands)</h4>
+    <pre>! FOREIGN side — wired VLAN is configured only here
+guest-lan profile-name gstpro-1 1 wired-vlan 25
+ no security web-auth              ! for open auth
+
+! ANCHOR side — no wired-vlan parameter; VLAN comes from the policy profile
+guest-lan profile-name testpro-2 1</pre>
+    <p><span class="status good"><span class="sw"></span>documented</span> restriction: <strong>"Ensure that the Anchor VLAN ID and the wired VLAN ID configured on the Foreign controller is not the same."</strong> Also capacity limits: "A maximum of five guest LANs are supported on the foreign controller," "A maximum of 2000 clients per foreign are supported," and "You can map only one wired VLAN to a guest LAN" / "only one guest LAN to one policy profile."</p>
+
+    <h3>Verifying anchoring is actually happening</h3>
+    <pre>show wireless mobility summary
+show wireless client summary                               ! on foreign: client shows up here
+show wireless client mac-address &lt;mac&gt; detail                ! look for:
+                                                             !   Mobility Role : Export Foreign
+                                                             !   Mobility Roam Type : L3 Requested
+show wireless config validate                               ! surfaces VLAN/guest-LAN mismatches directly, e.g.:
+                                                             !   "Error in No record found for VLAN 9,
+                                                             !    needed by Guest-LAN open-wired"</pre>
+    <div class="panel alert">
+      <p><span class="status alert"><span class="sw"></span>community-reported, not a Cisco doc claim</span> &mdash; a real field case on Cisco Community (9800-to-9800 guest anchor) describes clients that "try and connect and State is mobility, but the clients do not get a IP address or redirected to the splash page," and never appear on the anchor controller at all. The responding troubleshooter's documented checklist for that exact symptom: confirm the policy-profile config actually matches between anchor and foreign (copy foreign's profiles/tags via CLI and paste to the anchor, changing only the mobility settings), confirm Export Anchor is actually checked on the anchor's policy profile, and confirm there's a real SVI for the anchor VLAN rather than relying on the WLC's own DHCP server (called out as "not a recommended practice"). Treat this as a credible field pattern, not a vendor-confirmed root cause list.</p>
+    </div>
+    <p>Separately documented and easy to misdiagnose as "anchoring doesn't work": if an AP physically moves between controllers that are mobility peers of each other, a client can "remain anchored" to the original controller. The documented fix is <strong>"remove the mobility peer configuration from that controller"</strong> &mdash; not to chase the anchor config itself.</p>
+
+    <h3>The mobility tunnel &mdash; CAPWAP on IOS-XE, not EoIP</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented, directly confirmed</span> &mdash; <strong>"the Cisco Catalyst 9800 Series Wireless Controller mobility tunnel is a CAPWAP tunnel with a control path (UDP 16666) and a data path (UDP 16667)."</strong> The control path "uses DTLS encryption by default," supported DTLS version 1.2. Data-path encryption (data-link-encryption / data-DTLS) is optional and must be matched on both ends &mdash; <strong>"If the configurations do not match, the system disables the mobility data path."</strong></p>
+    </div>
+    <div class="panel caution">
+      <p><span class="status good"><span class="sw"></span>documented</span>, platform distinction confirmed by direct comparison rather than assumed: <strong>EoIP (Ethernet over IP) is an AireOS-era term, not a current IOS-XE/9800 term.</strong> The AireOS 8.5 configuration guide uses it directly, describing the encrypted mobility tunnel as using "UDP port 16667, instead of EoIP, to send the data traffic" &mdash; i.e. on AireOS, EoIP is the default unencrypted data-path encapsulation that the encrypted tunnel replaces. The 9800 mobility-tunnel documentation never mentions EoIP at all; its data path is CAPWAP/UDP 16667 unconditionally, encrypted or not. In a mixed AireOS+9800 (IRCM) deployment, "control plane encryption is always enabled" regardless of platform, and if you enable data encryption on the 9800 side you must also enable it on the AireOS side with <code>config mobility group member data-dtls enable</code> &mdash; a mismatch here, not a missing EoIP tunnel, is the documented failure mode on mixed deployments.</p>
+    </div>
+    <p>Mobility tunnels have two platform-specific restrictions worth knowing before troubleshooting a cert error: <strong>"Mobility tunnels do not support ECDSA-based certificates or ECDSA-based trustpoints,"</strong> and 9800-CL peers using self-signed certs need an additional SSC hash validation step.</p>
+
+    <h3>Tunnel health &mdash; verification and documented failure signatures</h3>
+    <pre>show wireless mobility summary                 ! Mobility Group Name, MAC, Keepalive Interval/Count,
+                                                 !   Domain Identifier, per-peer IP/Public-IP/Group/Status/PMTU
+show wireless mobility peer ip &lt;peer-ip&gt;         ! single-peer detail
+show wireless mobility ap-list                  ! APs known to the mobility group
+show wireless stats mobility                    ! event stats, handoff status (incl. "Group mismatch"),
+                                                 !   export anchor/foreign counters, L2/L3 roam counts
+show wireless stats mobility messages           ! per-message-type Tx/Rx counters
+show wireless management trustpoint             ! cert hash, for peer validation issues
+show crypto pki trustpoints</pre>
+    <table>
+      <tr><th>Documented syslog / error text</th><th>Meaning</th></tr>
+      <tr><td><code>keepalive ctrl packet missed, total missed packet = 10</code></td><td>Peer unreachable &mdash; check that UDP 16666/16667 are open end-to-end between the controllers.</td></tr>
+      <tr><td><code>Failed to validate endpoint: Invalid argument</code></td><td>General endpoint validation failure during peer setup.</td></tr>
+      <tr><td><code>Failed to validate endpoint. reason: Group name hash mismatch.</code></td><td>Mobility group names don't match between peers &mdash; the exact, named error for the symptom in the section above.</td></tr>
+      <tr><td><code>Failed to validate endpoint. reason: MAC address mismatch.</code></td><td>The configured peer MAC doesn't match the peer's actual mobility MAC.</td></tr>
+      <tr><td><code>Mobility DTLS Ctrl handshake failed for &lt;ip&gt; HB is down</code></td><td>Control-path DTLS handshake failure &mdash; check trustpoint/certificate state, not basic reachability.</td></tr>
+      <tr><td><code>MAC_CONFLICT</code> warning, once per minute</td><td>Documented as cosmetic in specific Layer2/Layer3 topology scenarios &mdash; Cisco states it "does not impact functionality or performance."</td></tr>
+    </table>
+    <div class="panel alert">
+      <p><span class="status good"><span class="sw"></span>documented</span> HA SSO gotcha, and already cross-referenced in this guide's ISE section: <strong>"mobility MAC address is not configured by default and it can cause the mobility tunnel to go down if a failover happens."</strong> The fix is to explicitly set and save <code>wireless mobility mac-address</code> so a chassis failover doesn't silently change the mobility identity the rest of the group has peered with.</p>
+    </div>
+
+    <h3>FlexConnect &mdash; local vs. central switching</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> definitions, current 9800 FlexConnect chapter: <strong>Locally switched &mdash; "the AP forwards client data directly to the local LAN or VLAN at the site instead of tunneling it through the controller."</strong> <strong>Centrally switched &mdash; "the AP forwards the client's data traffic to the controller, depending on the WLAN configuration."</strong></p>
+      <p>FlexConnect exists specifically for "branch office and remote office deployments," letting branch APs be managed "through a wide area network (WAN) link without deploying a controller in each office." Documented WAN requirements: round-trip latency "must not exceed 300 milliseconds (ms) between the access point and the controller," and FlexConnect "supports up to 4 fragmented packets or a 576-byte MTU WAN link." Local <em>authentication</em> specifically is called out as useful when you "cannot maintain a remote office setup of a minimum bandwidth of 128 kbps with the round-trip latency no greater than 100 ms."</p>
+    </div>
+    <table>
+      <tr><th>Documented state</th><th>Valid in</th></tr>
+      <tr><td>Central authentication, central switching</td><td>Connected mode only</td></tr>
+      <tr><td>Central authentication, local switching</td><td>Connected mode only</td></tr>
+      <tr><td>Local authentication, local switching</td><td>Connected <strong>and</strong> standalone mode</td></tr>
+      <tr><td>Authentication down, switch down</td><td>Connected and standalone (centrally-switched WLANs when auth is down)</td></tr>
+      <tr><td>Authentication down, local switching</td><td>Standalone mode (locally-switched WLANs when auth is down)</td></tr>
+    </table>
+
+    <h3>Standalone mode &mdash; what happens when the WAN/controller link drops</h3>
+    <div class="panel caution">
+      <p><span class="status good"><span class="sw"></span>documented</span>, exact trigger: <strong>"Whenever a FlexConnect AP disassociates from controller, it moves to the standalone mode."</strong> Effect: <strong>"Centrally switched clients are disassociated. However, the FlexConnect access point continues to serve locally switched clients."</strong> This is the single most important FlexConnect fact for sizing a design &mdash; a branch WLAN that must survive a WAN outage has to be locally switched; a centrally-switched WLAN at a branch site is defined to drop its clients the moment the WAN link does.</p>
+      <p>Security-type behavior in standalone mode is also explicit: open/shared/WPA-PSK/WPA2-PSK WLANs "enter the local authentication, local switching state and continue new client authentications" with no controller needed. 802.1X/WPA-802.1X/WPA2-802.1X/CCKM WLANs "require an external or local RADIUS server to remain operational" &mdash; i.e. 802.1X branch clients only keep working in standalone mode if local EAP/RADIUS is configured on the AP itself, not by default.</p>
+    </div>
+    <div class="panel">
+      <p><span class="status good"><span class="sw"></span>documented</span> recovery sequence, quoted directly &mdash; this is the exact, field-relevant timeline for "AP stuck in standalone": <strong>"The AP attempts to discover for five times and if it still cannot find the controller, it tries to renew the DHCP on the ethernet interface to get a new DHCP IP."</strong> <strong>"The AP will retry for five times, and if that fails, the AP will renew the IP address of the interface again, this will happen for three attempts."</strong> <strong>"If the three attempts fail, the AP will fall back to the static IP and will reboot (only if the AP is configured with a static IP)."</strong> Reboot rationale given directly: <strong>"Reboot is done to remove the possibility of any unknown error the AP configuration."</strong> On reconnecting: <strong>"the AP disassociates clients, applies new configuration, and resumes normal connectivity."</strong></p>
+      <p>Also documented: a controller normally doesn't use a backup RADIUS server for 802.1X &mdash; <strong>"A controller does not use a backup RADIUS server. The controller uses the backup RADIUS server in local authentication mode."</strong> That only applies once the AP is already in local/standalone authentication, not in normal connected operation.</p>
+    </div>
+
+    <h3>FlexConnect ACLs, VLAN mapping, and the site-tag model</h3>
+    <div class="panel">
+      <p>On the 9800, FlexConnect ACLs attach via a <strong>Flex Profile</strong>, not centrally like a redirect ACL on the WLC. VLAN mapping and ACL assignment live in the same place:</p>
+      <pre>wireless profile flex Flex-profile-1
+ acl-policy ACL1
+ native-vlan-id 25
+ vlan-name VLAN0169
+  vlan-id 169
+  acl ACL1</pre>
+      <p><span class="status good"><span class="sw"></span>documented</span> limitation worth flagging up front: <strong>"FlexConnect access points with locally switched WLANs cannot perform IP source guard and prevent ARP spoofing."</strong> Also: <strong>"FlexConnect mode can support only 16 VLANs per AP."</strong> Hitting that ceiling at a branch with many SSID/VLAN combinations is a documented capacity wall, not a bug.</p>
+    </div>
+    <div class="panel caution">
+      <p>9800/IOS-XE does <strong>not</strong> use the AireOS term "FlexConnect Group" &mdash; the current grouping/config-distribution mechanism is the <strong>site tag</strong>, which "allows you to efficiently manage AP profiles and flex profiles associated with specific network sites."</p>
+      <pre>wireless tag site default-site-tag
+ no local-site                     ! must be set before configuring flex-profile — this is what
+                                    !   actually puts the AP in FlexConnect mode
+ flex-profile rr-xyz-flex-profile
+ ap-profile xyz-ap-profile
+
+show wireless tag site summary
+show ap tag summary
+show ap name &lt;ap-name&gt; tag info</pre>
+      <p><span class="status good"><span class="sw"></span>documented</span>, and a genuinely common misconfiguration: <strong>"In the FlexConnect mode, use a named site tag instead of default-site-tag,"</strong> because leaving an AP on <code>default-site-tag</code> means <strong>"the client Pairwise Master Key (PMK) is not sent to APs,"</strong> causing <strong>"client roam and reassociation issues."</strong> A branch AP that was never explicitly moved onto a real site tag will show exactly that symptom &mdash; roams that work on paper but keep failing or re-authenticating in the field. Capacity note: "You can have a maximum of 100 access points for each flex connect site."</p>
+    </div>
+
+    <h3>Split tunneling and DNS during web authentication</h3>
+    <div class="panel">
+      <p>During web-auth on a locally-switched FlexConnect WLAN, DNS has a documented, deliberately centralized exception: <strong>"client DNS replies must pass through the controller during authentication"</strong> &mdash; specifically, "the FlexConnect APs allows only DNS and DHCP messages; the APs forward the DNS reply messages to the controller before web-authentication&hellip; is complete." Only <strong>after</strong> web-auth completes does traffic switch fully locally: <strong>"all traffic switches locally."</strong> A branch guest/webauth SSID that seems to redirect correctly but then can't resolve anything post-login, or vice versa, is a sign this handoff point is misconfigured rather than a generic DNS problem.</p>
+      <p>Split tunneling itself is configured as an ACL path: define the ACL, attach it as an ACL policy under the flex profile, map a split MAC ACL name within the wireless policy profile, then apply the site/policy tags &mdash; the same ACL-via-flex-profile mechanism used for general FlexConnect ACLs above, not a separate feature.</p>
+    </div>
+    <div class="panel alert">
+      <p><span class="status good"><span class="sw"></span>documented</span> operational caveat, easy to trigger by accident during a "quick fix": <strong>"When you apply a configuration change to a locally switched WLAN, the access point resets the radio, causing associated client devices to disassociate&hellip; Modify the configuration only during a maintenance window."</strong> A VLAN-mapping tweak pushed mid-day to fix one client will knock every other client on that AP's radio off at the same moment.</p>
+    </div>
+
+    <h3>Field triage &mdash; common failure modes</h3>
+    <table>
+      <tr><th>Symptom</th><th>Likely documented cause</th><th>Check</th></tr>
+      <tr><td>Client roams to another controller, does full 802.1X instead of fast roam</td><td>Mobility group name mismatch breaking FT/CCKM validation, or WLAN profile mismatch</td><td><code>show wireless stats mobility</code> &mdash; "Group mismatch" counter; confirm group name identical on both controllers</td></tr>
+      <tr><td>Guest client sits in "mobility" state, never gets an IP, never redirects, never appears on anchor</td><td>Policy-profile/WLAN name mismatch between anchor and foreign, Export Anchor not actually set, or no real SVI for the anchor VLAN</td><td><code>show wireless config validate</code>; diff anchor/foreign policy-profile config; confirm Export Anchor flag; confirm anchor VLAN has a routed SVI, not WLC-hosted DHCP</td></tr>
+      <tr><td>Mobility tunnel won't come up / flaps</td><td>UDP 16666/16667 blocked, group-name hash mismatch, mobility MAC mismatch, or DTLS cert/trustpoint issue</td><td><code>show wireless mobility summary</code>; look for the named error strings in the table above</td></tr>
+      <tr><td>Mobility tunnel drops after an HA SSO failover</td><td>Mobility MAC left at default (chassis-derived), which changes on failover</td><td><code>show run | i mobility</code> &mdash; confirm <code>wireless mobility mac-address</code> is explicitly set and saved</td></tr>
+      <tr><td>Branch AP stuck in standalone / clients on centrally-switched WLAN all drop when WAN blips</td><td>Expected, documented behavior for centrally-switched WLANs &mdash; not a defect</td><td>Confirm which WLANs at that site are locally vs. centrally switched; only locally-switched WLANs are designed to survive the outage</td></tr>
+      <tr><td>Branch 802.1X clients can't authenticate during a WAN outage</td><td>No local EAP/RADIUS configured on the AP for standalone mode</td><td>Confirm local-auth AP EAP method and local RADIUS/backup-RADIUS config exist for that flex profile</td></tr>
+      <tr><td>Branch AP roams/reassociations keep failing even though config "looks right"</td><td>AP left on <code>default-site-tag</code> instead of a named site tag &mdash; PMK not pushed to the AP</td><td><code>show ap name &lt;ap&gt; tag info</code> &mdash; confirm it's on a named site tag, not default</td></tr>
+      <tr><td>Clients on a locally-switched VLAN get the wrong traffic / wrong network</td><td>VLAN-name/VLAN-id mismatch under the flex profile, or the 16-VLANs-per-AP ceiling hit silently</td><td><code>show wireless profile flex detailed &lt;name&gt;</code>; count mapped VLANs against the AP</td></tr>
+    </table>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-12/config-guide/b_wl_17_12_cg/m_vewlc_mobility.html</li>
+        <li>cisco.com/c/en/us/support/docs/wireless/catalyst-9800-series-wireless-controllers/213913-building-mobility-tunnels-on-catalyst-98.html</li>
+        <li>cisco.com/c/en/us/support/docs/wireless/catalyst-9800-series-wireless-controllers/213912-configure-mobility-anchor-on-catalyst-98.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-3/config-guide/b_wl_17_3_cg/m_wired-guest-access.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-5/config-guide/b_cg85/encrypted_mobility_tunnel.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/17-9/config-guide/b_wl_17_9_cg/m_vewlc_flex_connect.html</li>
+        <li>community.cisco.com/t5/wireless/guest-devices-unable-to-connect-to-mobility-anchor-cisco-9800/td-p/4440453</li>
+        <li>community.cisco.com/t5/networking-knowledge-base/configure-wlan-anchor-mobility-feature-on-catalyst-9800/ta-p/4772377</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- AIREOS & MOBILITY EXPRESS -->
+  <div class="topic" id="aireos">
+    <div class="sheet-head">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="9" width="5" height="6"/><rect x="16" y="9" width="5" height="6"/><path d="M8 12h8"/></svg>
+      <div>
+        <h2>AireOS &amp; Mobility Express</h2>
+        <div class="conf"><span class="status good"><span class="sw"></span>documented</span></div>
+      </div>
+    </div>
+
+    <h3>The CLI isn't just "older" &mdash; it's a different shape</h3>
+    <div class="panel">
+      <p>AireOS is flat and non-modal: commands fully qualify their target in one line (<code>config wlan create</code>, <code>config wlan interface</code>), with no config-mode sub-shell to step into. There's also no running/startup split &mdash; config lives as XML in RAM and only reaches NVRAM via an explicit <code>save config</code>; logging out or resetting prompts you to save first. 9800/IOS-XE uses the modal config-mode convention most engineers already expect.</p>
+    </div>
+
+    <h3>The config model itself is restructured, not just renamed</h3>
+    <p>AireOS binds a WLAN directly to a VLAN interface, with AP Groups remapping that WLAN-to-VLAN binding per site. The 9800 decouples the same idea into five pieces: <strong>WLAN Profile</strong> (SSID/L2 security) + <strong>Policy Profile</strong> (VLAN/ACL/QoS) + <strong>Policy Tag</strong> (binds the two) + <strong>RF Tag</strong> + <strong>Site Tag</strong> + <strong>AP Join Profile</strong>. Changing any tag forces an AP rejoin &mdash; a side effect that surprises engineers used to AireOS's more direct model.</p>
+
+    <h3>Debugging works completely differently</h3>
+    <table>
+      <tr><th>AireOS</th><th>9800 / IOS-XE</th></tr>
+      <tr><td><code>debug client &lt;mac&gt;</code> or <code>debug mac addr</code> &mdash; one global debug session, filterable by up to 10 MACs</td><td><code>debug platform condition feature wireless mac &lt;mac&gt;</code> then <code>debug platform condition start</code> &mdash; radioactive tracing across every process</td></tr>
+      <tr><td><code>save config</code></td><td><code>write memory</code></td></tr>
+    </table>
+    <div class="panel alert">
+      <p>On AireOS, <strong>starting a new debug session kills any other active one</strong> &mdash; a second engineer debugging a different client on the same box will silently stop your trace. There's no equivalent collision on the 9800's condition-based model.</p>
+    </div>
+
+    <h3>Mobility Express is not the same thing as the 9800's EWC</h3>
+    <div class="panel">
+      <p>Classic Mobility Express is <strong>AireOS running on an AP acting as its own controller</strong> &mdash; no separate WLC hardware. Scale depends on which AP holds the Primary role: 1540/1815/1830/1850 top out at 50 APs/1000 clients; 1560/2800/3800/4800 reach 100 APs/2000 clients; the hard ceiling across the line is 100 APs/2000 clients. No Cisco table extends this to Wi-Fi 6 APs under classic ME.</p>
+      <p>Confirm you're looking at an ME deployment, not a true WLC, with <code>show version</code> on the AP &mdash; it reports <code>AP Image Type: MOBILITY EXPRESS IMAGE</code> when it's acting as its own controller.</p>
+    </div>
+    <div class="panel alert">
+      <p><strong>Don't confuse this with the Catalyst 9800 Embedded Wireless Controller (EWC)</strong> &mdash; a separate, IOS-XE-based product, not AireOS ME. EWC itself is now end-of-sale (11/29/2024) with support ending 11/30/2029 and <strong>no replacement product</strong>. If you're inheriting an EWC deployment, there's no "upgrade path" to plan for &mdash; only a platform change.</p>
+    </div>
+
+    <h3>Primary AP election and failover</h3>
+    <p>Election priority, in order: a pinned "User Defined Master" &gt; "Next Preferred Master" &gt; highest-capability hardware &gt; lowest client load &gt; lowest MAC address. Mechanism is VRRP under the hood. No consolidated ME-vs-full-WLC feature parity table exists on Cisco.com &mdash; that gap is confirmed, not just unresearched; don't assume one platform's feature set carries over to the other without checking the specific feature.</p>
+
+    <h3>EOL dates and the IRCM migration path</h3>
+    <table>
+      <tr><th>Platform</th><th>End of Sale</th><th>Last Date of Support</th></tr>
+      <tr><td>3504</td><td>1/31/21</td><td>1/31/27</td></tr>
+      <tr><td>5520</td><td>12/10/21</td><td>1/31/27</td></tr>
+      <tr><td>8540</td><td>1/31/22</td><td>1/31/27</td></tr>
+      <tr><td>WiSM2</td><td>&mdash;</td><td>already passed (4/30/22)</td></tr>
+    </table>
+    <p>Migration path runs through the Technology Migration Program toward 9800-40/9800-CL. For mixed-fleet transitions, <strong>IRCM (Inter-Release Controller Mobility)</strong> lets AireOS and 9800 roam together &mdash; always treated as L3 &mdash; over a Secure Mobility Tunnel (UDP 16666/16667), replacing the older unencrypted AireOS-only EoIP tunnel.</p>
+    <div class="panel alert">
+      <p>IRCM has real exclusions, not just a version floor: it requires 9800 on IOS-XE 16.10.1+ and AireOS on IRCM-specific image 8.5.14x or mainline 8.8.111+. <strong>2504, 7510, and WiSM2 are explicitly unsupported</strong> for IRCM regardless of software version. FlexConnect and Application Visibility &amp; Control (AVC) don't work under IRCM at all &mdash; plan the migration order around what you'd lose mid-transition, not just whether the controllers can see each other.</p>
+    </div>
+
+    <h3>Web GUI won't load / management access blocked</h3>
+    <div class="panel good">
+      <p><span class="status good"><span class="sw"></span>documented</span> &mdash; check HTTP vs. HTTPS state before anything else. HTTP ("web mode") is <strong>disabled</strong> by default (<code>config network webmode enable|disable</code>); HTTPS ("secure web") is <strong>enabled</strong> by default (<code>config network secureweb enable|disable</code>). A browser request to <code>http://</code> on a controller that's never had webmode enabled simply won't load &mdash; try <code>https://</code> before assuming the management interface itself is unreachable. Cisco's own guidance runs the opposite direction from "just enable HTTP for convenience": "enable the HTTPS interface and disable the HTTP interface to ensure more robust security."</p>
+      <p>If instead you're trying to reach the GUI over a wireless client associated to that same controller/AP: <strong>Management via Wireless is disabled by default</strong>, and even when enabled it only "blocks wireless management access to the same controller that the wireless client device is currently associated with" &mdash; it does nothing to stop a wireless client associated to a <em>different</em> controller from reaching this one. If the real goal is blocking management access broadly by VLAN/subnet, Cisco's own guidance says plainly: "we recommend that you use access control lists (ACLs) or similar mechanism" instead of relying on this toggle. It's also not available at all for FlexConnect locally-switched clients.</p>
+    </div>
+
+    <h3>Mobility groups &mdash; the legacy AireOS model</h3>
+    <div class="panel caution">
+      <p><span class="status caution"><span class="sw"></span>legacy terminology</span> &mdash; AireOS's "mobility group" concept predates the 9800/IOS-XE mobility architecture and is kept here deliberately, since current IOS-XE deployment guidance is covered separately in the Mobility &amp; FlexConnect section. On AireOS, a mobility group is a named set of controllers sharing client/AP context so clients roam seamlessly across them; group membership is a manually maintained peer list, not auto-discovered. The classic unencrypted inter-controller data tunnel on AireOS uses <strong>EoIP (Ethernet over IP)</strong> &mdash; Cisco's own 8.5 configuration guide describes the encrypted alternative as using "UDP port 16667, instead of EoIP, to send the data traffic," i.e. EoIP is the AireOS-era default that the encrypted tunnel replaces. This EoIP terminology does not carry over to IOS-XE/9800, which uses CAPWAP (UDP 16666 control / 16667 data) unconditionally for its mobility tunnel &mdash; see the Mobility &amp; FlexConnect section for the current platform's architecture.</p>
+    </div>
+
+    <h3>Rough command translation</h3>
+    <pre>debug client &lt;mac&gt;        &rarr;  debug platform condition feature wireless mac &lt;mac&gt;
+                                  debug platform condition start
+save config                 &rarr;  write memory
+AP Groups                   &rarr;  Policy Tag + Site Tag + RF Tag (structural, not a rename)</pre>
+    <p><span class="status alert"><span class="sw"></span>unconfirmed</span> &mdash; no Cisco source directly pairs <code>show client detail</code> against <code>show wireless client mac-address detail</code> as an equivalence. Treat that mapping as reliable general knowledge, not a cited one-to-one.</p>
+
+    <div class="sources">
+      <h3>Sources</h3>
+      <ul>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-8/config-guide/b_cg88/wlans.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-8/config-guide/b_cg88/managing_configuration.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-8/config-guide/b_cg88/configuring_ap_groups.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/config-guide/b_wl_16_10_cg/new-configuration-model.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-8/config-guide/b_cg88/debugging_on_cisco_wireless_controllers.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/config-guide/b_wl_16_10_cg/conditional-debug-and-radioactive-tracing.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/technotes/8-8/b_cisco_mobility_express_8_8.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/technotes/8-8/b_cisco_mobility_express_8_8/m_master_ap_failover.html</li>
+        <li>cisco.com/c/en/us/products/collateral/wireless/embedded-wireless-controller-catalyst-access-points/wireless-ewc-access-point-eol.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/9800/config-guide/ConfiguringIRCM/b-configuring-inter-release-controller-mobility-in-wireless-deployments-supporting-aireos-and-catalyst-9800-controllers.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-8/config-guide/b_cg88/administration_of_cisco_wlc.html</li>
+        <li>cisco.com/c/en/us/td/docs/wireless/controller/8-5/config-guide/b_cg85/encrypted_mobility_tunnel.html</li>
+      </ul>
+    </div>
+  </div>
+
   <!-- CASE NOTES -->
   <div class="topic" id="case-notes">
     <div class="sheet-head">
@@ -1769,7 +2258,7 @@ show vlan                               ! confirms the VLAN actually exists in t
 
     <h3>Why this is worth escalating</h3>
     <div class="panel">
-      <p>Cisco's own DevNet reference defines the AUTH_EXPIRED-family delete reason as a <strong>pre-association</strong> timeout &mdash; "client did auth phase, but never completed association." That doesn't match a client that had already reached RUN. This contradiction, not the downstream PMKID failure, is what belongs in front of TAC or Bug Search. See <strong>FT roam + CWA</strong> for the open questions it raises.</p>
+      <p>Cisco's own DevNet reference defines the AUTH_EXPIRED-family delete reason as a <strong>pre-association</strong> timeout &mdash; "client did auth phase, but never completed association." That doesn't match a client that had already reached RUN. This contradiction, not the downstream PMKID failure, is what belongs in front of TAC or Bug Search. See <strong>Identity Services Engine</strong> for the open questions it raises.</p>
     </div>
   </div>
 
@@ -1777,14 +2266,22 @@ show vlan                               ! confirms the VLAN actually exists in t
 </main>
 
 <script>
+  // Wrap every table in a scrollable container so wide tables don't force the page to scroll sideways.
+  document.querySelectorAll('.page table').forEach(t => {
+    const wrap = document.createElement('div');
+    wrap.className = 'table-wrap';
+    t.parentNode.insertBefore(wrap, t);
+    wrap.appendChild(t);
+  });
+
   const buttons = document.querySelectorAll('.rack-unit');
   const topics = document.querySelectorAll('.topic');
 
   function navigateTo(topicId) {
-    buttons.forEach(b => b.classList.remove('active'));
+    buttons.forEach(b => { b.classList.remove('active'); b.removeAttribute('aria-current'); });
     topics.forEach(t => t.classList.remove('active'));
     const btn = document.querySelector(`.rack-unit[data-topic="${topicId}"]`);
-    if (btn) btn.classList.add('active');
+    if (btn) { btn.classList.add('active'); btn.setAttribute('aria-current', 'true'); }
     const panel = document.getElementById(topicId);
     if (panel) {
       panel.classList.add('active');
@@ -1798,8 +2295,20 @@ show vlan                               ! confirms the VLAN actually exists in t
 
   const filterInput = document.getElementById('filter');
   const groups = document.querySelectorAll('.rack-group');
+  const filterEmpty = document.getElementById('filter-empty');
+
+  const filterEmptyLink = document.querySelector('.filter-empty-link');
+  if (filterEmptyLink) {
+    filterEmptyLink.addEventListener('click', () => {
+      filterInput.value = '';
+      filterInput.dispatchEvent(new Event('input'));
+      navigateTo(filterEmptyLink.dataset.topic);
+    });
+  }
+
   filterInput.addEventListener('input', () => {
     const q = filterInput.value.trim().toLowerCase();
+    let anyVisibleOverall = false;
     groups.forEach(group => {
       let anyVisible = false;
       group.querySelectorAll('.rack-unit').forEach(unit => {
@@ -1810,7 +2319,9 @@ show vlan                               ! confirms the VLAN actually exists in t
       });
       group.querySelector('.rack-label').style.display = anyVisible ? '' : 'none';
       group.style.display = anyVisible ? '' : 'none';
+      if (anyVisible) anyVisibleOverall = true;
     });
+    if (filterEmpty) filterEmpty.hidden = anyVisibleOverall || !q;
   });
 
   // --- Symptom troubleshooter: a decision tree over the guide's own sections.
@@ -1818,23 +2329,82 @@ show vlan                               ! confirms the VLAN actually exists in t
   const TS_TREE = {
     id: 'root',
     question: 'What are you actually seeing right now?',
-    choices: [
-      { label: 'An AP won’t join the controller', next: 'ap-join-branch' },
-      { label: 'A client gets stuck on the captive portal / web login', next: 'cwa-branch' },
-      { label: 'A client drops or re-authenticates right after roaming', next: 'roam-branch' },
-      { label: 'Problems are random, intermittent, hit different people', next: 'intermittent-branch' },
-      { label: 'This is a Meraki (cloud-managed) deployment', next: 'meraki-branch' },
-      { label: 'This is an older AireOS controller or Mobility Express', next: 'aireos-branch' },
-      { label: 'An outdoor or mesh AP won’t connect / backhaul is bad', next: 'mesh-branch' },
-      { label: 'Location accuracy / CMX / Cisco Spaces data looks wrong', next: 'location-branch' },
-      { label: 'A controller failover didn’t behave as expected', next: 'ha-branch' },
-      { label: 'A client keeps failing the same auth over and over', next: 'exclusion-branch' },
-      { label: 'One client fails 802.1X but others on the same SSID work fine', next: 'supplicant-branch' },
-      { label: 'Multicast, broadcast, or mDNS/Bonjour discovery isn’t working', next: 'multicast-branch' },
-      { label: 'Voice or video over Wi-Fi sounds choppy', next: 'qos-branch' },
-      { label: 'Certificate errors that don’t make sense (cert looks valid)', next: 'ntp-branch' },
-      { label: 'Planning or recovering from a 9800 software upgrade', next: 'issu-branch' },
-      { label: 'An AP is missing radios/USB, or won’t power on fully', next: 'poe-branch' },
+    categories: [
+      {
+        label: 'AP & Controller Infrastructure',
+        choices: [
+          { label: 'An AP won’t join the controller', next: 'ap-join-branch' },
+          { label: 'Controller shows the AP count at its license limit', next: 'ap-license-branch' },
+          { label: 'An AP keeps rebooting / crash-looping after joining', next: 'ap-crashloop-branch' },
+          { label: 'A bunch of APs all drop and rejoin at the same time', next: 'ap-mass-disconnect-branch' },
+          { label: 'A controller failover didn’t behave as expected', next: 'ha-branch' },
+          { label: 'Planning or recovering from a 9800 software upgrade', next: 'issu-branch' },
+          { label: 'An AP is missing radios/USB, or won’t power on fully', next: 'poe-branch' },
+        ]
+      },
+      {
+        label: 'Client Authentication & AAA',
+        choices: [
+          { label: 'A client can’t connect to the SSID at all', next: 'ssid-connect-branch' },
+          { label: 'Layer 2 authentication failure (802.1X/EAP fails before any portal or DHCP)', next: 'l2-auth-branch' },
+          { label: 'RADIUS/AAA server seems unreachable or timing out', next: 'radius-unreachable-branch' },
+          { label: 'A client gets stuck on the captive portal / web login', next: 'cwa-branch' },
+          { label: 'A client keeps failing the same auth over and over', next: 'exclusion-branch' },
+          { label: 'One client fails 802.1X but others on the same SSID work fine', next: 'supplicant-branch' },
+          { label: 'Certificate errors that don’t make sense (cert looks valid)', next: 'ntp-branch' },
+        ]
+      },
+      {
+        label: 'Roaming: Fast Transition (802.11r), 802.11k, 802.11v',
+        choices: [
+          { label: 'A client drops or re-authenticates right after roaming', next: 'roam-branch' },
+          { label: 'Client sticks to a far/weak AP instead of roaming to a closer one', next: 'sticky-client-branch' },
+          { label: 'Client takes a long time to roam / voice call glitches during roam', next: 'roam-voice-branch' },
+          { label: 'Client roams fine on 5 GHz but struggles or won’t roam on 2.4 GHz', next: 'roam-band-branch' },
+        ]
+      },
+      {
+        label: 'Mobility & FlexConnect',
+        choices: [
+          { label: 'A client roams to a different controller and gets fully re-authenticated instead of a fast roam', next: 'mobility-group-branch' },
+          { label: 'Guest traffic isn’t anchoring to the DMZ/guest controller like it should', next: 'anchor-branch' },
+          { label: 'A branch-site FlexConnect AP keeps going into standalone mode', next: 'flex-standalone-branch' },
+        ]
+      },
+      {
+        label: 'Identity Services Engine (ISE)',
+        choices: [
+          { label: 'Problems are random, intermittent, hit different people', next: 'intermittent-branch' },
+        ]
+      },
+      {
+        label: 'Application & Performance',
+        choices: [
+          { label: 'Wi-Fi feels slow but signal strength looks fine', next: 'throughput-branch' },
+          { label: 'A client gets a low data rate / stuck on 1-11 Mbps', next: 'low-datarate-branch' },
+          { label: 'One specific app (video conferencing, streaming) performs badly, but others are fine', next: 'app-perf-branch' },
+          { label: 'Multicast, broadcast, or mDNS/Bonjour discovery isn’t working', next: 'multicast-branch' },
+          { label: 'Voice or video over Wi-Fi sounds choppy', next: 'qos-branch' },
+          { label: 'Location accuracy / CMX / Cisco Spaces data looks wrong', next: 'location-branch' },
+        ]
+      },
+      {
+        label: 'Platform-Specific — Cloud & Outdoor',
+        choices: [
+          { label: 'This is a Meraki (cloud-managed) deployment', next: 'meraki-branch' },
+          { label: 'A client connects to Meraki Wi-Fi but has no internet access', next: 'meraki-internet-branch' },
+          { label: 'A client can’t get a DHCP IP address on a Meraki AP', next: 'meraki-dhcp-branch' },
+          { label: 'An outdoor or mesh AP won’t connect / backhaul is bad', next: 'mesh-branch' },
+          { label: 'Mesh backhaul is up with decent SNR, but throughput/link rate is still bad', next: 'mesh-rate-branch' },
+        ]
+      },
+      {
+        label: 'Legacy — AireOS & Mobility Express',
+        choices: [
+          { label: 'This is an older AireOS controller or Mobility Express', next: 'aireos-branch' },
+          { label: 'AireOS WLC / Mobility Express web GUI won’t load, or management access is blocked', next: 'aireos-gui-branch' },
+        ]
+      },
     ]
   };
 
@@ -1854,6 +2424,51 @@ show vlan                               ! confirms the VLAN actually exists in t
         }}
       ]
     },
+    'ap-license-branch': {
+      question: 'Is this a 9800-CL running without a connected Smart Licensing/CSSM session, or a licensed platform where the AP count has grown past what you purchased?',
+      choices: [
+        { label: '9800-CL, not connected to Smart Licensing', result: {
+          topic: 'ap-license',
+          verdict: 'This is a real, enforced technical cap — not a compliance warning.',
+          detail: 'Cisco documents a hard-enforced limit of 50 access points on a 9800-CL that isn’t connected to Smart Licensing — not a soft warning. <code>show license status</code> and <code>show license summary</code> confirm connectivity before you assume it’s a hardware or join-process failure.'
+        }},
+        { label: 'Licensed platform, AP count exceeds purchased licenses', result: {
+          topic: 'ap-license',
+          verdict: 'APs over your purchased count won’t be blocked from joining — this is a compliance problem today, not a technical one.',
+          detail: 'Cisco’s own FAQ frames this as an audit/compliance matter: APs beyond the licensed count are simply "out of compliance." Start with <code>show license summary</code>, <code>show license status</code>, and <code>show license air entities summary</code> before escalating.'
+        }}
+      ]
+    },
+    'ap-crashloop-branch': {
+      question: 'Does the AP get stuck before it ever joins (console shows a boot/signature error), or does it join fine and then crash/reboot repeatedly afterward?',
+      choices: [
+        { label: 'Stuck pre-join, console shows a signature/checksum error', result: {
+          topic: 'ap-crashloop',
+          verdict: 'This matches a specific, documented defect family, not generic AP flakiness.',
+          detail: 'Field Notice FN74109 documents Wave 2 11ac and Catalyst 9100 Wi-Fi 6/6E APs downloading a corrupted image over CAPWAP, then boot-looping. Exact console signature: <code>verify signature failed for /bootpart/part1/ramfs_data_cisco.cpio.lzma</code>. Fixed in 8.10.185.0, 17.3.7, 17.6.6, 17.9.3, and 17.11.1+.'
+        }},
+        { label: 'Joins fine, then reboots/rejoins repeatedly afterward', result: {
+          topic: 'ap-crashloop',
+          verdict: 'Work this from the WLC side first — Cisco’s own troubleshooting flow starts with uptime patterns, not the AP console.',
+          detail: '<code>show ap crash</code> and <code>show wireless stats ap history mac-address &lt;mac&gt;</code> show the last reboot type/reason. Look for APs with abnormally low "Assoc Uptime," then check whether the affected APs share a switch or a wncd process via <code>show wireless loadbalance ap affinity mac &lt;mac&gt;</code>.'
+        }}
+      ]
+    },
+    'ap-mass-disconnect-branch': {
+      question: 'Are the APs that dropped together all on the same switch/stack, or scattered across different switches?',
+      choices: [
+        { label: 'Same switch or stack', result: {
+          topic: 'ap-mass-disconnect',
+          verdict: 'Check that switch’s own health and power budget before suspecting the controller.',
+          detail: 'Cisco’s documented correlation step for simultaneous AP drops is explicitly to check "if those APs were in same switch" — a shared uplink, a switch reload, or PoE power-budget exhaustion on that one switch all produce this exact signature.'
+        }},
+        { label: 'Scattered across different, unrelated switches', result: {
+          topic: 'ap-mass-disconnect',
+          verdict: 'This points at the controller side — specifically per-process load, not the access layer.',
+          detail: 'Cisco’s own troubleshooting flow checks wncd (the per-AP-group wireless control process) utilization: "disconnections could be due to high wncd CPU utilization." <code>show wireless loadbalance ap affinity wncd &lt;0-7&gt;</code> shows which APs share a wncd instance.'
+        }}
+      ]
+    },
     'cwa-branch': {
       question: 'Does the redirect never happen at all, or does it loop / never complete?',
       choices: [
@@ -1865,12 +2480,12 @@ show vlan                               ! confirms the VLAN actually exists in t
       question: 'Is this a 9800/IOS-XE controller, or AireOS?',
       choices: [
         { label: '9800 / IOS-XE', result: {
-          topic: 'redirect-acl',
+          topic: 'ise-sizing',
           verdict: 'Most common cause: the redirect ACL name doesn’t exactly match between ISE and the WLC.',
           detail: 'Look for <code>SANET_AUTHZ_FAILURE - Redirect ACL Failure</code> in logs. ISE’s default name <code>ACL_WEBAUTH_REDIRECT</code> uses underscores — a dash instead breaks the match silently. Also confirm <code>aaa-override</code> and NAC are both enabled in the policy profile.'
         }},
         { label: 'AireOS', result: {
-          topic: 'redirect-acl',
+          topic: 'ise-sizing',
           verdict: 'Check the ACL polarity first — AireOS and 9800 are inverted from each other.',
           detail: 'On AireOS, <code>deny</code> means redirect and <code>permit</code> means pass-through — the opposite of 9800. An ACL built with 9800 habits on an AireOS box will redirect exactly backwards, with no error shown.'
         }}
@@ -1880,14 +2495,14 @@ show vlan                               ! confirms the VLAN actually exists in t
       question: 'Does it loop continuously, or get further and then time out once?',
       choices: [
         { label: 'Loops continuously', result: {
-          topic: 'redirect-acl',
+          topic: 'ise-sizing',
           verdict: 'Almost always a missing exemption for DNS and/or the ISE PSN in the redirect ACL.',
           detail: 'The ACL must explicitly deny (exempt) traffic to the ISE PSN and to DNS — skip either and the client keeps getting redirected mid-redirect.'
         }},
         { label: 'Gets further, then times out once', result: {
-          topic: 'ft-cwa',
+          topic: 'ise-sizing',
           verdict: 'This matches a documented CWA timer, not a config defect — or it matches the FT+CWA interaction pattern if a roam happened first.',
-          detail: 'The 9800’s reap timer = 3× init-state-timeout + 5s will deauth a client who hasn’t finished the portal login in time — a 10s timeout means a 35s cutoff. If a Fast Transition roam happened right before this, see the FT roam + CWA section for the open questions around that specific interaction.'
+          detail: 'The 9800’s reap timer = 3× init-state-timeout + 5s will deauth a client who hasn’t finished the portal login in time — a 10s timeout means a 35s cutoff. If a Fast Transition roam happened right before this, see the Identity Services Engine section for the open questions around that specific interaction.'
         }}
       ]
     },
@@ -1895,7 +2510,7 @@ show vlan                               ! confirms the VLAN actually exists in t
       question: 'Does the client fully recover afterward (via a fresh full login), or does it stay disconnected?',
       choices: [
         { label: 'It recovers via a fresh full login', result: {
-          topic: 'ft-cwa',
+          topic: 'ise-sizing',
           verdict: 'This matches a documented pattern: a successful FT roam followed by an unexpected deletion, then recovery.',
           detail: 'The deletion timing — not the PMKID failure that follows it — is what’s worth escalating to TAC/Bug Search. Cisco’s own definition of the delete reason describes a pre-association failure, which doesn’t match a client that had already reached RUN.'
         }},
@@ -1903,6 +2518,92 @@ show vlan                               ! confirms the VLAN actually exists in t
           topic: 'intermittent',
           verdict: 'Check DHCP behavior across the roam boundary before assuming it’s an auth problem.',
           detail: 'A <code>DHCP Required</code> mismatch between foreign/anchor controllers (or FlexConnect profiles) lets a client keep a stale IP across a roam, leading to a DHCP NAK that looks like a connectivity failure.'
+        }}
+      ]
+    },
+    'sticky-client-branch': {
+      question: 'Is Optimized Roaming (or 802.11v BSS Transition) actually configured on this WLAN, or is this a stock config?',
+      choices: [
+        { label: 'Nothing like that is configured — it’s a stock WLAN', result: {
+          topic: 'ft-roaming',
+          verdict: 'This is expected default behavior, not a defect — a 9800 doesn’t proactively push a client off a weak AP unless something tells it to.',
+          detail: 'Optimized Roaming is "disabled by default," and the roam decision is always client-driven until you turn this on. Enable per band: <code>ap dot11 24ghz rrm optimized-roam</code> (plus 5/6 GHz equivalents). Cisco explicitly warns not to combine this with RSSI Low Check on the same WLAN.'
+        }},
+        { label: 'It’s already enabled, but the client still won’t move', result: {
+          topic: 'ft-roaming',
+          verdict: 'Check whether the client itself supports 802.11v BSS Transition before assuming the controller config is wrong.',
+          detail: 'A BTM request is "a suggestion (or advice) given to a client, which the client can choose to follow or ignore." A client that ignores it needs <code>bss-transition disassociation-imminent</code> configured to be forced off after a hold-down timer. Confirm the controller is actually trying: <code>show ap dot11 &lt;band&gt; optimized-roaming statistics</code> — nonzero Disassociations/Rejections counters mean the controller is acting.'
+        }}
+      ]
+    },
+    'roam-voice-branch': {
+      question: 'Is 802.11r (Fast Transition) actually configured on this WLAN, or does every roam run a full 802.1X exchange?',
+      choices: [
+        { label: 'FT isn’t configured — full 802.1X runs on every roam', result: {
+          topic: 'qos-voice',
+          verdict: 'This is the documented difference between FT and a full re-auth — without FT, a roam has to redo the entire EAP exchange, which is enough added latency to drop or glitch an active call.',
+          detail: 'FT caches a derived PMK so a roam can skip the full 802.1X handshake entirely. Note: <code>TSPEC is not supported for 802.11r fast roaming</code>, and LEAP is incompatible with FT outright. Confirm which roaming method is in use with <code>show wireless client summary</code> (look for FT / FT-SAE vs. a plain re-auth).'
+        }},
+        { label: 'FT is already configured, but roams are still slow or calls still glitch', result: {
+          topic: 'ft-roaming',
+          verdict: 'Check WAN latency and the per-WLC FT handshake cap before assuming FT itself is broken.',
+          detail: '"If WAN link latency exists, fast roaming is also delayed," for both over-the-air and over-the-DS FT. Each WLC also caps simultaneous FT handshakes at three different APs as a DoS protection. Pull failure counters with <code>show wireless stats client detail</code> and PMK-cache state with <code>show wireless pmk-cache</code> before escalating.'
+        }}
+      ]
+    },
+    'roam-band-branch': {
+      question: 'Is Band Select enabled on this WLAN?',
+      choices: [
+        { label: 'Yes — the SSID is configured to favor 5 GHz', result: {
+          topic: 'ft-roaming',
+          verdict: 'This may be intended behavior, not a defect — Band Select is specifically documented as unfriendly to time-sensitive traffic on the band it’s steering clients away from.',
+          detail: '"Band selection-enabled WLANs do not support time-sensitive applications such as voice and video because of roaming delays," since the mechanism works by deliberately delaying 2.4 GHz probe responses. It’s also unsupported on specific older AP hardware (1600, 1040, OEAP 600 series). Verify current settings with <code>show band-select</code>.'
+        }},
+        { label: 'No — Band Select isn’t configured, and 2.4 GHz roaming still struggles', result: {
+          topic: 'intermittent',
+          verdict: 'Check whether 802.11k-assisted roaming even applies to this client’s path — its documented scope is narrower than people assume.',
+          detail: '802.11k neighbor-list assistance is "supported only on a single controller" and "only on 802.11n-capable indoor access points." A client roaming across separate controllers, or on AP hardware outside that support list, gets no 11k assistance on either band. Use <code>debug 11k {all|events|errors}</code> to confirm whether k-assisted roaming is actually engaging for that client.'
+        }}
+      ]
+    },
+    'mobility-group-branch': {
+      question: 'Do the two controllers involved share the exact same mobility group name?',
+      choices: [
+        { label: 'Not sure / never checked', result: {
+          topic: 'mobility-flex',
+          verdict: 'Check this before anything else — a mobility group name mismatch is the documented cause of exactly this symptom for FT/CCKM roams.',
+          detail: 'Controllers must share the same mobility group name "when a fast layer2 roam like Fast Transition (FT) or Cisco Centralized Key Management (CCKM) is in use." <code>show wireless stats mobility</code> has a named "Group mismatch" counter under Handoff Status — a nonzero value confirms this exact cause.'
+        }},
+        { label: 'Group names match', result: {
+          topic: 'mobility-flex',
+          verdict: 'Group name isn’t it — check for a WLAN profile mismatch between the two controllers instead.',
+          detail: 'Cisco documents a separate, equally common cause: "client roaming is not supported if there is a WLAN profile mismatch" between controllers. Diff the WLAN and policy profile configuration on both sides.'
+        }}
+      ]
+    },
+    'anchor-branch': {
+      question: 'Is the mobility tunnel itself up between the anchor and foreign controller (check show wireless mobility summary), or is the tunnel up but clients still aren’t anchoring?',
+      choices: [
+        { label: 'Tunnel is down / not showing as a peer', next: 'mobility-group-branch' },
+        { label: 'Tunnel is up, but the client never shows up on the anchor', result: {
+          topic: 'mobility-flex',
+          verdict: 'This is almost always a policy-profile mismatch or a missing Export Anchor flag, not a tunnel problem.',
+          detail: 'Cisco documents it as mandatory that "WLAN and Policy Profile names and configurations match on both foreign 9800 WLC and anchor 9800 WLC with the exception of VLAN." Confirm Export Anchor is actually checked on the anchor-side policy profile, and that the anchor VLAN has a real routed SVI. <code>show wireless client mac-address &lt;mac&gt; detail</code> on the foreign controller should show "Mobility Role : Export Foreign."'
+        }}
+      ]
+    },
+    'flex-standalone-branch': {
+      question: 'Is the affected WLAN at that branch site locally switched or centrally switched?',
+      choices: [
+        { label: 'Centrally switched', result: {
+          topic: 'mobility-flex',
+          verdict: 'This is expected, documented behavior, not a bug — centrally-switched clients are defined to drop when the AP goes standalone.',
+          detail: '"Centrally switched clients are disassociated. However, the FlexConnect access point continues to serve locally switched clients." If this branch needs to survive WAN outages, the WLAN needs to be moved to local switching.'
+        }},
+        { label: 'Locally switched, but it’s still failing/dropping', result: {
+          topic: 'mobility-flex',
+          verdict: 'Check the site tag before anything else — a FlexConnect AP left on default-site-tag has a documented, specific roam/reassociation failure.',
+          detail: 'Leaving an AP on <code>default-site-tag</code> means "the client Pairwise Master Key (PMK) is not sent to APs," causing "client roam and reassociation issues." Run <code>show ap name &lt;ap-name&gt; tag info</code> to confirm the AP is on a named site tag with a real flex-profile.'
         }}
       ]
     },
@@ -1936,6 +2637,36 @@ show vlan                               ! confirms the VLAN actually exists in t
         }}
       ]
     },
+    'meraki-internet-branch': {
+      question: 'Is this the AP itself failing to reach its own gateway, or a client that associates fine but has no internet?',
+      choices: [
+        { label: 'The AP itself — check its own gateway/DHCP first', result: {
+          topic: 'meraki',
+          verdict: 'Confirm the AP can actually see its own default gateway before troubleshooting any client at all.',
+          detail: 'The AP converts itself to repeater mode if it "cannot receive an ARP reply packet from the default gateway on the LAN," broadcasting a <code>&lt;SSID&gt;-bad-gateway</code> SSID as the signal — an AP-side symptom, not a client-side one.'
+        }},
+        { label: 'A client — associates fine, just no internet', result: {
+          topic: 'meraki',
+          verdict: 'Verify gateway reachability and DNS before assuming this is a Dashboard/cloud problem.',
+          detail: 'Meraki’s resolution guide starts with "verify that the gateway is correct and reachable" — ping the gateway from both the client and the AP. DNS is called out separately as "one of the most common causes of client connection problems."'
+        }}
+      ]
+    },
+    'meraki-dhcp-branch': {
+      question: 'Is this SSID in Bridge mode (clients get an IP from your own LAN DHCP server) or NAT mode (the Meraki AP hands out the IP itself)?',
+      choices: [
+        { label: 'Bridge mode', result: {
+          topic: 'meraki',
+          verdict: 'Three documented causes, roughly in order: pool exhaustion, DHCP server reachability, VLAN tag mismatch.',
+          detail: 'In bridge mode "wireless and wired clients connected to Meraki APs receive an IP address from the DHCP server on the wired LAN." Check pool exhaustion first, then ping the DHCP server from Wireless &gt; Access point &gt; Tools, then confirm an IP helper/DHCP relay is configured if it sits on a different broadcast domain.'
+        }},
+        { label: 'NAT mode', result: {
+          topic: 'meraki',
+          verdict: 'Isolate scope first — same client on a different SSID, a different client on the same SSID — before chasing the AP itself.',
+          detail: 'NAT-mode DHCP is handled entirely by the AP, so bridge-mode causes don’t apply. Capture on the client with Wireshark to confirm an ACK actually comes back, and check the event log (Network Wide &gt; Monitor &gt; Client) for the exact step that failed.'
+        }}
+      ]
+    },
     'aireos-branch': {
       question: 'Is this a true separate WLC, or an AP acting as its own controller (Mobility Express)?',
       choices: [
@@ -1951,6 +2682,21 @@ show vlan                               ! confirms the VLAN actually exists in t
         }}
       ]
     },
+    'aireos-gui-branch': {
+      question: 'Are you reaching for the GUI over a wired management/service port, or through a wireless client associated to that same controller/AP?',
+      choices: [
+        { label: 'Wired / management interface', result: {
+          topic: 'aireos',
+          verdict: 'Check HTTP vs. HTTPS state before anything else — AireOS ships HTTPS-only by default.',
+          detail: 'HTTP ("web mode") is disabled by default; HTTPS ("secure web") is enabled by default. A browser request to <code>http://</code> on a controller that’s never had webmode enabled simply won’t load — try <code>https://</code> first.'
+        }},
+        { label: 'Over a wireless client, same controller the AP is on', result: {
+          topic: 'aireos',
+          verdict: 'Check whether Management via Wireless is actually supposed to be off here — its default is disabled, and its scope is narrower than people assume.',
+          detail: 'Management via Wireless is disabled by default, and even when enabled it only "blocks wireless management access to the same controller that the wireless client device is currently associated with" — it does nothing to stop a client associated to a different controller from reaching this one.'
+        }}
+      ]
+    },
     'mesh-branch': {
       question: 'Is the AP failing to join at all, or joined but with a bad/unstable backhaul link?',
       choices: [
@@ -1963,6 +2709,21 @@ show vlan                               ! confirms the VLAN actually exists in t
           topic: 'outdoor',
           verdict: 'Check hop count and SNR before assuming it’s a hardware problem.',
           detail: 'Hop count is a throughput multiplier on the whole backhaul, not just added latency. Backhaul SNR thresholds are 12 dB (low) / 60 dB (high) — DFS-heavy regions want 20 dB minimum. Weather radar on 5600–5650 MHz can trigger DFS "quiet" mode on specific channels, which looks like an unrelated outage.'
+        }}
+      ]
+    },
+    'mesh-rate-branch': {
+      question: 'Does `show mesh neigh summary` show a low backhaul link rate despite acceptable SNR, or is this specifically a pair of nodes mounted close together?',
+      choices: [
+        { label: 'Low link rate despite OK-looking SNR', result: {
+          topic: 'outdoor',
+          verdict: 'Confirm antenna gain configuration matches the installed hardware — a mismatch here caps the negotiated rate independent of actual signal quality.',
+          detail: 'Antenna gain for a mesh AP "must be configured to match that of the antenna installed." The mesh backhaul also defaults to, and is locked to, 802.11a — "You cannot change the backhaul interface to 802.11b/g." Leave the backhaul rate set to Auto rather than a fixed rate.'
+        }},
+        { label: 'This is specifically two collocated/closely-mounted mesh nodes', result: {
+          topic: 'outdoor',
+          verdict: 'Check physical separation before touching any RF or channel setting — collocated radios can desensitize each other regardless of configuration.',
+          detail: 'Collocated mesh APs need a minimum of 10 ft vertical or 100 ft horizontal separation specifically to avoid the nodes’ own radios interfering with each other. No channel or power change will fix self-interference at closer spacing.'
         }}
       ]
     },
@@ -2056,6 +2817,43 @@ show vlan                               ! confirms the VLAN actually exists in t
         }}
       ]
     },
+    'throughput-branch': {
+      question: 'Is everyone nearby on that AP/floor slow, or is it just one client while others close by are fine?',
+      choices: [
+        { label: 'Everyone nearby is slow — signal bars look fine for all of them', result: {
+          topic: 'qos-voice',
+          verdict: 'This points at airtime contention, not RF coverage — RSSI and available airtime are two separate things, and a good bar count says nothing about either.',
+          detail: 'Check legacy low data rates first: one client associating at a legacy rate (e.g. 1-11 Mbps) holds the medium far longer per frame than a modern MCS client, dragging throughput down for everyone on that AP even though their own RSSI looks fine. Also check channel width — a channel manually pinned narrow can cap throughput independent of signal strength.'
+        }},
+        { label: 'Just one client — others on the same AP are fine', next: 'low-datarate-branch' }
+      ]
+    },
+    'low-datarate-branch': {
+      question: 'Does `show wireless client mac-address <mac> detail` show that client actually negotiated a low legacy rate (1-11 Mbps), or does the rate look normal?',
+      choices: [
+        { label: 'Confirmed — client is on a low legacy rate (1-11 Mbps)', result: {
+          topic: 'qos-voice',
+          verdict: 'Before assuming pure RF distance, confirm this AP’s rate configuration actually matches policy — a profile that wasn’t updated everywhere will quietly let one AP keep legacy rates alive.',
+          detail: 'Rate states: <strong>mandatory</strong> (clients must support it to associate), <strong>supported</strong> (clients may use it but aren’t required to), <strong>disable</strong> (off). Set per-band via <code>ap dot11 {5ghz|24ghz} rate &lt;rate&gt; {disable|mandatory|supported}</code>. If a site-wide policy was supposed to disable legacy rates and this AP still negotiated one, check whether this AP’s RF profile actually inherited that change.'
+        }},
+        { label: 'Rate looks normal, but the experience is still bad', next: 'app-perf-branch' }
+      ]
+    },
+    'app-perf-branch': {
+      question: 'Is this specific to one application (e.g., a video conferencing or streaming app), while other traffic from the same client is fine?',
+      choices: [
+        { label: 'Yes — one app is bad, everything else from that client is fine', result: {
+          topic: 'qos-voice',
+          verdict: 'Use AVC for visibility into whether the controller is even classifying that app correctly — but don’t expect it to hand you a root cause by itself.',
+          detail: '<code>show avc client &lt;ip&gt; top &lt;N&gt; applications</code> shows whether that app’s traffic is being identified at all. NBAR2 classification "cannot classify traffic accurately when SaaS applications use end-to-end encryption, QUIC, or DoH" — a video/streaming app over QUIC can silently misclassify with no visible error. There is also a hard ceiling: an AVC profile "supports a maximum of 23 rules."'
+        }},
+        { label: 'No — it is broadly all traffic for that client, not one app', result: {
+          topic: 'qos-voice',
+          verdict: 'This isn’t app-specific — fall back to the general RF/QoS correlation order already documented for this client.',
+          detail: 'Work it as: RF retries/RSSI first via <code>show wireless stats client summary</code>, then DSCP marking hop-by-hop, then CAC, then controller CPU. Treat "RF → QoS → CAC → CPU" as a reasonable synthesized order, not a quoted Cisco procedure.'
+        }}
+      ]
+    },
     'ntp-branch': {
       question: 'Is this a CAPWAP/AP join certificate error, or an EAP-TLS/ISE certificate error?',
       choices: [
@@ -2069,6 +2867,50 @@ show vlan                               ! confirms the VLAN actually exists in t
           verdict: 'Confirm ISE and the client aren’t drifted relative to each other, same logic as the CAPWAP case.',
           detail: 'ISE’s own guidance is to use the same NTP source across all nodes specifically so "reports and logs... are always synchronized." If the client and ISE disagree enough on time, a genuinely valid cert can fail validation on either side — check clock state before escalating as a PKI defect.'
         }}
+      ]
+    },
+    'ssid-connect-branch': {
+      question: 'Where exactly does the connection attempt stop?',
+      choices: [
+        { label: 'It never shows up, or it associates but 802.1X/EAP authentication never starts or completes', next: 'l2-auth-branch' },
+        { label: 'It keeps attempting and failing the exact same way, over and over, every single time', next: 'exclusion-branch' },
+        { label: 'It authenticates fine, but never actually gets an IP address', result: {
+          topic: 'intermittent',
+          verdict: 'Confirm the client is actually stuck in the DHCP stage, not an auth stage you haven’t checked yet — the two look identical from the user’s side.',
+          detail: 'Cisco’s client state-machine (PEM) table defines <code>DHCP_REQD</code> as the stage reached only <em>after</em> Layer 2 authentication has already completed — strictly a Layer 3 problem, not an AAA one. Confirm with <code>show wireless client mac-address &lt;mac&gt; detail</code> (<code>Policy Manager State</code> field); if it reads anything other than <code>Run</code>, work the DHCP pool and scope exhaustion before touching RADIUS at all.'
+        }},
+        { label: 'It gets an IP, but still has no real network access afterward', next: 'ssid-connect-ip-noaccess' }
+      ]
+    },
+    'ssid-connect-ip-noaccess': {
+      question: 'Is this a guest/web-login (captive portal) SSID?',
+      choices: [
+        { label: 'Yes — it’s a CWA/guest network', next: 'cwa-branch' },
+        { label: 'No — it’s 802.1X or PSK, just no access after connecting', result: {
+          topic: 'supplicant',
+          verdict: 'This is a RADIUS-authorization problem, not an authentication one — the client already passed AAA.',
+          detail: 'Cisco’s 9800 Common Issues document names this exact shape: an <strong>ACL sent by RADIUS that doesn’t exist on the 9800 WLC</strong>, or a <strong>VLAN sent by RADIUS that doesn’t exist on the 9800 WLC</strong> — the client authenticates successfully and then gets no usable access. Check <code>show wireless client mac-address &lt;mac&gt; detail</code> under Server Policies for the exact ACL/VLAN name ISE sent, then confirm that name exists on the controller.'
+        }}
+      ]
+    },
+    'l2-auth-branch': {
+      question: 'This is strictly pre-DHCP, pre-portal — the client is failing 802.1X/EAP itself. What does the controller/AP trace actually show?',
+      choices: [
+        { label: 'It just times out — EAPOL/dot1x retries exhaust with no final answer either way', next: 'supplicant-branch' },
+        { label: 'It gets a definite rejection — wrong credentials, a bad PSK/MIC, or an invalid key-management frame', next: 'exclusion-branch' },
+        { label: 'The WLC can’t even reach the RADIUS/ISE server to ask', next: 'radius-unreachable-branch' }
+      ]
+    },
+    'radius-unreachable-branch': {
+      question: 'Is every client on this SSID/WLC failing right now, or just one (or a few), with others succeeding fine?',
+      choices: [
+        { label: 'Every client fails at once — this looks systemic', result: {
+          topic: 'intermittent',
+          verdict: 'This matches Cisco’s own documented AAA-unreachable signature — confirm the WLC-to-RADIUS path itself before touching endpoint config.',
+          detail: 'Cisco’s Common Wireless Issues document shows the exact deauth sequence: "Max retransmission of Access-Request... reached for mobile," followed by "Returning AAA Error ‘Timeout’ (-5) for mobile." The client delete-reason catalog names this directly: <code>CO_CLIENT_DELETE_REASON_AAA_SERVER_UNAVAILABLE</code> — "Radius server was not reachable." Check basic transport first — RADIUS auth/acct (UDP 1812/1813) reachable from the WLC — and confirm the server isn’t already flagged dead on the controller.'
+        }},
+        { label: 'Just one client (or a few) — other clients on the same SSID authenticate fine', next: 'supplicant-branch' },
+        { label: 'This is specifically a CWA/guest deployment with multiple ISE PSNs behind a load balancer', next: 'intermittent-branch' }
       ]
     },
     'issu-branch': {
@@ -2106,6 +2948,22 @@ show vlan                               ! confirms the VLAN actually exists in t
   const tsRoot = document.getElementById('ts-root');
   let tsHistory = [];
 
+  function tsChoiceButton(node, choice) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'ts-choice';
+    b.textContent = choice.label;
+    b.addEventListener('click', () => {
+      tsHistory.push(node);
+      if (choice.result) {
+        tsRenderResult(choice.result);
+      } else {
+        tsRender(TS_NODES[choice.next]);
+      }
+    });
+    return b;
+  }
+
   function tsRenderQuestion(node) {
     const q = document.createElement('div');
     q.className = 'ts-step';
@@ -2115,22 +2973,32 @@ show vlan                               ! confirms the VLAN actually exists in t
     q.appendChild(h);
     const choiceWrap = document.createElement('div');
     choiceWrap.className = 'ts-choices';
-    node.choices.forEach(choice => {
-      const b = document.createElement('button');
-      b.className = 'ts-choice';
-      b.textContent = choice.label;
-      b.addEventListener('click', () => {
-        tsHistory.push(node);
-        if (choice.result) {
-          tsRenderResult(choice.result);
-        } else {
-          tsRender(TS_NODES[choice.next]);
-        }
-      });
-      choiceWrap.appendChild(b);
-    });
+    node.choices.forEach(choice => choiceWrap.appendChild(tsChoiceButton(node, choice)));
     q.appendChild(choiceWrap);
     return q;
+  }
+
+  function tsRenderCategories(node) {
+    const wrap = document.createElement('div');
+    wrap.className = 'ts-step';
+    const h = document.createElement('p');
+    h.className = 'ts-question';
+    h.textContent = node.question;
+    wrap.appendChild(h);
+    node.categories.forEach(category => {
+      const catWrap = document.createElement('div');
+      catWrap.className = 'ts-category';
+      const label = document.createElement('p');
+      label.className = 'ts-category-label';
+      label.textContent = category.label;
+      catWrap.appendChild(label);
+      const choiceWrap = document.createElement('div');
+      choiceWrap.className = 'ts-choices';
+      category.choices.forEach(choice => choiceWrap.appendChild(tsChoiceButton(node, choice)));
+      catWrap.appendChild(choiceWrap);
+      wrap.appendChild(catWrap);
+    });
+    return wrap;
   }
 
   function tsRenderResult(result) {
@@ -2179,7 +3047,7 @@ show vlan                               ! confirms the VLAN actually exists in t
   function tsRender(node) {
     tsRoot.innerHTML = '';
     tsRoot.appendChild(tsBackBar());
-    tsRoot.appendChild(tsRenderQuestion(node));
+    tsRoot.appendChild(node.categories ? tsRenderCategories(node) : tsRenderQuestion(node));
   }
 
   function tsStart() {
